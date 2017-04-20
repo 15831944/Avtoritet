@@ -1,0 +1,1 @@
+"C:\Program Files\Snap-on Business Solutions\Snap-on EPC\jre\bin\javaw.exe" -classpath "\\snapon\Snap-on EPC Client\Configurator.jar" com.snapon.sbs.install.Launcher

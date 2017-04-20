@@ -1,0 +1,22 @@
+﻿<Window x:Class="NewLauncher.View.BrowserLauncherView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:extension="clr-namespace:NewLauncher.Extension"
+        xmlns:gecko="clr-namespace:Gecko;assembly=Geckofx-Winforms"
+        mc:Ignorable="d"
+        Icon="/favicon.ico" WindowStartupLocation="CenterScreen" WindowState="Maximized" ResizeMode="CanResizeWithGrip" Background="#FF939393">
+    <Grid Background="#FFFFFFFF" Margin="2">
+        <WindowsFormsHost Name="IeHost" Visibility="Collapsed" Panel.ZIndex="10" Background="{x:Null}">
+            <extension:ExtendedWebBrowser x:Name="IeWeb" />
+        </WindowsFormsHost>
+        <WindowsFormsHost Name="GeckoHost" Visibility="Visible" Panel.ZIndex="10" Background="{x:Null}">
+            <gecko:GeckoWebBrowser x:Name="GeckoWeb" />
+        </WindowsFormsHost>
+        <StackPanel Visibility="Visible" VerticalAlignment="Center">
+            <TextBlock Name="Captcha" Text="Загрузка..." TextBlock.FontWeight="Bold" TextBlock.FontSize="18" HorizontalAlignment="Center" />
+            <TextBlock Name="Message" Text="Пожалуйста, ждите..." HorizontalAlignment="Center" VerticalAlignment="Center" TextBlock.FontSize="14" />
+        </StackPanel>
+    </Grid>
+</Window>
