@@ -69,7 +69,7 @@ namespace NewLauncher.View
                 string url = ((ButtonModel)sender).DataContext.ToString();
                 if (url.StartsWith("http") || url.StartsWith("https"))
                 {
-                    if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true) // "imtportal.gm", "gme-infotech"
+                    if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true)
                     {
                         StartSeparateProcess(url);
                     }
@@ -222,9 +222,9 @@ namespace NewLauncher.View
             StreamWriter writer;
             RequestHelper.Client.OpenSession(url, true);
             string cookies = RequestHelper.Client.GetCookies(url);
-            if (url.Contains("opel"))
+            if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
             {
-                using (stream = new FileStream("Session_Opel.txt", FileMode.Create, FileAccess.Write))
+                using (stream = new FileStream("Session_ChevroletOpelGroup.txt", FileMode.Create, FileAccess.Write))
                 {
                     using (writer = new StreamWriter(stream))
                     {
@@ -232,21 +232,42 @@ namespace NewLauncher.View
                     }
                 }
             }
-            if (url.Contains("chevrolet"))
-            {
-                using (stream = new FileStream("Session_Chevrolet.txt", FileMode.Create, FileAccess.Write))
-                {
-                    using (writer = new StreamWriter(stream))
+            // вариант №1 (рабочий)
+            //using (Process process = new Process()
+            //    { StartInfo =
+            //        {
+            //            FileName = "BrowserExtension.exe",
+            //            Arguments = url,
+            //            CreateNoWindow = true,
+            //            UseShellExecute = false
+            //        }
+            //    })
+            //{
+            //    if (process.Start() == false)
+            //        ErrorLogHelper.AddErrorInLog("Process.Start: BrowserExtension.exe", "Unknown reason");
+            //    else
+            //        ;
+            //}
+            // вариант №2 (для отладки)
+            try {
+                Process process = new Process() {
+                    StartInfo =
                     {
-                        writer.Write(cookies);
+                        FileName = "BrowserExtension.exe",
+                        Arguments = url,
+                        CreateNoWindow = true,
+                        UseShellExecute = false
                     }
-                }
-            }
-            using (Process process = new Process { StartInfo = { FileName = "BrowserExtension.exe", Arguments = url, CreateNoWindow = true, UseShellExecute = false } })
-            {
-                process.Start();
+                };
+
+                if (process.Start() == false)
+                    ErrorLogHelper.AddErrorInLog("Process.Start: BrowserExtension.exe", "Unknown reason");
+                else
+                    ;
+            } catch (Exception e) {
+                ErrorLogHelper.AddErrorInLog("Process.Start: BrowserExtension.exe", e.Message + " | " + e.StackTrace);
+                Debug.WriteLine("[{0}] {1} / {2}", new object[] {DateTime.Now, e.Message, e.StackTrace});
             }
         }
-
     }
 }

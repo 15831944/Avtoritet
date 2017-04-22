@@ -92,7 +92,7 @@ namespace RelayServer.Portals
 				}
 				if (forceSession)
 				{
-					Task<HttpResponseMessage> session2 = reqHandler.GetSessionAsync("https://imtportal.gm.com/subscriptions.html", container);
+					Task<HttpResponseMessage> session2 = reqHandler.GetSessionAsync(string.Format("{0}/subscriptions.html", CatalogApi.UrlConstants.ChevroletOpelGroup), container);
 					session2.Wait();
 					HttpResponseMessage responseMessage = session2.Result;
 					ConsoleHelper.Info(string.Format("Url Navigation: {0}", responseMessage.RequestMessage.RequestUri.AbsoluteUri));

@@ -707,12 +707,12 @@ namespace NewLauncher.View
                 bool flag = false;
                 this.Captcha.Text = "Загрузка...";
                 this.Message.Text = "Пожалуйста, ждите...";
-                if (this.url.Contains("http://10.0.5.4:9907/impact3/application"))
+                if (this.url.Contains(CatalogApi.Catalogs.VolvoImpact))
                 {
                     flag = true;
                     this.DelayForNextNavigation(this.IeHost, 0x7d0, 0xbb8);
                 }
-                if (this.url.Contains("http://172.16.24.31/impact3/application"))
+                if (this.url.Contains(CatalogApi.Catalogs.RenoImpact))
                 {
                     flag = true;
                     this.DelayForNextNavigation(this.IeHost, 500, 0xbb8);
@@ -931,7 +931,7 @@ namespace NewLauncher.View
                 }
 
                 #region Chevrolet|Opel Group
-                if (this.url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true) //imtportal.gm
+                if (this.url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true)
                 {
                     flag = true;
 
@@ -1007,7 +1007,43 @@ namespace NewLauncher.View
                     ;
                 #endregion
 
-                if (((((this.url.Contains("http://172.16.24.41:7080/navi?SBMK=R&COUNTRY=012&DRIVE=S&MAKE=R&LANGUAGE=N&ALL_FIG=0&RMODE=DEFAULT&KEY=HOME&EPER_CAT=SP&GUI_LANG=N&ALL_LIST_PART=0&PRINT_MODE=0&PREVIOUS_KEY=HOME&SB_CODE=-1&WINDOW_ID=1&SAVE_PARAM=COUNTRY") || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=F&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")) || (this.url.Contains("http://172.16.24.38:351/PQMace/") || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=T&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP"))) || ((this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=L&MAKE=L&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP") || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=C&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")) || (this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=F&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP") || this.url.Contains("http://10.0.0.12:351/PQMace/root.fve?width=1590&height=846&checkNotifications")))) || (((this.url.Contains("http://10.0.60.1/Vida/") || this.url.Contains("http://10.0.0.12:8080/MGRover/index.jsp")) || (this.url.Contains("http://172.16.24.37:5031/CYWW/login.fve?&height=846&width=1590") || this.url.Contains("http://10.0.0.11:451/PQMace/login.fve?&width=1590&height=846"))) || (this.url.Contains("http://172.16.24.33:8080/mycatric/") || this.url.Contains("http://172.16.24.34:8080/mycatric/")))) || this.url.Contains("10.0.0.10:351"))
+                if (
+                        (
+                            (
+                                (
+                                    (this.url.Contains(CatalogApi.Catalogs.AlfaRomeo)
+                                        || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=F&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")
+                                    )
+                                    || (this.url.Contains("http://172.16.24.38:351/PQMace/")
+                                            || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=T&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")
+                                    )
+                                )
+                                || (
+                                    (this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=L&MAKE=L&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")
+                                        || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=C&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")
+                                    )
+                                    || (
+                                        this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=F&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")
+                                            || this.url.Contains(CatalogApi.Catalogs.Opel_main)
+                                    )
+                                )
+                            )
+                            || (
+                                (
+                                    (this.url.Contains(CatalogApi.Catalogs.Volvo)
+                                        || this.url.Contains(CatalogApi.Catalogs.Rover)
+                                    )
+                                    || (this.url.Contains(CatalogApi.Catalogs.Chrysler)
+                                        || this.url.Contains(CatalogApi.Catalogs.Chevrolet)
+                                    )
+                                )
+                                || (this.url.Contains(CatalogApi.Catalogs.IvecoTruck)
+                                    || this.url.Contains(CatalogApi.Catalogs.IvecoBus)
+                                )
+                            )
+                        )
+                    || this.url.Contains("10.0.0.10:351")
+                )
                 {
                     flag = true;
                     this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
@@ -1102,24 +1138,24 @@ namespace NewLauncher.View
                 }
                 else
                 {
-                    if ((browserExtendedNavigatingEventArgs.Url != null) && browserExtendedNavigatingEventArgs.Url.LocalPath.Contains("http://10.0.0.10:351/PQMace/login.fve"))
+                    if ((browserExtendedNavigatingEventArgs.Url != null)
+                        && browserExtendedNavigatingEventArgs.Url.LocalPath.Contains("http://10.0.0.10:351/PQMace/login.fve"))
                     {
                         base.Close();
                     }
-                    if ((browserExtendedNavigatingEventArgs.Url != null) && browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("https://www.parts.bmwgroup.com/tetis/starteApplikationAction.do?ENTRY_ID=WebETK_START"))
+                    if ((browserExtendedNavigatingEventArgs.Url != null)
+                        && browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains(CatalogApi.UrlConstants.BMW_ETKEntry))
                     {
-                        this.IeWeb.Navigate("https://www.parts.bmwgroup.com/tetis/starteApplikationAction.do?ENTRY_ID=WebETK_START");
+                        this.IeWeb.Navigate(CatalogApi.UrlConstants.BMW_ETKEntry);
                         browserExtendedNavigatingEventArgs.Cancel = true;
                     }
-                    else if (this.url.Contains("bmwgroup"))
-                    {
-                        browserExtendedNavigatingEventArgs.Cancel = true;
-                    }
-                    else
-                    {
-                        ExtendedWebBrowser browser = this.WindowManager.New(false);
-                        browserExtendedNavigatingEventArgs.AutomationObject = browser.Application;
-                    }
+                    else if (this.url.Contains(CatalogApi.UrlConstants.BMW_Root))
+                            browserExtendedNavigatingEventArgs.Cancel = true;
+                        else
+                        {
+                            ExtendedWebBrowser browser = this.WindowManager.New(false);
+                            browserExtendedNavigatingEventArgs.AutomationObject = browser.Application;
+                        }
                 }
             }
         }
@@ -1205,14 +1241,14 @@ namespace NewLauncher.View
                     flag = true;
                     this.IeWeb.Navigate(this.url);
                 }
-                if (this.url.Contains("partslink24"))
+                if (this.url.Contains(CatalogApi.UrlConstants.Partslink24Root))
                 {
                     flag = true;
                     InteropHelper.SetSystemTime(ref this.time);
                     if (RequestHelper.Client.IsServiceAvailable())
                     {
-                        this.OpenSession(".partslink24.com", false);
-                        this.GeckoWeb.Navigate("https://www.partslink24.com/");
+                        this.OpenSession(string.Format(".{0}.com", CatalogApi.UrlConstants.Partslink24Root), false);
+                        this.GeckoWeb.Navigate(string.Format("{0}/", CatalogApi.UrlConstants.Partslink24Com));
                     }
                     else
                     {
@@ -1236,47 +1272,48 @@ namespace NewLauncher.View
                 }
                 #endregion
 
-                if ((((this.url.Contains("http://172.16.24.41:7080/navi?SBMK=R&COUNTRY=012&DRIVE=S&MAKE=R&LANGUAGE=N&ALL_FIG=0&RMODE=DEFAULT&KEY=HOME&EPER_CAT=SP&GUI_LANG=N&ALL_LIST_PART=0&PRINT_MODE=0&PREVIOUS_KEY=HOME&SB_CODE=-1&WINDOW_ID=1&SAVE_PARAM=COUNTRY") || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=F&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")) || (this.url.Contains("http://172.16.24.38:351/PQMace/") || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=T&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP"))) || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=L&MAKE=L&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")) || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=C&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP"))
+                if (this.url.Contains(CatalogApi.Catalogs.AlfaRomeo))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this.url);
                 }
-                if (this.url.Contains("http://10.0.0.12:351/PQMace/root.fve?width=1590&height=846&checkNotifications"))
+                if (this.url.Contains(CatalogApi.Catalogs.Opel_main))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this.url);
                 }
-                if (this.url.Contains("http://172.16.24.33:8080/mycatric/") || this.url.Contains("http://172.16.24.34:8080/mycatric/"))
+                if (this.url.Contains(CatalogApi.Catalogs.IvecoTruck)
+                    || this.url.Contains(CatalogApi.Catalogs.IvecoBus))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this.url);
                 }
-                if (this.url.Contains("http://10.0.60.1/Vida/"))
+                if (this.url.Contains(CatalogApi.Catalogs.Volvo))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this.url);
                 }
-                if (this.url.Contains("http://10.0.5.4:9907/impact3/application"))
+                if (this.url.Contains(CatalogApi.Catalogs.VolvoImpact))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this.url);
                 }
-                if (this.url.Contains("http://172.16.24.31/impact3/application"))
+                if (this.url.Contains(CatalogApi.Catalogs.RenoImpact))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this.url);
                 }
-                if (this.url.Contains("http://10.0.0.12:8080/MGRover/index.jsp"))
+                if (this.url.Contains(CatalogApi.Catalogs.Rover))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this.url);
                 }
-                if (this.url.Contains("http://172.16.24.37:5031/CYWW/login.fve?&height=846&width=1590"))
+                if (this.url.Contains(CatalogApi.Catalogs.Chrysler))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this.url);
                 }
-                if (this.url.Contains("http://10.0.0.11:451/PQMace/login.fve?&width=1590&height=846"))
+                if (this.url.Contains(CatalogApi.Catalogs.Chevrolet))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this.url);
@@ -1286,7 +1323,7 @@ namespace NewLauncher.View
                     flag = true;
                     this.IeWeb.Navigate(this.url);
                 }
-                if (this.url.Contains("bmwgroup"))
+                if (this.url.Contains(CatalogApi.UrlConstants.BMW_Root))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this.url);
@@ -1361,7 +1398,7 @@ namespace NewLauncher.View
                 this.IeWeb.StartNewWindow += new EventHandler<BrowserExtendedNavigatingEventArgs>(this.IeWebOnStartNewWindow);
                 this.IeWeb.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(this.IeWebOnDocumentCompleted);
                 this.IeWeb.IsWebBrowserContextMenuEnabled = false;
-                if (this.url.Contains("http://172.16.24.31/impact3/application"))
+                if (this.url.Contains(CatalogApi.Catalogs.RenoImpact))
                 {
                     this.IeWeb.IsWebBrowserContextMenuEnabled = true;
                 }

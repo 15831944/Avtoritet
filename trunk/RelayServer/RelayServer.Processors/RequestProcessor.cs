@@ -127,16 +127,17 @@ namespace RelayServer.Processors
 				{
 					RequestProcessor.PeugeotPortal.OpenSession(url, forceSession);
 				}
-				else if (url.Contains("partslink24"))
+				else if (url.Contains(CatalogApi.UrlConstants.Partslink24Root))
 				{
 					RequestProcessor.PartslinkPortal.OpenSession(url, forceSession);
 				}
 				else
 				{
-					if (!url.Contains("imtportal.gm"))
+					if (!url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
 					{
-						throw new System.Exception("Open session error");
-					}
+                        //throw new System.Exception("Open session error");
+					    RequestProcessor.ChevroletPortal.OpenSession(url.Replace("chevrolet", string.Empty), forceSession);
+                    }
 					if (url.Contains("opel"))
 					{
 						RequestProcessor.OpelPortal.OpenSession(url.Replace("opel", string.Empty), forceSession);
@@ -166,25 +167,16 @@ namespace RelayServer.Processors
 				{
 					RequestProcessor.PeugeotPortal.CloseSession(url);
 				}
-				else if (url.Contains("partslink24"))
+				else if (url.Contains(CatalogApi.UrlConstants.Partslink24Root))
 				{
 					RequestProcessor.PartslinkPortal.CloseSession(url);
 				}
-				else
+				else if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
 				{
-					if (!url.Contains("imtportal.gm"))
-					{
-						throw new System.Exception("Close session error");
-					}
-					if (url.Contains("opel"))
-					{
-						RequestProcessor.OpelPortal.CloseSession(url.Replace("opel", string.Empty));
-					}
-					if (url.Contains("chevrolet"))
-					{
-						RequestProcessor.ChevroletPortal.CloseSession(url.Replace("chevrolet", string.Empty));
-					}
+					RequestProcessor.ChevroletPortal.CloseSession(url);
 				}
+                else
+                    throw new System.Exception("Close session error");
 			}
 			catch (System.Exception ex)
 			{
@@ -208,23 +200,28 @@ namespace RelayServer.Processors
 				}
 				else
 				{
-					if (!url.Contains("partslink24"))
+					if (!url.Contains(CatalogApi.UrlConstants.Partslink24Root))
 					{
-						if (url.Contains("imtportal.gm"))
+						if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
 						{
-							if (url.Contains("opel"))
-							{
-								result = RequestProcessor.OpelPortal.GetCookies(url.Replace("opel", string.Empty));
-								return result;
-							}
-							if (url.Contains("chevrolet"))
-							{
-								result = RequestProcessor.ChevroletPortal.GetCookies(url.Replace("opel", string.Empty));
-								return result;
-							}
-						}
+						    result = RequestProcessor.ChevroletPortal.GetCookies(url);
+						    return result;
+
+                            //if (url.Contains("opel"))
+                            //{
+                            //	result = RequestProcessor.OpelPortal.GetCookies(url.Replace("opel", string.Empty));
+                            //	return result;
+                            //}
+                            //if (url.Contains("chevrolet"))
+                            //{
+                            //	result = RequestProcessor.ChevroletPortal.GetCookies(url.Replace("opel", string.Empty));
+                            //	return result;
+                            //}
+                        }
+
 						throw new System.Exception("Getting cookies error");
 					}
+
 					result = RequestProcessor.PartslinkPortal.GetCookies(url);
 				}
 			}

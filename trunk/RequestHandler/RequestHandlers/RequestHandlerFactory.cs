@@ -16,13 +16,13 @@ namespace RequestHandlers
 			{
 				result = new PeugeotRequestHandler(Login, Password);
 			}
-			else if (url.Contains("partslink24"))
+			else if (url.Contains(CatalogApi.UrlConstants.Partslink24Root))
 			{
 				result = new PartsLink24RequestHandler(Login, Password);
 			}
 			else
 			{
-				if (!url.Contains("imtportal.gm"))
+				if (!url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
 				{
 					throw new NotImplementedException(string.Format("Processor for url: '{0}' is not implemented", url));
 				}

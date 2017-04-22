@@ -6,17 +6,13 @@ namespace RequestHandlers.Requests
 {
 	public class ChevroletRequestFactory
 	{
-		private const string ChevroletLoginDo = "https://imtportal.gm.com/users/login.html";
-
-		private const string ChevroletLogoutDo = "https://imtportal.gm.com/users/logout.html";
-
 		public static HttpRequestMessage CreateLoginRequest(string Login, string Password)
 		{
 			return new HttpRequestMessage
 			{
 				Content = ChevroletRequestFactory.FormUrlEncodedContent(Login, Password),
 				Method = HttpMethod.Post,
-				RequestUri = new Uri("https://imtportal.gm.com/users/login.html")
+				RequestUri = new Uri(CatalogApi.UrlConstants.ChevroletOpelGroupUserLoginDo)
 			};
 		}
 
@@ -26,7 +22,7 @@ namespace RequestHandlers.Requests
 			{
 				Content = ChevroletRequestFactory.FormUrlEncodedContentForLogout(),
 				Method = HttpMethod.Post,
-				RequestUri = new Uri("https://imtportal.gm.com/users/logout.html")
+				RequestUri = new Uri(CatalogApi.UrlConstants.ChevroletOpelGroupUserLogoutTo)
 			};
 		}
 

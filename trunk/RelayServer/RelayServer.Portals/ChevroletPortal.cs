@@ -33,7 +33,7 @@ namespace RelayServer.Portals
 			string Password = string.Empty;
             using (AvtoritetEntities ae = new AvtoritetEntities())
             {
-                string sql = "SELECT        TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password\r\n                                            FROM dbo.Provider INNER JOIN\r\n                                            dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId\r\n                                            WHERE(dbo.Provider.Uri LIKE N'%imtportal.gm.com/chevrolet%') AND(dbo.ProviderAccount.Enable = 1)";
+                string sql = string.Format("SELECT        TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password\r\n                                            FROM dbo.Provider INNER JOIN\r\n                                            dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId\r\n                                            WHERE(dbo.Provider.Uri LIKE N'%{0}%') AND(dbo.ProviderAccount.Enable = 1)", CatalogApi.UrlConstants.ChevroletOpelGroupRoot);
                 ProvAcc provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).FirstOrDefault<ProvAcc>();
                 if (provider != null)
                 {
@@ -92,7 +92,7 @@ namespace RelayServer.Portals
 					}
 					ConsoleHelper.Error(string.Format("Open session error: {0}", url));
 				}
-				Task<HttpResponseMessage> session2 = reqHandler.GetSessionAsync("https://imtportal.gm.com/subscriptions.html", container);
+				Task<HttpResponseMessage> session2 = reqHandler.GetSessionAsync(string.Format("{0}/subscriptions.html", CatalogApi.UrlConstants.ChevroletOpelGroup), container);
 				session2.Wait();
 				HttpResponseMessage responseMessage = session2.Result;
 				ConsoleHelper.Info(string.Format("Url Navigation: {0}", responseMessage.RequestMessage.RequestUri.AbsoluteUri));

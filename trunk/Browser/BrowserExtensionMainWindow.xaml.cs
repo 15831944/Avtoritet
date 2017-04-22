@@ -137,14 +137,26 @@ namespace BrowserExtension
 
         private void InternetExplorerOnStartNewWindow(object sender, BrowserExtendedNavigatingEventArgs browserExtendedNavigatingEventArgs)
         {
-            if (!(browserExtendedNavigatingEventArgs.Url != null) || !browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("about:blank")) {
-                if (browserExtendedNavigatingEventArgs.Url != null && (browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=notify") || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=news") || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=bulletinboard") || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=feedback") || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=about") || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=downloads") || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=ug") || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("/privacy/") || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=help"))) {
+            if (!(browserExtendedNavigatingEventArgs.Url != null)
+                || (!(browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("about:blank")))) {
+                if ((browserExtendedNavigatingEventArgs.Url != null)
+                    && (browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=notify")
+                    || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=news")
+                    || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=bulletinboard")
+                    || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=feedback")
+                    || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=about")
+                    || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=downloads")
+                    || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=ug")
+                    || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("/privacy/")
+                    || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=help"))) {
                     browserExtendedNavigatingEventArgs.Cancel = true;
                 } else {
-                    if (browserExtendedNavigatingEventArgs.Url != null && browserExtendedNavigatingEventArgs.Url.LocalPath.Contains("http://10.0.0.10:351/PQMace/login.fve")) {
+                    if ((!(browserExtendedNavigatingEventArgs.Url == null))
+                        && (browserExtendedNavigatingEventArgs.Url.LocalPath.Contains("http://10.0.0.10:351/PQMace/login.fve"))) {
                         base.Close();
                     }
-                    if (browserExtendedNavigatingEventArgs.Url != null && browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("navlevel=year&action=navigate&aid=epc&fid=nav")) {
+                    if ((!(browserExtendedNavigatingEventArgs.Url == null))
+                        && (browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("navlevel=year&action=navigate&aid=epc&fid=nav"))) {
                         base.Close();
                     }
                     ExtendedWebBrowser extendedWebBrowser = this.WindowManager.New(false, base.Title);

@@ -6,17 +6,13 @@ namespace RequestHandlers.Requests
 {
 	public class OpelRequestFactory
 	{
-		private const string OpelLoginDo = "https://imtportal.gm.com/users/login.html";
-
-		private const string OpelLogoutDo = "https://imtportal.gm.com/users/logout.html";
-
 		public static HttpRequestMessage CreateLoginRequest(string login, string password)
 		{
 			return new HttpRequestMessage
 			{
 				Content = OpelRequestFactory.FormUrlEncodedContent(login, password),
 				Method = HttpMethod.Post,
-				RequestUri = new Uri("https://imtportal.gm.com/users/login.html")
+				RequestUri = new Uri(CatalogApi.UrlConstants.ChevroletOpelGroupUserLoginDo)
 			};
 		}
 
@@ -26,7 +22,7 @@ namespace RequestHandlers.Requests
 			{
 				Content = OpelRequestFactory.FormUrlEncodedContentForLogout(),
 				Method = HttpMethod.Post,
-				RequestUri = new Uri("https://imtportal.gm.com/users/logout.html")
+				RequestUri = new Uri(CatalogApi.UrlConstants.ChevroletOpelGroupUserLogoutTo)
 			};
 		}
 

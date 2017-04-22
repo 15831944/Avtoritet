@@ -82,6 +82,7 @@
     <Compile Include="RequestHandlers.Requests\PeugeotRequestFactory.cs" />
     <Compile Include="RequestHandlers.Requests\RequestFactory.cs" />
     <Compile Include="RequestHandlers\RequestHandlerFactory.cs" />
+    <Compile Include="UrlConstants.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
