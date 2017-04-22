@@ -1,6 +1,6 @@
 ﻿namespace CatalogApi
 {
-    public class CatalogsContants
+    public class Catalogs
     {
         /* из NewLauncher-а */
         public const string Abarth = "http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=C&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP";

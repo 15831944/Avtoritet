@@ -931,14 +931,10 @@ namespace NewLauncher.View
                 }
 
                 #region Chevrolet|Opel Group
-                if (this.url.Contains("gme-infotech.com")) //imtportal.gm
+                if (this.url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true) //imtportal.gm
                 {
                     flag = true;
-                    //if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri == this.url)
-                    //{
-                    //    this.IeWeb.Navigate("https://www.gme-infotech.com/subscriptions.html");
-                    //    return;
-                    //}
+
                     if (((this.IeWeb.Document == null) || (this.IeWeb.Document.Body == null))
                         || ((this.IeWeb.Document.Window == null) || (this.IeWeb.Document.Window.Frames == null)))
                     {
@@ -1224,11 +1220,13 @@ namespace NewLauncher.View
                         this.Message.Text = "У нас ведутся технические работы но уже скоро мы снова будем с вами.";
                     }
                 }
-                if (this.url.Contains("imtportal.gm"))
+
+                #region Chevrolet/Opel Group
+                if (this.url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true)
                 {
                     flag = true;
-                    RequestHelper.Client.OpenSession("https://imtportal.gm.com/users/login.html", false);
-                    string cookies = RequestHelper.Client.GetCookies("https://imtportal.gm.com/users/login.html");
+                    RequestHelper.Client.OpenSession(CatalogApi.UrlConstants.ChevroletOpelGroupUserLoginDo, false);
+                    string cookies = RequestHelper.Client.GetCookies(CatalogApi.UrlConstants.ChevroletOpelGroupUserLoginDo);
                     Process process = new Process
                     {
                         StartInfo = { FileName = "WebBrowserEx.exe", Arguments = cookies }
@@ -1236,6 +1234,8 @@ namespace NewLauncher.View
                     process.Start();
                     process.WaitForExit();
                 }
+                #endregion
+
                 if ((((this.url.Contains("http://172.16.24.41:7080/navi?SBMK=R&COUNTRY=012&DRIVE=S&MAKE=R&LANGUAGE=N&ALL_FIG=0&RMODE=DEFAULT&KEY=HOME&EPER_CAT=SP&GUI_LANG=N&ALL_LIST_PART=0&PRINT_MODE=0&PREVIOUS_KEY=HOME&SB_CODE=-1&WINDOW_ID=1&SAVE_PARAM=COUNTRY") || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=F&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")) || (this.url.Contains("http://172.16.24.38:351/PQMace/") || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=T&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP"))) || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=L&MAKE=L&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")) || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=C&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP"))
                 {
                     flag = true;

@@ -69,7 +69,7 @@ namespace NewLauncher.View
                 string url = ((ButtonModel)sender).DataContext.ToString();
                 if (url.StartsWith("http") || url.StartsWith("https"))
                 {
-                    if (false) // "imtportal.gm", "gme-infotech"
+                    if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true) // "imtportal.gm", "gme-infotech"
                     {
                         StartSeparateProcess(url);
                     }
