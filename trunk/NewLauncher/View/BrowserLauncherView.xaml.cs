@@ -24,6 +24,8 @@ using System.Windows.Forms.Integration;
 using System.Windows.Input;
 using System.Windows.Markup;
 
+using BrowserExtension;
+
 namespace NewLauncher.View
 {
     /// <summary>
@@ -948,39 +950,16 @@ namespace NewLauncher.View
                     if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/users/login.html"))
                         foreach (HtmlElement element in this.IeWeb.Document.GetElementsByTagName("form"))
                         {
-                            element.SetAttribute("target", "_self"); //???
-                            if (element.Document != null)
+                            if (BrowserExtension.MainWindow.AutoTypeCredentials(this.IeWeb.Document
+                                , element
+                                , "logon", login, "password", password) == true)
                             {
-                                //HtmlElementCollection elements2 = element.Document.GetElementsByTagName("input");
-                                elementById = this.IeWeb.Document.GetElementsByTagName("input")
-                                    .Cast<HtmlElement>()
-                                    .First<HtmlElement>(x => x.GetAttribute("name").Equals("logon"));
-                                if (elementById != null)
-                                {
-                                    elementById.SetAttribute("value", login);
-                                }
-                                element3 = this.IeWeb.Document.GetElementsByTagName("input")
-                                    .Cast<HtmlElement>()
-                                    .First<HtmlElement>(x => x.GetAttribute("name").Equals("password"));
-                                if (element3 != null)
-                                {
-                                    element3.SetAttribute("value", password);
-                                }
-                                element4 = this.IeWeb.Document.GetElementsByTagName("input")
-                                    .Cast<HtmlElement>()
-                                    .First<HtmlElement>(x => x.GetAttribute("type").Equals("submit"));
-                                if (element4 != null)
-                                {
-                                    element4.InvokeMember("click");
-                                    this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
-                                }
+                                this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
+
+                                return;
                             }
                             else
                                 ;
-
-                            this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
-
-                            return;
                         }
                     else
                         ;
@@ -988,24 +967,14 @@ namespace NewLauncher.View
                     if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/subscriptions.html"))
                         foreach (HtmlElement element in this.IeWeb.Document.GetElementsByTagName("form"))
                         {
-                            element.SetAttribute("target", "_self");
-                            if (element.Document != null)
+                            if (BrowserExtension.MainWindow.AutoClickEPCSubmit(element) == true)
                             {
-                                HtmlElementCollection elements2 = element.Document.GetElementsByTagName("input");
-                                foreach (HtmlElement element9 in from el in elements2.Cast<HtmlElement>()
-                                    where el.GetAttribute("value")
-                                        .Equals("EPC", StringComparison.InvariantCultureIgnoreCase)
-                                    select el)
-                                {
-                                    element9.InvokeMember("click");
-                                }
+                                this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
+
+                                return;
                             }
                             else
                                 ;
-
-                            this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
-
-                            return;
                         }
                     else
                         ;
@@ -1019,11 +988,17 @@ namespace NewLauncher.View
                     else
                         ;
                 }
+
+                #region BMW
                 if (this.url.Contains("bmwgroup"))
                 {
                     flag = true;
                     this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
                 }
+                else
+                    ;
+                #endregion
+
                 if (((((this.url.Contains("http://172.16.24.41:7080/navi?SBMK=R&COUNTRY=012&DRIVE=S&MAKE=R&LANGUAGE=N&ALL_FIG=0&RMODE=DEFAULT&KEY=HOME&EPER_CAT=SP&GUI_LANG=N&ALL_LIST_PART=0&PRINT_MODE=0&PREVIOUS_KEY=HOME&SB_CODE=-1&WINDOW_ID=1&SAVE_PARAM=COUNTRY") || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=F&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")) || (this.url.Contains("http://172.16.24.38:351/PQMace/") || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=T&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP"))) || ((this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=L&MAKE=L&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP") || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=C&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")) || (this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=F&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP") || this.url.Contains("http://10.0.0.12:351/PQMace/root.fve?width=1590&height=846&checkNotifications")))) || (((this.url.Contains("http://10.0.60.1/Vida/") || this.url.Contains("http://10.0.0.12:8080/MGRover/index.jsp")) || (this.url.Contains("http://172.16.24.37:5031/CYWW/login.fve?&height=846&width=1590") || this.url.Contains("http://10.0.0.11:451/PQMace/login.fve?&width=1590&height=846"))) || (this.url.Contains("http://172.16.24.33:8080/mycatric/") || this.url.Contains("http://172.16.24.34:8080/mycatric/")))) || this.url.Contains("10.0.0.10:351"))
                 {
                     flag = true;

@@ -119,6 +119,12 @@
   <ItemGroup>
     <Resource Include="favicon.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CatatalogApi\CatalogApi.csproj">
+      <Project>{93b1e453-fbdb-4585-aed5-373fd42e6206}</Project>
+      <Name>CatalogApi</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

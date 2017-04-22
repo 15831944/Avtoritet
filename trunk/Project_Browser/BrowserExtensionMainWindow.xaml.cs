@@ -97,11 +97,11 @@ namespace BrowserExtension
                         List<Cookie> list = JsonConvert.DeserializeObject<List<Cookie>>(value);
                         foreach (Cookie current in list)
                         {
-                            MainWindow.InternetSetCookie("https://www.gme-infotech.com/", current.Name, current.Value);
+                            MainWindow.InternetSetCookie(string.Format("{0}/", CatalogApi.UrlConstants.ChevroletOpelGroup), current.Name, current.Value);
                         }
                         base.Dispatcher.BeginInvoke(new Action(delegate
                         {
-                            this.InternetExplorer.Navigate("https://www.gme-infotech.com/users/login.html");
+                            this.InternetExplorer.Navigate(CatalogApi.UrlConstants.ChevroletOpelGroupUserLoginDo);
                         }), new object[0]);
                     }
                     else
@@ -185,39 +185,32 @@ namespace BrowserExtension
             {
                 if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("index.html"))
                 {
-                    this.InternetExplorer.Navigate("https://www.gme-infotech.com/subscriptions.html");
+                    this.InternetExplorer.Navigate(string.Format("{0}/subscriptions.html", CatalogApi.UrlConstants.ChevroletOpelGroup));
                 }
                 else if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/users/login.html"))
                 {
-                    this.InternetExplorer.Navigate("https://www.gme-infotech.com/subscriptions.html");
+                    this.InternetExplorer.Navigate(string.Format("{0}/subscriptions.html", CatalogApi.UrlConstants.ChevroletOpelGroup));
                 }
-                else if (!(this.InternetExplorer.Document == null))
-                {
-                    if (!(this.InternetExplorer.Document.Body == null))
+                else if ((!(this.InternetExplorer.Document == null))
+                         && (!(this.InternetExplorer.Document.Body == null))
+                         && (!(this.InternetExplorer.Document.Window == null))
+                         && (!(this.InternetExplorer.Document.Window.Frames == null)))
                     {
-                        if (!(this.InternetExplorer.Document.Window == null))
+                    // EPC
+                        foreach (HtmlElement htmlElement in InternetExplorer.Document.GetElementsByTagName("form"))
                         {
-                            if (this.InternetExplorer.Document.Window.Frames != null)
+                            if (AutoClickEPCSubmit(htmlElement) == true)
                             {
-                                foreach (HtmlElement htmlElement in this.InternetExplorer.Document.GetElementsByTagName("form"))
-                                {
-                                    htmlElement.SetAttribute("target", "_self");
-                                    if (htmlElement.Document != null)
-                                    {
-                                        HtmlElementCollection elementsByTagName = htmlElement.Document.GetElementsByTagName("input");
-                                        foreach (HtmlElement current in from HtmlElement element in elementsByTagName
-                                                                        where element.GetAttribute("value").Equals("EPC", StringComparison.InvariantCultureIgnoreCase)
-                                                                        select element)
-                                        {
-                                            current.InvokeMember("click");
-                                        }
-                                    }
-                                    this.DelayForNextNavigation(this.IeHost, 3000, 4000);
-                                }
+                                this.DelayForNextNavigation(this.IeHost, 3000, 4000);
+
+                                return;
                             }
+                            else
+                                ;
                         }
                     }
-                }
+                    else
+                        ;
             }
             catch (Exception ex)
             {
@@ -228,6 +221,67 @@ namespace BrowserExtension
 					ex.StackTrace
 				});
             }
+        }
+
+        public static bool AutoClickEPCSubmit(HtmlElement htmlElement)
+        {
+            htmlElement.SetAttribute("target", "_self");
+            if (htmlElement.Document != null) {
+                HtmlElementCollection elementsByTagName =
+                    htmlElement.Document.GetElementsByTagName("input");
+                foreach (HtmlElement current in from HtmlElement element in elementsByTagName
+                    where element.GetAttribute("value")
+                        .Equals("EPC", StringComparison.InvariantCultureIgnoreCase)
+                    select element) {
+                    current.InvokeMember("click");
+
+                    return true;
+                }
+            } else
+                ;
+
+            return false;
+        }
+
+        public static bool AutoTypeCredentials(HtmlDocument document, HtmlElement element, params string[] credentionals)
+        {
+            HtmlElement elementById;
+
+            element.SetAttribute("target", "_self"); //???
+            if (element.Document != null) {
+                elementById = document.GetElementsByTagName("input")
+                    .Cast<HtmlElement>()
+                    .First<HtmlElement>(x => x.GetAttribute("name").Equals(credentionals[0]));
+                if (elementById != null)
+                {
+                    elementById.SetAttribute("value", credentionals[1]);
+                }
+                else
+                    return false;
+
+                elementById = document.GetElementsByTagName("input")
+                    .Cast<HtmlElement>()
+                    .First<HtmlElement>(x => x.GetAttribute("name").Equals(credentionals[2]));
+                if (elementById != null)
+                {
+                    elementById.SetAttribute("value", credentionals[3]);
+                }
+                else
+                    return false;
+
+                elementById = document.GetElementsByTagName("input")
+                    .Cast<HtmlElement>()
+                    .First<HtmlElement>(x => x.GetAttribute("type").Equals("submit"));
+                if (elementById != null)
+                {
+                    elementById.InvokeMember("click");
+                }
+                else
+                    return false;
+            } else
+                ;
+
+            return true;
         }
 
         private void DelayForNextNavigation(UIElement uie, int min, int max)
