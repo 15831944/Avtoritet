@@ -1,1 +1,0 @@
-C:\WINDOWS\AppPatch\AppLoc.exe "C:\SUBARU2\SUBARU.exe" "/L0411"

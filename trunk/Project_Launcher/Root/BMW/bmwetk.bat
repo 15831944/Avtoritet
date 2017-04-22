@@ -1,1 +1,0 @@
-\\avtoritet24.com\epc\apps\BMWGroup\ETKClient\bmwetk.vbs

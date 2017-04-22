@@ -1,1 +1,0 @@
-C:\WINDOWS\setdate.exe 01.01.2015 3000 C:\ATRIS_ST\KatCd\atris_st.exe

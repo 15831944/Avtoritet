@@ -1,2 +1,0 @@
-rem C:\WINDOWS\AppPatch\AppLoc.exe "C:\SPAREMAP\EPC for HYUNDAI\SMEPC3.exe" "/L0412"
-"C:\SPAREMAP\EPC for HYUNDAI\SMEPC.exe"
