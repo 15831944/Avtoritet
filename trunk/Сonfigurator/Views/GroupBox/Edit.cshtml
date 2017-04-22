@@ -1,0 +1,73 @@
+﻿@model Сonfigurator.DataContext.GroupBox
+
+@{
+    ViewBag.Title = "Подгруппа";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+<table>
+    @using (Html.BeginForm("Edit", "GroupBox", FormMethod.Post))
+    {
+        @Html.Hidden("GroupId", Model.GroupId)
+        @Html.Hidden("GroupBoxId", Model.GroupBoxId)
+        <tr>
+            <td>Наименование</td>
+            <td>@Html.TextBoxFor(t => t.Title)</td>
+        </tr>
+        <tr>
+            <td>Top</td>
+            <td>@Html.TextBoxFor(t => t.Top)</td>
+        </tr>
+        <tr>
+            <td>Left</td>
+            <td>@Html.TextBoxFor(t => t.Left)</td>
+        </tr>
+        <tr>
+            <td>Ширина</td>
+            <td>@Html.TextBoxFor(t => t.Width)</td>
+        </tr>
+        <tr>
+            <td>Высота</td>
+            <td>@Html.TextBoxFor(t => t.Height)</td>
+        </tr>
+        <tr>
+            <td>Ширина кнопки</td>
+            <td>@Html.TextBoxFor(t => t.ButtonWidth)</td>
+        </tr>
+        <tr>
+            <td>Высота кнопки</td>
+            <td>@Html.TextBoxFor(t => t.ButtonHeight)</td>
+        </tr>
+        <tr>
+            <td>Отступ кнопки от края рамки группы</td>
+            <td>@Html.TextBoxFor(t => t.ButtonHorizontalPadding)</td>
+        </tr>
+        <tr>
+            <td>Отступ группы кнопок сверху и снизу от рамки группы</td>
+            <td>@Html.TextBoxFor(t => t.ButtonVerticalPadding)</td>
+        </tr>
+        <tr>
+            <td>Отступ между кнопками по вертикали</td>
+            <td>@Html.TextBoxFor(t => t.ButtonBetweenVerticalPadding)</td>
+        </tr>
+        <tr>
+            <td>Отступ между кнопками по горизонтали</td>
+            <td>@Html.TextBoxFor(t => t.ButtonBetweenHorizontalPadding)</td>
+        </tr>
+        <tr>
+            <td>Видимость границ подгруппы</td>
+            <td>@Html.CheckBoxFor(t => t.VisibleBorder)</td>
+        </tr>
+        <tr>
+            <td>Доступно</td>
+            <td>@Html.CheckBoxFor(t => t.Enable)</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button type="submit">Сохранить</button>
+                @Html.ActionLink("Обратно в список", "Index", "GroupBox", new { GroupId = ViewBag.GroupId }, null)
+            </td>
+        </tr>
+    }
+</table>

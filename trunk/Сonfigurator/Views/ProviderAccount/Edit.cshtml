@@ -1,0 +1,41 @@
+﻿@model Сonfigurator.DataContext.ProviderAccount
+
+@{
+    ViewBag.Title = "Создание/Редактирование аккаунта";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<h2>title</h2>
+<table>
+    @using (Html.BeginForm("Edit", "ProviderAccount", FormMethod.Post))
+    {
+        @Html.Hidden("ProviderId", Model.ProviderId)
+        @Html.Hidden("providerAccId", Model.ProviderAccountId)
+        <tr>
+            <td>Uri</td>
+            <td>@Html.TextBoxFor(t => t.Uri)</td>
+        </tr>
+        <tr>
+            <td>Логин</td>
+            <td>@Html.TextBoxFor(t => t.Login)</td>
+        </tr>
+        <tr>
+            <td>Пароль</td>
+            <td>@Html.TextBoxFor(t => t.Password)</td>
+        </tr>
+        <tr>
+            <td>Доступно</td>
+            <td>@Html.CheckBoxFor(t => t.Enable)</td>
+        </tr>
+        <tr>
+            <td>Порядковый номер</td>
+            <td>@Html.TextBoxFor(t => t.Order)</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button type="submit">Сохранить</button>
+                @Html.ActionLink("Обратно в список", "Index", "ProviderAccount", new { ProviderId = ViewBag.ProviderId }, null)
+            </td>
+        </tr>
+    }
+</table>

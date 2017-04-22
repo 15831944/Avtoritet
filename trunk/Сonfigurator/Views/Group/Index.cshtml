@@ -1,0 +1,38 @@
+﻿@model List<Сonfigurator.DataContext.Group>
+@{
+    ViewBag.Title = "Группы";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+
+<table border="1">
+    <tr>
+        <td>Группа</td>
+        <td>Описание</td>
+        <td>Ширина</td>
+        <td>Высота</td>
+        <td>Доступно</td>
+        <td>Порядковый номер</td>
+        <td></td>
+        <td>Расположение</td>
+        <td></td>
+    </tr>
+    @foreach (var group in Model)
+    {
+        <tr>
+            <td>@Html.ActionLink(group.Name, "Edit",new {groupId=group.GroupId})</td>
+            <td>@group.Description</td>
+            <td>@group.Width</td>
+            <td>@group.Height</td>
+            <td>@Html.CheckBox("Enable", group.Enable)</td>
+            <td>@group.Order</td>
+            <td>@Html.ActionLink("Подгруппы", "Index", "GroupBox", new { GroupId = group.GroupId }, null)
+            <td>@Html.ActionLink("Расположение", "LayOut", "Group", new { GroupId = group.GroupId }, null)
+            <td>@Html.ActionLink("Удалить", "Delete",new { Id = group.GroupId })</td>
+        </tr>
+    }
+</table>
+@Html.ActionLink("Создать группу","Edit")  |   
+@Html.ActionLink("Опубликовать конфигурацию","Publish")

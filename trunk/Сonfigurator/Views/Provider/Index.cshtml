@@ -1,0 +1,43 @@
+﻿@model System.Collections.Generic.List<Сonfigurator.DataContext.Provider>
+
+@{
+    ViewBag.Title = "Провайдеры";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@Html.Raw(ViewBag.BradCrumb)
+
+<table border="1">
+    <tr>
+        <td>Наименование</td>
+        <td>Uri</td>
+        <td>Изображение</td>
+        <td>IconPath</td>
+        <td>Размер</td>
+        <td>Доступно</td>
+        <td>Доступно</td>
+        <td>Порядковый номер</td>
+        <td>Командные файлы</td>
+        <td>Двоичные файлы</td>
+        <td></td>
+    </tr>
+    @foreach (var provider in Model)
+    {
+        <tr>
+            <td>@Html.ActionLink(provider.Title, "Edit", new { providerId = provider.ProviderId, brandId = ViewBag.BrandId })</td>
+            <td>@provider.Uri</td>
+            <td></td>
+            <td>@provider.IconPath</td>
+            <td>@provider.IconImgSize</td>
+            <td>@Html.CheckBox("Enable", provider.Enable)</td>
+            <td>@provider.Order</td>
+            <td>@Html.ActionLink("Командные файлы", "Index", "CommandFile", new { ProviderId = provider.ProviderId }, null)
+            <td>@Html.ActionLink("Двоичные файлы", "Index", "ProviderFile", new { ProviderId = provider.ProviderId }, null)
+<td>@Html.ActionLink("Аккаунты", "Index", "ProviderAccount", new { ProviderId = provider.ProviderId }, null)
+<td>@Html.ActionLink("Удалить", "Delete", new { Id = provider.ProviderId, BrandId = ViewBag.BrandId })
+</tr>
+    }
+</table>
+@Html.ActionLink("Создать провайдера", "Edit", new { BrandId = ViewBag.BrandId })

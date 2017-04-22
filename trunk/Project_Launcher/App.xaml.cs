@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
@@ -56,6 +58,19 @@ namespace NewLauncher
             if(_mutex != null)
                 _mutex.ReleaseMutex();
             base.OnExit(e);
+        }
+
+        public static bool IsRelease(Assembly assembly)
+        {
+            object[] attributes = assembly.GetCustomAttributes(typeof(DebuggableAttribute), true);
+            if (attributes == null || attributes.Length == 0)
+                return true;
+
+            var d = (DebuggableAttribute)attributes[0];
+            if ((d.DebuggingFlags & DebuggableAttribute.DebuggingModes.Default) == DebuggableAttribute.DebuggingModes.None)
+                return true;
+
+            return false;
         }
     }
 }

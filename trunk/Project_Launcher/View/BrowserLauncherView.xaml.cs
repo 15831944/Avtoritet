@@ -929,39 +929,95 @@ namespace NewLauncher.View
                         }
                     }
                 }
-                if (this.url.Contains("imtportal.gm"))
+                if (this.url.Contains("gme-infotech.com")) //imtportal.gm
                 {
                     flag = true;
-                    if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri == this.url)
+                    //if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri == this.url)
+                    //{
+                    //    this.IeWeb.Navigate("https://www.gme-infotech.com/subscriptions.html");
+                    //    return;
+                    //}
+                    if (((this.IeWeb.Document == null) || (this.IeWeb.Document.Body == null))
+                        || ((this.IeWeb.Document.Window == null) || (this.IeWeb.Document.Window.Frames == null)))
                     {
-                        this.IeWeb.Navigate("https://imtportal.gm.com/subscriptions.html");
                         return;
                     }
+                    else
+                        ;
+                    //
+                    if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/users/login.html"))
+                        foreach (HtmlElement element in this.IeWeb.Document.GetElementsByTagName("form"))
+                        {
+                            element.SetAttribute("target", "_self"); //???
+                            if (element.Document != null)
+                            {
+                                //HtmlElementCollection elements2 = element.Document.GetElementsByTagName("input");
+                                elementById = this.IeWeb.Document.GetElementsByTagName("input")
+                                    .Cast<HtmlElement>()
+                                    .First<HtmlElement>(x => x.GetAttribute("name").Equals("logon"));
+                                if (elementById != null)
+                                {
+                                    elementById.SetAttribute("value", login);
+                                }
+                                element3 = this.IeWeb.Document.GetElementsByTagName("input")
+                                    .Cast<HtmlElement>()
+                                    .First<HtmlElement>(x => x.GetAttribute("name").Equals("password"));
+                                if (element3 != null)
+                                {
+                                    element3.SetAttribute("value", password);
+                                }
+                                element4 = this.IeWeb.Document.GetElementsByTagName("input")
+                                    .Cast<HtmlElement>()
+                                    .First<HtmlElement>(x => x.GetAttribute("type").Equals("submit"));
+                                if (element4 != null)
+                                {
+                                    element4.InvokeMember("click");
+                                    this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
+                                }
+                            }
+                            else
+                                ;
+
+                            this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
+
+                            return;
+                        }
+                    else
+                        ;
+                    // EPC
+                    if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/subscriptions.html"))
+                        foreach (HtmlElement element in this.IeWeb.Document.GetElementsByTagName("form"))
+                        {
+                            element.SetAttribute("target", "_self");
+                            if (element.Document != null)
+                            {
+                                HtmlElementCollection elements2 = element.Document.GetElementsByTagName("input");
+                                foreach (HtmlElement element9 in from el in elements2.Cast<HtmlElement>()
+                                    where el.GetAttribute("value")
+                                        .Equals("EPC", StringComparison.InvariantCultureIgnoreCase)
+                                    select el)
+                                {
+                                    element9.InvokeMember("click");
+                                }
+                            }
+                            else
+                                ;
+
+                            this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
+
+                            return;
+                        }
+                    else
+                        ;
+
                     if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/users/login.html"))
                     {
                         this.OpenSession(this.url, true);
-                        this.IeWeb.Navigate("https://imtportal.gm.com/subscriptions.html");
+                        //this.IeWeb.Navigate("https://www.gme-infotech.com/subscriptions.html");
                         return;
                     }
-                    if (((this.IeWeb.Document == null) || (this.IeWeb.Document.Body == null)) || ((this.IeWeb.Document.Window == null) || (this.IeWeb.Document.Window.Frames == null)))
-                    {
-                        return;
-                    }
-                    foreach (HtmlElement element in this.IeWeb.Document.GetElementsByTagName("form"))
-                    {
-                        element.SetAttribute("target", "_self");
-                        if (element.Document != null)
-                        {
-                            HtmlElementCollection elements2 = element.Document.GetElementsByTagName("input");
-                            foreach (HtmlElement element9 in from el in elements2.Cast<HtmlElement>()
-                                                             where el.GetAttribute("value").Equals("EPC", StringComparison.InvariantCultureIgnoreCase)
-                                                             select el)
-                            {
-                                element9.InvokeMember("click");
-                            }
-                        }
-                        this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
-                    }
+                    else
+                        ;
                 }
                 if (this.url.Contains("bmwgroup"))
                 {
@@ -1353,7 +1409,7 @@ namespace NewLauncher.View
             List<System.Net.Cookie> cookies = JsonConvert.DeserializeObject<List<System.Net.Cookie>>(RequestHelper.Client.GetCookies(this.url));
             if ((cookies != null) && (cookies.Count > 0))
             {
-                if (!host.Contains("imtportal.gm"))
+                if (!host.Contains("gme-infotech.com"))
                 {
                     this.ClearCookies();
                     this.InsertCookies(host, cookies);

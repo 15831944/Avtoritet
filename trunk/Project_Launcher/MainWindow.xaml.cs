@@ -496,7 +496,8 @@ namespace NewLauncher
             {
                 base.Closing += delegate(object sender, System.ComponentModel.CancelEventArgs args)
                 {
-                    if (this.isNormalShutdownMode)
+                    if ((!(NewLauncher.App.IsRelease(Assembly.GetAssembly(this.GetType())))
+                        || (this.isNormalShutdownMode == true)))
                     {
                         args.Cancel = false;
                     }
