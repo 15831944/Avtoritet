@@ -138,16 +138,16 @@
     <Compile Include="UrlConstants.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CodeTools\CodeTools4.csproj">
-      <Project>{D49B6BB5-29D6-4F52-ADF7-EEED5EB5E518}</Project>
-      <Name>CodeTools4</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <None Include="app.manifest" />
     <None Include="ExtendedWebBrowser2.snk" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CodeTools\CodeTools4.csproj">
+      <Project>{D49B6BB5-29D6-4F52-ADF7-EEED5EB5E518}</Project>
+      <Name>CodeTools4</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Project_Launcher\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\Project_Launcher\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

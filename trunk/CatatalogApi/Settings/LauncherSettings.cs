@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace CatalogApi.Settings
 {
+    [Serializable]
  public class LauncherSettings
  {
   public const int ColumnsNumber = 3;

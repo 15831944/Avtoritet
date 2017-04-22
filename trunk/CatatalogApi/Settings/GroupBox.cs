@@ -5,6 +5,7 @@ using System.Text;
 
 namespace CatalogApi.Settings
 {
+    [Serializable]
     public class GroupBox
     {
         public GroupBox()
@@ -20,6 +21,7 @@ namespace CatalogApi.Settings
         public bool VisibleBorder { get; set; }
         public bool MenuWindow { get; set; }
 
-        public IList<Brand> Brands { get; private set; }
+        // 21.04.2017 KhryapinAN rem private
+        public IList<Brand> Brands { get; /*private*/ set; }
     }
 }

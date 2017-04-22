@@ -374,7 +374,9 @@
       <DependentUpon>DataContext.edmx</DependentUpon>
       <LastGenOutput>DataContext.cs</LastGenOutput>
     </None>
-    <None Include="launcherDBSettings.dat" />
+    <None Include="launcherDBSettings.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="newsign.snk" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CatalogApi.Settings
 {
+    [Serializable]
     public class Brand
     {
         public Brand()

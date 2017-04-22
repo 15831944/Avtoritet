@@ -206,7 +206,7 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Project_RequestHandler\RequestHandlers.csproj">
+    <ProjectReference Include="..\RequestHandler\RequestHandlers.csproj">
       <Project>{65d78338-2d4b-4b16-989d-defb6d6f6f26}</Project>
       <Name>RequestHandlers</Name>
     </ProjectReference>

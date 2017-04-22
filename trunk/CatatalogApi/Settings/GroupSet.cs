@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CatalogApi.Settings
 {
+    [Serializable]
     public class GroupSet
     {
         public GroupSet()
@@ -13,6 +15,7 @@ namespace CatalogApi.Settings
         public int Width { get; set; }
         public int Height { get; set; }
 
-        public IList<GroupBox> GroupBoxs { get; private set; }
+        // 21.04.2017 KhryapinAN rem private
+        public IList<GroupBox> GroupBoxs { get; /*private*/ set; }
     }
 }

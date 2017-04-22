@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CatalogApi.Settings
 {
+    [Serializable]
     public class BrandProvider
     {
         public string Uri { get; set; }
+
+        // 22.04.2017 KhryapinAN
+        public Int64 ProviderId { get; set; }
 
         public string IconPath { get; set; }
 
@@ -18,12 +23,14 @@ namespace CatalogApi.Settings
         public List<ProviderFile> ProviderFiles { get; set; }
     }
 
+    [Serializable]
     public class CommandFile
     {
         public string FileName { get; set; }
         public string FileContent { get; set; }
     }
 
+    [Serializable]
     public class ProviderFile
     {
         public string FileName { get; set; }
