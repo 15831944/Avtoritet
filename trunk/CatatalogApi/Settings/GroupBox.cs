@@ -20,6 +20,7 @@ namespace CatalogApi.Settings
         public bool VisibleBorder { get; set; }
         public bool MenuWindow { get; set; }
 
-        public IList<Brand> Brands { get; private set; }
+        /* KhryapinAN 22.04.2017 REM private*/
+        public IList<Brand> Brands { get; /*private*/ set; }
     }
 }

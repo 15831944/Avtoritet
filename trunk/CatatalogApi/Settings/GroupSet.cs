@@ -13,6 +13,7 @@ namespace CatalogApi.Settings
         public int Width { get; set; }
         public int Height { get; set; }
 
-        public IList<GroupBox> GroupBoxs { get; private set; }
+        /* KhryapinAN 22.04.2017 REM private */
+        public IList<GroupBox> GroupBoxs { get; /*private*/ set; }
     }
 }

@@ -6,6 +6,9 @@ namespace CatalogApi.Settings
     {
         public string Uri { get; set; }
 
+        /* KhryapinAN 22.04.2017 */
+        public int ProviderId { get; set; }
+
         public string IconPath { get; set; }
 
         public string Title { get; set; }
