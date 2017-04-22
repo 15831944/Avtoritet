@@ -84,12 +84,6 @@
     <Compile Include="ServerHost\Program.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Project_Relay\RelayServer.csproj">
-      <Project>{7f37ff42-25e8-4a63-bd50-89c740ea0c8b}</Project>
-      <Name>RelayServer</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="settings.config">
