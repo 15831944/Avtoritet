@@ -24,8 +24,6 @@ using System.Windows.Forms.Integration;
 using System.Windows.Input;
 using System.Windows.Markup;
 
-using BrowserExtension;
-
 namespace NewLauncher.View
 {
     /// <summary>
@@ -931,6 +929,8 @@ namespace NewLauncher.View
                         }
                     }
                 }
+
+                #region Chevrolet|Opel Group
                 if (this.url.Contains("gme-infotech.com")) //imtportal.gm
                 {
                     flag = true;
@@ -946,11 +946,11 @@ namespace NewLauncher.View
                     }
                     else
                         ;
-                    //
+                    // Auto Log-on
                     if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/users/login.html"))
                         foreach (HtmlElement element in this.IeWeb.Document.GetElementsByTagName("form"))
                         {
-                            if (BrowserExtension.MainWindow.AutoTypeCredentials(this.IeWeb.Document
+                            if (CatalogApi.Autocomplit.TypeCredentials(this.IeWeb.Document
                                 , element
                                 , "logon", login, "password", password) == true)
                             {
@@ -967,7 +967,7 @@ namespace NewLauncher.View
                     if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/subscriptions.html"))
                         foreach (HtmlElement element in this.IeWeb.Document.GetElementsByTagName("form"))
                         {
-                            if (BrowserExtension.MainWindow.AutoClickEPCSubmit(element) == true)
+                            if (CatalogApi.Autocomplit.ClickEPCSubmit(element) == true)
                             {
                                 this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
 
@@ -979,8 +979,19 @@ namespace NewLauncher.View
                     else
                         ;
 
-                    if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/users/login.html"))
+                    if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/spongepc") == true)
                     {
+                        if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/logout") == true)
+                        {
+                            this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
+
+                            this.Close();
+
+                            return;
+                        }
+                        else
+                            ;
+
                         this.OpenSession(this.url, true);
                         //this.IeWeb.Navigate("https://www.gme-infotech.com/subscriptions.html");
                         return;
@@ -988,6 +999,7 @@ namespace NewLauncher.View
                     else
                         ;
                 }
+                #endregion
 
                 #region BMW
                 if (this.url.Contains("bmwgroup"))

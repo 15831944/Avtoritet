@@ -69,7 +69,7 @@ namespace NewLauncher.View
                 string url = ((ButtonModel)sender).DataContext.ToString();
                 if (url.StartsWith("http") || url.StartsWith("https"))
                 {
-                    if (url.Contains("imtportal.gm"))
+                    if (false) // "imtportal.gm", "gme-infotech"
                     {
                         StartSeparateProcess(url);
                     }

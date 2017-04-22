@@ -374,9 +374,7 @@
       <DependentUpon>DataContext.edmx</DependentUpon>
       <LastGenOutput>DataContext.cs</LastGenOutput>
     </None>
-    <None Include="launcherDBSettings.dat">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="launcherDBSettings.dat" />
     <None Include="newsign.snk" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -441,10 +439,6 @@
     <ProjectReference Include="..\Geckofx-Winforms\Geckofx-Winforms.csproj">
       <Project>{d7adc901-e1c4-480e-8f6d-b1ffd5cf87e8}</Project>
       <Name>Geckofx-Winforms</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Project_Browser\BrowserExtension.csproj">
-      <Project>{17ea7f82-1d17-407a-bea0-393d51162997}</Project>
-      <Name>BrowserExtension</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
