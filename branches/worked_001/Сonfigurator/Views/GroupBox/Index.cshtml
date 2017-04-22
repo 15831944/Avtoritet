@@ -1,0 +1,56 @@
+﻿@model System.Collections.Generic.List<Сonfigurator.DataContext.GroupBox>
+
+@{
+    ViewBag.Title = "Подгруппы";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>@ViewBag.Title</h2>
+
+@Html.Raw(ViewBag.BradCrumb)
+
+<table border="1">
+    <tr>
+        <td>Наименование</td>
+        <td>top</td>
+        <td>left</td>
+        <td>Ширина</td>
+        <td>Высота</td>
+        <td>Высота кнопки</td>
+        <td>Ширина кнопки</td>
+        <td>Расстояние между кнопками по вертикали</td>
+        <td>Расстояние между кнопками по горизонтали</td>
+        <td>Отступ по краям слева и справа</td>
+        <td>Отступ по верткали снизу и сверху</td>
+        <td>Видимость границ подгруппы</td>
+        <td>Доступно</td>
+        <td>Бренды</td>
+        <td>авторасположение</td>
+        <td>Расположение</td>
+        <td></td>
+    </tr>
+    @foreach (var groupbox in Model)
+    {
+        <tr>
+            <td>@Html.ActionLink(groupbox.Title, "Edit", new { groupboxId = groupbox.GroupBoxId, groupId = ViewBag.GroupId })</td>
+            <td>@groupbox.Top</td>
+            <td>@groupbox.Left</td>
+            <td>@groupbox.Width</td>
+            <td>@groupbox.Height</td>
+            <td>@groupbox.ButtonHeight</td>
+            <td>@groupbox.ButtonWidth</td>
+            <td>@groupbox.ButtonBetweenVerticalPadding</td>
+            <td>@groupbox.ButtonBetweenHorizontalPadding</td>
+            <td>@groupbox.ButtonHorizontalPadding</td>
+            <td>@groupbox.ButtonVerticalPadding</td>
+            <td>@Html.CheckBox("VisibleBorder", groupbox.VisibleBorder)</td>
+            <td>@Html.CheckBox("Enable", groupbox.Enable)</td>
+            <td>@Html.ActionLink("Бренды", "Index", "Brand", new { groupboxId = groupbox.GroupBoxId }, null)
+            <td>@Html.ActionLink("Автомат. расположение кнопок", "ButtonAutoLayout", "GroupBox", new { groupboxId = groupbox.GroupBoxId }, null)
+<td>@Html.ActionLink("Расположение", "LayOut", new { groupboxId = groupbox.GroupBoxId,groupId= groupbox.GroupId }, null)
+<td>@Html.ActionLink("Удалить", "Delete", new { Id = groupbox.GroupBoxId})
+        </tr>
+    }
+</table>
+@Html.ActionLink("Создать подгруппу", "Edit", new { groupid = ViewBag.GroupId },null)

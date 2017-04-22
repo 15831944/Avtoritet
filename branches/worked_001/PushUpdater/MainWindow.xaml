@@ -1,0 +1,11 @@
+﻿<Window x:Class="PushUpdater.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Push Updater" Height="150" Width="500" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" AllowsTransparency="True" WindowStyle="None">
+ <Border BorderThickness="3" BorderBrush="LightGray">
+ <StackPanel VerticalAlignment="Center">
+   <TextBlock TextWrapping="Wrap" Margin="0, 0, 0, 10" HorizontalAlignment="Center" Text="Пожалуйста, подождите несколько минут пока идет обновление."></TextBlock>
+  <ProgressBar IsIndeterminate="True" Margin="5 0 5 0" Height="20"></ProgressBar>
+ </StackPanel>
+ </Border>
+</Window>

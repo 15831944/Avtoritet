@@ -1,0 +1,46 @@
+﻿
+@model Сonfigurator.DataContext.Group
+@{
+    ViewBag.Title = "Редактирование группы";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+
+<table>
+    @using (Html.BeginForm("Edit","Group",FormMethod.Post))
+    {
+        @Html.Hidden("GroupId",Model.GroupId)
+        <tr>
+            <td>Наименование</td>
+            <td>@Html.TextBoxFor(t => t.Name)</td>
+        </tr>
+        <tr>
+            <td>Ширина</td>
+            <td>@Html.TextBoxFor(t => t.Width)</td>
+        </tr>
+        <tr>
+            <td>Высота</td>
+            <td>@Html.TextBoxFor(t => t.Height)</td>
+        </tr>
+        <tr>
+            <td>Описание</td>
+            <td>@Html.TextAreaFor(t => t.Description)</td>
+        </tr>
+        <tr>
+            <td>Доступно</td>
+            <td>@Html.CheckBoxFor(t => t.Enable)</td>
+        </tr>
+        <tr>
+            <td>Порядковый номер</td>
+            <td>@Html.TextBoxFor(t => t.Order)</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button type="submit">Сохранить</button>
+                @Html.ActionLink("Обратно в список","Index","Group")
+            </td>
+        </tr>
+    }
+</table>

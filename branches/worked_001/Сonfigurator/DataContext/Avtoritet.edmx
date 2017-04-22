@@ -1,0 +1,735 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="AvtoritetModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Brand">
+          <Key>
+            <PropertyRef Name="BrandId" />
+          </Key>
+          <Property Name="BrandId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NameAndFolder" Type="nvarchar(max)" />
+          <Property Name="IconPath" Type="nvarchar(max)" />
+          <Property Name="IconPath2" Type="nvarchar(max)" />
+          <Property Name="GroupBoxId" Type="int" Nullable="false" />
+          <Property Name="Enable" Type="bit" Nullable="false" />
+          <Property Name="IconPathImg" Type="image" />
+          <Property Name="IconPathImgExt" Type="nvarchar" MaxLength="32" />
+          <Property Name="IconPathImgSize" Type="bigint" />
+          <Property Name="IconPath2Img" Type="image" />
+          <Property Name="IconPath2ImgExt" Type="nvarchar" MaxLength="32" />
+          <Property Name="IconPath2ImgSize" Type="bigint" />
+          <Property Name="Top" Type="int" />
+          <Property Name="Left" Type="int" />
+          <Property Name="Width" Type="int" />
+          <Property Name="Height" Type="int" />
+          <Property Name="Order" Type="int" />
+          <Property Name="ButtonStyle" Type="nvarchar" MaxLength="128" />
+          <Property Name="MenuWindow" Type="bit" />
+        </EntityType>
+        <EntityType Name="ButtonStyle">
+          <Key>
+            <PropertyRef Name="ButtonStyleId" />
+          </Key>
+          <Property Name="ButtonStyleId" Type="int" Nullable="false" />
+          <Property Name="Width" Type="int" />
+          <Property Name="Height" Type="int" />
+          <Property Name="BackgroundColor" Type="int" />
+          <Property Name="BackgroundImage" Type="image" />
+          <Property Name="Icon" Type="image" />
+          <Property Name="Font" Type="nvarchar" MaxLength="64" />
+          <Property Name="FontSize" Type="int" />
+          <Property Name="FontStyle" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="CommandFile">
+          <Key>
+            <PropertyRef Name="CommandFileId" />
+          </Key>
+          <Property Name="CommandFileId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProviderId" Type="int" />
+          <Property Name="FileName" Type="nvarchar(max)" />
+          <Property Name="FileContent" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Group">
+          <Key>
+            <PropertyRef Name="GroupId" />
+          </Key>
+          <Property Name="GroupId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="Enable" Type="bit" Nullable="false" />
+          <Property Name="Order" Type="int" />
+          <Property Name="Width" Type="int" />
+          <Property Name="Height" Type="int" />
+        </EntityType>
+        <EntityType Name="GroupBox">
+          <Key>
+            <PropertyRef Name="GroupBoxId" />
+          </Key>
+          <Property Name="GroupBoxId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="nvarchar(max)" />
+          <Property Name="Left" Type="int" />
+          <Property Name="Top" Type="int" />
+          <Property Name="GroupId" Type="int" Nullable="false" />
+          <Property Name="Enable" Type="bit" Nullable="false" />
+          <Property Name="Width" Type="int" />
+          <Property Name="Height" Type="int" />
+          <Property Name="ButtonWidth" Type="int" />
+          <Property Name="ButtonHeight" Type="int" />
+          <Property Name="ButtonHorizontalPadding" Type="int" />
+          <Property Name="ButtonVerticalPadding" Type="int" />
+          <Property Name="ButtonBetweenVerticalPadding" Type="int" />
+          <Property Name="ButtonBetweenHorizontalPadding" Type="int" />
+          <Property Name="VisibleBorder" Type="bit" />
+        </EntityType>
+        <EntityType Name="Links">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Url" Type="nvarchar" MaxLength="1000" />
+        </EntityType>
+        <EntityType Name="NewsLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="1000" />
+          <Property Name="Message" Type="nvarchar(max)" />
+          <Property Name="PostTime" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Provider">
+          <Key>
+            <PropertyRef Name="ProviderId" />
+          </Key>
+          <Property Name="ProviderId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Uri" Type="nvarchar(max)" />
+          <Property Name="IconPath" Type="nvarchar(max)" />
+          <Property Name="Title" Type="nvarchar(max)" />
+          <Property Name="BrandId" Type="int" Nullable="false" />
+          <Property Name="Enable" Type="bit" Nullable="false" />
+          <Property Name="IconImg" Type="image" />
+          <Property Name="IconImgExt" Type="nvarchar" MaxLength="32" />
+          <Property Name="IconImgSize" Type="bigint" />
+          <Property Name="commandfile" Type="nvarchar(max)" />
+          <Property Name="commandcontent" Type="nvarchar(max)" />
+          <Property Name="Order" Type="int" />
+        </EntityType>
+        <EntityType Name="ProviderAccount">
+          <Key>
+            <PropertyRef Name="ProviderAccountId" />
+          </Key>
+          <Property Name="ProviderAccountId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Login" Type="nvarchar(max)" />
+          <Property Name="Password" Type="nvarchar(max)" />
+          <Property Name="Uri" Type="nvarchar(max)" />
+          <Property Name="ProviderId" Type="int" Nullable="false" />
+          <Property Name="Enable" Type="bit" Nullable="false" />
+          <Property Name="Order" Type="int" />
+        </EntityType>
+        <EntityType Name="ProviderFile">
+          <Key>
+            <PropertyRef Name="ProviderFileId" />
+          </Key>
+          <Property Name="ProviderFileId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProviderId" Type="int" />
+          <Property Name="FileName" Type="nvarchar(max)" />
+          <Property Name="FileExt" Type="nvarchar(max)" />
+          <Property Name="FileSize" Type="bigint" />
+          <Property Name="FileContent" Type="image" />
+        </EntityType>
+        <EntityType Name="SettingUpdate">
+          <Key>
+            <PropertyRef Name="SettingUpdateId" />
+          </Key>
+          <Property Name="SettingUpdateId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Update" Type="bit" Nullable="false" />
+          <Property Name="SettingVersion" Type="int" />
+        </EntityType>
+        <EntityType Name="VersionLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Value" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <Association Name="FK_Brand_GroupBox">
+          <End Role="GroupBox" Type="Self.GroupBox" Multiplicity="1" />
+          <End Role="Brand" Type="Self.Brand" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GroupBox">
+              <PropertyRef Name="GroupBoxId" />
+            </Principal>
+            <Dependent Role="Brand">
+              <PropertyRef Name="GroupBoxId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CommandFile_Provider1">
+          <End Role="Provider" Type="Self.Provider" Multiplicity="0..1" />
+          <End Role="CommandFile" Type="Self.CommandFile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Provider">
+              <PropertyRef Name="ProviderId" />
+            </Principal>
+            <Dependent Role="CommandFile">
+              <PropertyRef Name="ProviderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_GroupBox_Group">
+          <End Role="Group" Type="Self.Group" Multiplicity="1" />
+          <End Role="GroupBox" Type="Self.GroupBox" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Group">
+              <PropertyRef Name="GroupId" />
+            </Principal>
+            <Dependent Role="GroupBox">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Provider_Brand">
+          <End Role="Brand" Type="Self.Brand" Multiplicity="1" />
+          <End Role="Provider" Type="Self.Provider" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Brand">
+              <PropertyRef Name="BrandId" />
+            </Principal>
+            <Dependent Role="Provider">
+              <PropertyRef Name="BrandId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProviderAccount_Provider">
+          <End Role="Provider" Type="Self.Provider" Multiplicity="1" />
+          <End Role="ProviderAccount" Type="Self.ProviderAccount" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Provider">
+              <PropertyRef Name="ProviderId" />
+            </Principal>
+            <Dependent Role="ProviderAccount">
+              <PropertyRef Name="ProviderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProviderFile_Provider">
+          <End Role="Provider" Type="Self.Provider" Multiplicity="0..1" />
+          <End Role="ProviderFile" Type="Self.ProviderFile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Provider">
+              <PropertyRef Name="ProviderId" />
+            </Principal>
+            <Dependent Role="ProviderFile">
+              <PropertyRef Name="ProviderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="AvtoritetModelStoreContainer">
+          <EntitySet Name="Brand" EntityType="Self.Brand" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ButtonStyle" EntityType="Self.ButtonStyle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CommandFile" EntityType="Self.CommandFile" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Group" EntityType="Self.Group" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GroupBox" EntityType="Self.GroupBox" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Links" EntityType="Self.Links" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NewsLog" EntityType="Self.NewsLog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Provider" EntityType="Self.Provider" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProviderAccount" EntityType="Self.ProviderAccount" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProviderFile" EntityType="Self.ProviderFile" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SettingUpdate" EntityType="Self.SettingUpdate" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VersionLog" EntityType="Self.VersionLog" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Brand_GroupBox" Association="Self.FK_Brand_GroupBox">
+            <End Role="GroupBox" EntitySet="GroupBox" />
+            <End Role="Brand" EntitySet="Brand" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CommandFile_Provider1" Association="Self.FK_CommandFile_Provider1">
+            <End Role="Provider" EntitySet="Provider" />
+            <End Role="CommandFile" EntitySet="CommandFile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GroupBox_Group" Association="Self.FK_GroupBox_Group">
+            <End Role="Group" EntitySet="Group" />
+            <End Role="GroupBox" EntitySet="GroupBox" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Provider_Brand" Association="Self.FK_Provider_Brand">
+            <End Role="Brand" EntitySet="Brand" />
+            <End Role="Provider" EntitySet="Provider" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProviderAccount_Provider" Association="Self.FK_ProviderAccount_Provider">
+            <End Role="Provider" EntitySet="Provider" />
+            <End Role="ProviderAccount" EntitySet="ProviderAccount" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProviderFile_Provider" Association="Self.FK_ProviderFile_Provider">
+            <End Role="Provider" EntitySet="Provider" />
+            <End Role="ProviderFile" EntitySet="ProviderFile" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="AvtoritetModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="AvtoritetEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Links" EntityType="AvtoritetModel.Links" />
+          <EntitySet Name="NewsLog" EntityType="AvtoritetModel.NewsLog" />
+          <EntitySet Name="VersionLog" EntityType="AvtoritetModel.VersionLog" />
+          <EntitySet Name="Brand" EntityType="AvtoritetModel.Brand" />
+          <EntitySet Name="ButtonStyle" EntityType="AvtoritetModel.ButtonStyle" />
+          <EntitySet Name="CommandFile" EntityType="AvtoritetModel.CommandFile" />
+          <EntitySet Name="Group" EntityType="AvtoritetModel.Group" />
+          <EntitySet Name="GroupBox" EntityType="AvtoritetModel.GroupBox" />
+          <EntitySet Name="Provider" EntityType="AvtoritetModel.Provider" />
+          <EntitySet Name="ProviderAccount" EntityType="AvtoritetModel.ProviderAccount" />
+          <AssociationSet Name="FK_Brand_GroupBox" Association="AvtoritetModel.FK_Brand_GroupBox">
+            <End Role="GroupBox" EntitySet="GroupBox" />
+            <End Role="Brand" EntitySet="Brand" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Provider_Brand" Association="AvtoritetModel.FK_Provider_Brand">
+            <End Role="Brand" EntitySet="Brand" />
+            <End Role="Provider" EntitySet="Provider" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CommandFile_Provider1" Association="AvtoritetModel.FK_CommandFile_Provider1">
+            <End Role="Provider" EntitySet="Provider" />
+            <End Role="CommandFile" EntitySet="CommandFile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GroupBox_Group" Association="AvtoritetModel.FK_GroupBox_Group">
+            <End Role="Group" EntitySet="Group" />
+            <End Role="GroupBox" EntitySet="GroupBox" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProviderAccount_Provider" Association="AvtoritetModel.FK_ProviderAccount_Provider">
+            <End Role="Provider" EntitySet="Provider" />
+            <End Role="ProviderAccount" EntitySet="ProviderAccount" />
+          </AssociationSet>
+          <EntitySet Name="ProviderFile" EntityType="AvtoritetModel.ProviderFile" />
+          <AssociationSet Name="FK_ProviderFile_Provider" Association="AvtoritetModel.FK_ProviderFile_Provider">
+            <End Role="Provider" EntitySet="Provider" />
+            <End Role="ProviderFile" EntitySet="ProviderFile" />
+          </AssociationSet>
+          <EntitySet Name="SettingUpdate" EntityType="AvtoritetModel.SettingUpdate" />
+          </EntityContainer>
+        <EntityType Name="Links">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Url" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="NewsLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PostTime" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="VersionLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Value" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Brand">
+          <Key>
+            <PropertyRef Name="BrandId" />
+          </Key>
+          <Property Name="BrandId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NameAndFolder" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IconPath" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IconPath2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="GroupBoxId" Type="Int32" Nullable="false" />
+          <Property Name="Enable" Type="Boolean" Nullable="false" />
+          <Property Name="IconPathImg" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="IconPathImgExt" Type="String" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="IconPathImgSize" Type="Int64" />
+          <Property Name="IconPath2Img" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="IconPath2ImgExt" Type="String" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="IconPath2ImgSize" Type="Int64" />
+          <Property Name="Top" Type="Int32" />
+          <Property Name="Left" Type="Int32" />
+          <Property Name="Width" Type="Int32" />
+          <Property Name="Height" Type="Int32" />
+          <Property Name="Order" Type="Int32" />
+          <Property Name="ButtonStyle" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="MenuWindow" Type="Boolean" />
+          <NavigationProperty Name="GroupBox" Relationship="AvtoritetModel.FK_Brand_GroupBox" FromRole="Brand" ToRole="GroupBox" />
+          <NavigationProperty Name="Provider" Relationship="AvtoritetModel.FK_Provider_Brand" FromRole="Brand" ToRole="Provider" />
+        </EntityType>
+        <EntityType Name="ButtonStyle">
+          <Key>
+            <PropertyRef Name="ButtonStyleId" />
+          </Key>
+          <Property Name="ButtonStyleId" Type="Int32" Nullable="false" />
+          <Property Name="Width" Type="Int32" />
+          <Property Name="Height" Type="Int32" />
+          <Property Name="BackgroundColor" Type="Int32" />
+          <Property Name="BackgroundImage" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="Icon" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="Font" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="FontSize" Type="Int32" />
+          <Property Name="FontStyle" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="CommandFile">
+          <Key>
+            <PropertyRef Name="CommandFileId" />
+          </Key>
+          <Property Name="CommandFileId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProviderId" Type="Int32" />
+          <Property Name="FileName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FileContent" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Provider" Relationship="AvtoritetModel.FK_CommandFile_Provider1" FromRole="CommandFile" ToRole="Provider" />
+        </EntityType>
+        <EntityType Name="Group">
+          <Key>
+            <PropertyRef Name="GroupId" />
+          </Key>
+          <Property Name="GroupId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Enable" Type="Boolean" Nullable="false" />
+          <Property Name="Order" Type="Int32" />
+          <Property Name="Width" Type="Int32" />
+          <Property Name="Height" Type="Int32" />
+          <NavigationProperty Name="GroupBox" Relationship="AvtoritetModel.FK_GroupBox_Group" FromRole="Group" ToRole="GroupBox" />
+        </EntityType>
+        <EntityType Name="GroupBox">
+          <Key>
+            <PropertyRef Name="GroupBoxId" />
+          </Key>
+          <Property Name="GroupBoxId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Left" Type="Int32" />
+          <Property Name="Top" Type="Int32" />
+          <Property Name="GroupId" Type="Int32" Nullable="false" />
+          <Property Name="Enable" Type="Boolean" Nullable="false" />
+          <Property Name="Width" Type="Int32" />
+          <Property Name="Height" Type="Int32" />
+          <Property Name="ButtonWidth" Type="Int32" />
+          <Property Name="ButtonHeight" Type="Int32" />
+          <Property Name="ButtonHorizontalPadding" Type="Int32" />
+          <Property Name="ButtonVerticalPadding" Type="Int32" />
+          <Property Name="ButtonBetweenVerticalPadding" Type="Int32" />
+          <Property Name="ButtonBetweenHorizontalPadding" Type="Int32" />
+          <Property Name="VisibleBorder" Type="Boolean" />
+          <NavigationProperty Name="Brand" Relationship="AvtoritetModel.FK_Brand_GroupBox" FromRole="GroupBox" ToRole="Brand" />
+          <NavigationProperty Name="Group" Relationship="AvtoritetModel.FK_GroupBox_Group" FromRole="GroupBox" ToRole="Group" />
+        </EntityType>
+        <EntityType Name="Provider">
+          <Key>
+            <PropertyRef Name="ProviderId" />
+          </Key>
+          <Property Name="ProviderId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Uri" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IconPath" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Title" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="BrandId" Type="Int32" Nullable="false" />
+          <Property Name="Enable" Type="Boolean" Nullable="false" />
+          <Property Name="IconImg" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="IconImgExt" Type="String" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="IconImgSize" Type="Int64" />
+          <Property Name="commandfile" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="commandcontent" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Order" Type="Int32" />
+          <NavigationProperty Name="Brand" Relationship="AvtoritetModel.FK_Provider_Brand" FromRole="Provider" ToRole="Brand" />
+          <NavigationProperty Name="CommandFile1" Relationship="AvtoritetModel.FK_CommandFile_Provider1" FromRole="Provider" ToRole="CommandFile" />
+          <NavigationProperty Name="ProviderAccount" Relationship="AvtoritetModel.FK_ProviderAccount_Provider" FromRole="Provider" ToRole="ProviderAccount" />
+          <NavigationProperty Name="ProviderFile" Relationship="AvtoritetModel.FK_ProviderFile_Provider" FromRole="Provider" ToRole="ProviderFile" />
+        </EntityType>
+        <EntityType Name="ProviderAccount">
+          <Key>
+            <PropertyRef Name="ProviderAccountId" />
+          </Key>
+          <Property Name="ProviderAccountId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Login" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Uri" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ProviderId" Type="Int32" Nullable="false" />
+          <Property Name="Enable" Type="Boolean" Nullable="false" />
+          <Property Name="Order" Type="Int32" />
+          <NavigationProperty Name="Provider" Relationship="AvtoritetModel.FK_ProviderAccount_Provider" FromRole="ProviderAccount" ToRole="Provider" />
+        </EntityType>
+        <Association Name="FK_Brand_GroupBox">
+          <End Type="AvtoritetModel.GroupBox" Role="GroupBox" Multiplicity="1" />
+          <End Type="AvtoritetModel.Brand" Role="Brand" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GroupBox">
+              <PropertyRef Name="GroupBoxId" />
+            </Principal>
+            <Dependent Role="Brand">
+              <PropertyRef Name="GroupBoxId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Provider_Brand">
+          <End Type="AvtoritetModel.Brand" Role="Brand" Multiplicity="1" />
+          <End Type="AvtoritetModel.Provider" Role="Provider" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Brand">
+              <PropertyRef Name="BrandId" />
+            </Principal>
+            <Dependent Role="Provider">
+              <PropertyRef Name="BrandId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CommandFile_Provider1">
+          <End Type="AvtoritetModel.Provider" Role="Provider" Multiplicity="0..1" />
+          <End Type="AvtoritetModel.CommandFile" Role="CommandFile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Provider">
+              <PropertyRef Name="ProviderId" />
+            </Principal>
+            <Dependent Role="CommandFile">
+              <PropertyRef Name="ProviderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_GroupBox_Group">
+          <End Type="AvtoritetModel.Group" Role="Group" Multiplicity="1" />
+          <End Type="AvtoritetModel.GroupBox" Role="GroupBox" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Group">
+              <PropertyRef Name="GroupId" />
+            </Principal>
+            <Dependent Role="GroupBox">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProviderAccount_Provider">
+          <End Type="AvtoritetModel.Provider" Role="Provider" Multiplicity="1" />
+          <End Type="AvtoritetModel.ProviderAccount" Role="ProviderAccount" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Provider">
+              <PropertyRef Name="ProviderId" />
+            </Principal>
+            <Dependent Role="ProviderAccount">
+              <PropertyRef Name="ProviderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ProviderFile">
+          <Key>
+            <PropertyRef Name="ProviderFileId" />
+          </Key>
+          <Property Name="ProviderFileId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProviderId" Type="Int32" />
+          <Property Name="FileName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FileExt" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FileSize" Type="Int64" />
+          <Property Name="FileContent" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <NavigationProperty Name="Provider" Relationship="AvtoritetModel.FK_ProviderFile_Provider" FromRole="ProviderFile" ToRole="Provider" />
+        </EntityType>
+        <Association Name="FK_ProviderFile_Provider">
+          <End Type="AvtoritetModel.Provider" Role="Provider" Multiplicity="0..1" />
+          <End Type="AvtoritetModel.ProviderFile" Role="ProviderFile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Provider">
+              <PropertyRef Name="ProviderId" />
+            </Principal>
+            <Dependent Role="ProviderFile">
+              <PropertyRef Name="ProviderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="SettingUpdate">
+          <Key>
+            <PropertyRef Name="SettingUpdateId" />
+          </Key>
+          <Property Name="SettingUpdateId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Update" Type="Boolean" Nullable="false" />
+          <Property Name="SettingVersion" Type="Int32" />
+        </EntityType>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="AvtoritetModelStoreContainer" CdmEntityContainer="AvtoritetEntities">
+          <EntitySetMapping Name="Links">
+            <EntityTypeMapping TypeName="AvtoritetModel.Links">
+              <MappingFragment StoreEntitySet="Links">
+                <ScalarProperty Name="Url" ColumnName="Url" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NewsLog">
+            <EntityTypeMapping TypeName="AvtoritetModel.NewsLog">
+              <MappingFragment StoreEntitySet="NewsLog">
+                <ScalarProperty Name="PostTime" ColumnName="PostTime" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VersionLog">
+            <EntityTypeMapping TypeName="AvtoritetModel.VersionLog">
+              <MappingFragment StoreEntitySet="VersionLog">
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Brand">
+            <EntityTypeMapping TypeName="AvtoritetModel.Brand">
+              <MappingFragment StoreEntitySet="Brand">
+                <ScalarProperty Name="MenuWindow" ColumnName="MenuWindow" />
+                <ScalarProperty Name="ButtonStyle" ColumnName="ButtonStyle" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="Height" ColumnName="Height" />
+                <ScalarProperty Name="Width" ColumnName="Width" />
+                <ScalarProperty Name="Left" ColumnName="Left" />
+                <ScalarProperty Name="Top" ColumnName="Top" />
+                <ScalarProperty Name="IconPath2ImgSize" ColumnName="IconPath2ImgSize" />
+                <ScalarProperty Name="IconPath2ImgExt" ColumnName="IconPath2ImgExt" />
+                <ScalarProperty Name="IconPath2Img" ColumnName="IconPath2Img" />
+                <ScalarProperty Name="IconPathImgSize" ColumnName="IconPathImgSize" />
+                <ScalarProperty Name="IconPathImgExt" ColumnName="IconPathImgExt" />
+                <ScalarProperty Name="IconPathImg" ColumnName="IconPathImg" />
+                <ScalarProperty Name="Enable" ColumnName="Enable" />
+                <ScalarProperty Name="GroupBoxId" ColumnName="GroupBoxId" />
+                <ScalarProperty Name="IconPath2" ColumnName="IconPath2" />
+                <ScalarProperty Name="IconPath" ColumnName="IconPath" />
+                <ScalarProperty Name="NameAndFolder" ColumnName="NameAndFolder" />
+                <ScalarProperty Name="BrandId" ColumnName="BrandId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ButtonStyle">
+            <EntityTypeMapping TypeName="AvtoritetModel.ButtonStyle">
+              <MappingFragment StoreEntitySet="ButtonStyle">
+                <ScalarProperty Name="FontStyle" ColumnName="FontStyle" />
+                <ScalarProperty Name="FontSize" ColumnName="FontSize" />
+                <ScalarProperty Name="Font" ColumnName="Font" />
+                <ScalarProperty Name="Icon" ColumnName="Icon" />
+                <ScalarProperty Name="BackgroundImage" ColumnName="BackgroundImage" />
+                <ScalarProperty Name="BackgroundColor" ColumnName="BackgroundColor" />
+                <ScalarProperty Name="Height" ColumnName="Height" />
+                <ScalarProperty Name="Width" ColumnName="Width" />
+                <ScalarProperty Name="ButtonStyleId" ColumnName="ButtonStyleId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CommandFile">
+            <EntityTypeMapping TypeName="AvtoritetModel.CommandFile">
+              <MappingFragment StoreEntitySet="CommandFile">
+                <ScalarProperty Name="FileContent" ColumnName="FileContent" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="ProviderId" ColumnName="ProviderId" />
+                <ScalarProperty Name="CommandFileId" ColumnName="CommandFileId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Group">
+            <EntityTypeMapping TypeName="AvtoritetModel.Group">
+              <MappingFragment StoreEntitySet="Group">
+                <ScalarProperty Name="Height" ColumnName="Height" />
+                <ScalarProperty Name="Width" ColumnName="Width" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="Enable" ColumnName="Enable" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GroupBox">
+            <EntityTypeMapping TypeName="AvtoritetModel.GroupBox">
+              <MappingFragment StoreEntitySet="GroupBox">
+                <ScalarProperty Name="VisibleBorder" ColumnName="VisibleBorder" />
+                <ScalarProperty Name="ButtonBetweenHorizontalPadding" ColumnName="ButtonBetweenHorizontalPadding" />
+                <ScalarProperty Name="ButtonBetweenVerticalPadding" ColumnName="ButtonBetweenVerticalPadding" />
+                <ScalarProperty Name="ButtonVerticalPadding" ColumnName="ButtonVerticalPadding" />
+                <ScalarProperty Name="ButtonHorizontalPadding" ColumnName="ButtonHorizontalPadding" />
+                <ScalarProperty Name="ButtonHeight" ColumnName="ButtonHeight" />
+                <ScalarProperty Name="ButtonWidth" ColumnName="ButtonWidth" />
+                <ScalarProperty Name="Height" ColumnName="Height" />
+                <ScalarProperty Name="Width" ColumnName="Width" />
+                <ScalarProperty Name="Enable" ColumnName="Enable" />
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+                <ScalarProperty Name="Top" ColumnName="Top" />
+                <ScalarProperty Name="Left" ColumnName="Left" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="GroupBoxId" ColumnName="GroupBoxId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Provider">
+            <EntityTypeMapping TypeName="AvtoritetModel.Provider">
+              <MappingFragment StoreEntitySet="Provider">
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="commandcontent" ColumnName="commandcontent" />
+                <ScalarProperty Name="commandfile" ColumnName="commandfile" />
+                <ScalarProperty Name="IconImgSize" ColumnName="IconImgSize" />
+                <ScalarProperty Name="IconImgExt" ColumnName="IconImgExt" />
+                <ScalarProperty Name="IconImg" ColumnName="IconImg" />
+                <ScalarProperty Name="Enable" ColumnName="Enable" />
+                <ScalarProperty Name="BrandId" ColumnName="BrandId" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="IconPath" ColumnName="IconPath" />
+                <ScalarProperty Name="Uri" ColumnName="Uri" />
+                <ScalarProperty Name="ProviderId" ColumnName="ProviderId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProviderAccount">
+            <EntityTypeMapping TypeName="AvtoritetModel.ProviderAccount">
+              <MappingFragment StoreEntitySet="ProviderAccount">
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="Enable" ColumnName="Enable" />
+                <ScalarProperty Name="ProviderId" ColumnName="ProviderId" />
+                <ScalarProperty Name="Uri" ColumnName="Uri" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Login" ColumnName="Login" />
+                <ScalarProperty Name="ProviderAccountId" ColumnName="ProviderAccountId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProviderFile">
+            <EntityTypeMapping TypeName="AvtoritetModel.ProviderFile">
+              <MappingFragment StoreEntitySet="ProviderFile">
+                <ScalarProperty Name="FileContent" ColumnName="FileContent" />
+                <ScalarProperty Name="FileSize" ColumnName="FileSize" />
+                <ScalarProperty Name="FileExt" ColumnName="FileExt" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="ProviderId" ColumnName="ProviderId" />
+                <ScalarProperty Name="ProviderFileId" ColumnName="ProviderFileId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SettingUpdate">
+            <EntityTypeMapping TypeName="AvtoritetModel.SettingUpdate">
+              <MappingFragment StoreEntitySet="SettingUpdate">
+                <ScalarProperty Name="SettingVersion" ColumnName="SettingVersion" />
+                <ScalarProperty Name="Update" ColumnName="Update" />
+                <ScalarProperty Name="SettingUpdateId" ColumnName="SettingUpdateId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

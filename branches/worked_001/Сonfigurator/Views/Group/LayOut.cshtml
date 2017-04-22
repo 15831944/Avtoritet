@@ -1,0 +1,33 @@
+﻿@model Object
+
+@{
+    ViewBag.Title = "Расположение";
+}
+<script language="javascript" type="text/javascript" src="/Scripts/jquery-1.10.2.min.js"></script>
+@*<script language="javascript" type="text/javascript" src="/Scripts/interact.js"></script>
+    <script language="javascript" type="text/javascript" src="/Scripts/geditor.js"></script>*@
+<script language="javascript" type="text/javascript" src="/Scripts/d3.js"></script>
+<script language="javascript" type="text/javascript" src="/Scripts/groupBox.js"></script>
+<style>
+    .draggable {
+        border: 1px solid black;
+        position: absolute;
+        display: inline-block;
+        top: 0;
+        left: 0;
+        cursor: move;
+    }
+
+    body {
+        margin: 0px;
+        padding: 0px;
+    }
+</style>
+<div style="border-style: solid;border-width: 1px; border-color: red; width: @{ @ViewBag.Width }px; height: @{@ViewBag.Height}px; top: 0px; left: 0px; padding: 0;margin:0">&nbsp;</div>
+<script language="javascript" type="text/javascript">
+    jQuery(function() {
+        groupboxd3(@Model);
+    });
+</script>
+<button id="btnSave" name="btnSave">Сохранить</button>
+@Html.ActionLink("Обратно в список", "Index", "Group")
