@@ -1,0 +1,19 @@
+<Application x:Class="NewLauncher.App" ShutdownMode="OnExplicitShutdown" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:extension="clr-namespace:NewLauncher.Extension" StartupUri="MainWindow.xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" d1p1:Ignorable="d" xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006">
+  <Application.Resources>
+    <Style x:Key="ButtonFocusVisual">
+      <Setter Property="Control.Template">
+        <Setter.Value>
+          <ControlTemplate>
+            <Rectangle Margin="2" SnapsToDevicePixels="True" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2" />
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <SolidColorBrush x:Key="ButtonNormalBorder" Color="#FF707070" />
+    <extension:StyleConverter x:Key="styleConverter" />
+    <extension:StyleConverter1 x:Key="styleConverter1" />
+    <!--<ResourceDictionary x:Key="Locator">
+      <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:NewLauncher.ViewModel" />
+    </ResourceDictionary>-->
+  </Application.Resources>
+</Application>

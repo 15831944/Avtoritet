@@ -1,0 +1,2 @@
+cd C:\SUZUKI
+.\SZFST32.exe
