@@ -9,6 +9,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace RelayServer.Portals
@@ -29,8 +30,12 @@ namespace RelayServer.Portals
 
 		public void OpenSession(string url, bool forceSession)
 		{
-			string Login = string.Empty;
-			string Password = string.Empty;
+		    //Uri uri;
+		    string
+                urlSession = string.Empty,
+		        Login = string.Empty,
+		        Password = string.Empty;
+
             using (AvtoritetEntities ae = new AvtoritetEntities())
             {
                 string sql = string.Format("SELECT        TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password\r\n                                            FROM dbo.Provider INNER JOIN\r\n                                            dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId\r\n                                            WHERE(dbo.Provider.Uri LIKE N'%{0}%') AND(dbo.ProviderAccount.Enable = 1)", CatalogApi.UrlConstants.ChevroletOpelGroupRoot);
@@ -41,10 +46,13 @@ namespace RelayServer.Portals
                     Password = provider.Password;
                 }
             }
-            //Login = "avtoritetepc";
-            //Password = "Hugoboss2050";
-            this.requestHandler = RequestHandlerFactory.Create(url, Login, Password, null);
-			HttpResponseMessage responseMessage = this.GetResponse(url, forceSession, this.requestHandler, ChevroletPortal.CookieContainer);
+
+		    //uri = new Uri(url);
+		    //urlSession = string.Format("{0}://{1}", uri.Scheme, uri.Host);
+		    urlSession = url;
+
+            this.requestHandler = RequestHandlerFactory.Create(urlSession, Login, Password, null);
+			HttpResponseMessage responseMessage = this.GetResponse(urlSession, forceSession, this.requestHandler, ChevroletPortal.CookieContainer);
 			if (responseMessage != null)
 			{
 				this.requestHandler.GetSessionResultAsync(responseMessage);
@@ -71,28 +79,30 @@ namespace RelayServer.Portals
 		public string GetCookies(string url)
 		{
 			string json = JsonConvert.SerializeObject(ChevroletPortal.CookieContainer.GetCookies(new Uri(url)).Cast<Cookie>().ToList<Cookie>());
-			ConsoleHelper.Debug("Cookies obtained succesfully");
+			ConsoleHelper.Debug(String.Format("Cookies obtained succesfully: {0}"
+                , json.Length > 0 ? json : "отсутствует"));
 			return json;
 		}
 
 		public HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container)
 		{
-			HttpResponseMessage result;
+            HttpResponseMessage result;
+
 			lock (ChevroletPortal.AutorizeLock)
 			{
-				ConsoleHelper.Debug("CHEVROLET");
+                ConsoleHelper.Debug("CHEVROLET");
 				if (reqHandler.NeedAuthorization(url, container))
 				{
 					HttpResponseMessage session = reqHandler.OpenSessionAsync(url, container);
 					ConsoleHelper.Info(string.Format("Open session status: {0}", session.StatusCode));
 					if (!this.SessionHasError(session))
-					{
+					{// Success
 						result = session;
 						return result;
 					}
 					ConsoleHelper.Error(string.Format("Open session error: {0}", url));
 				}
-				Task<HttpResponseMessage> session2 = reqHandler.GetSessionAsync(string.Format("{0}/subscriptions.html", CatalogApi.UrlConstants.ChevroletOpelGroup), container);
+				Task<HttpResponseMessage> session2 = reqHandler.GetSessionAsync(string.Format("{0}/subscriptions.html", url), container);
 				session2.Wait();
 				HttpResponseMessage responseMessage = session2.Result;
 				ConsoleHelper.Info(string.Format("Url Navigation: {0}", responseMessage.RequestMessage.RequestUri.AbsoluteUri));

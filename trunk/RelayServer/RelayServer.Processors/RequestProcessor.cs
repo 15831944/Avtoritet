@@ -131,23 +131,13 @@ namespace RelayServer.Processors
 				{
 					RequestProcessor.PartslinkPortal.OpenSession(url, forceSession);
 				}
-				else
+				else if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
 				{
-					if (!url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
-					{
-                        //throw new System.Exception("Open session error");
-					    RequestProcessor.ChevroletPortal.OpenSession(url.Replace("chevrolet", string.Empty), forceSession);
-                    }
-					if (url.Contains("opel"))
-					{
-						RequestProcessor.OpelPortal.OpenSession(url.Replace("opel", string.Empty), forceSession);
-					}
-					if (url.Contains("chevrolet"))
-					{
-						RequestProcessor.ChevroletPortal.OpenSession(url.Replace("chevrolet", string.Empty), forceSession);
-					}
-				}
-			}
+                    RequestProcessor.ChevroletPortal.OpenSession(url, forceSession);
+                } else
+				    throw new System.Exception(string.Format("RequestProccessor::OpenSession(Url={0}) Error..."
+                        , url));
+            }
 			catch (System.Exception ex)
 			{
 				ErrorLogHelper.AddErrorInLog("OpenSession()", ex.Message + "|" + ex.StackTrace);
@@ -204,8 +194,18 @@ namespace RelayServer.Processors
 					{
 						if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
 						{
-						    result = RequestProcessor.ChevroletPortal.GetCookies(url);
-						    return result;
+						    Uri uri = new Uri(url);
+						    string urlToCookies = string.Format("{0}://{1}", uri.Scheme, uri.Host);
+                            ConsoleHelper.Debug(string.Format("ToCookis={0} || Хост={1} || абс.={2} || лок.={3} || файл?={4}"
+						        , urlToCookies
+                                , uri.Host
+						        , uri.AbsolutePath
+						        , uri.LocalPath
+						        , uri.IsFile));
+
+                            result = RequestProcessor.ChevroletPortal.GetCookies(urlToCookies);
+
+                            return result;
 
                             //if (url.Contains("opel"))
                             //{

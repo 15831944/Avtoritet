@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -50,56 +51,94 @@ namespace BrowserExtension
             try {
                 this.InitializeComponent();
                 this.StartNewEventSession();
+
+                //logging("Browser::ctor () - new WindowManager() - ???...");
                 this.windowManager = new WindowManager();
+                logging(string.Format("{1}{0}Browser::ctor () - new WindowManager([DateTime={2}]) - processing.."
+                    , Environment.NewLine
+                    , string.Concat(Enumerable.Repeat("*---", 16))
+                    , DateTime.UtcNow));
+
                 Task.Factory.StartNew(delegate
                 {
+                    string fileNameSession = "Session_ChevroletOpelGroup.txt";
                     string[] commandLineArgs = Environment.GetCommandLineArgs();
                     string value = string.Empty;
                     if ((commandLineArgs.Length > 1)
-                        && (commandLineArgs[1].Contains("opel") == true)) {
+                        && (commandLineArgs[1].Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true)) {
                         base.Dispatcher.BeginInvoke(new Action(delegate
                         {
-                            base.Title = "***Opel Dealer Online***";
+                            base.Title = "***Chevrolet-Opel Dealer Online***";
                         }), new object[0]);
-                        using (FileStream fileStream =
-                            new FileStream("Session_Opel.txt", FileMode.Open, FileAccess.Read)) {
-                            using (StreamReader streamReader = new StreamReader(fileStream)) {
-                                value = streamReader.ReadToEnd();
-                            }
-                        }
-                    } else
-                        ;
 
-                    if ((commandLineArgs.Length > 1)
-                        && (commandLineArgs[1].Contains("chevrolet"))) {
-                        base.Dispatcher.BeginInvoke(new Action(delegate
+                        logging(String.Format("Browser::ctor () - read local session settings(file={0}) - ???..."
+                            , fileNameSession));
+                        if (File.Exists(fileNameSession) == true)
                         {
-                            base.Title = "***Chevrolet Dealer Online***";
-                        }), new object[0]);
-                        using (FileStream fileStream =
-                            new FileStream("Session_Chevrolet.txt", FileMode.Open, FileAccess.Read)) {
-                            using (StreamReader streamReader = new StreamReader(fileStream)) {
-                                value = streamReader.ReadToEnd();
+                            using (FileStream fileStream =
+                                new FileStream(fileNameSession, FileMode.Open, FileAccess.Read))
+                            {
+                                using (StreamReader streamReader = new StreamReader(fileStream))
+                                {
+                                    value = streamReader.ReadToEnd();
+                                }
                             }
+                            logging(String.Format(
+                                "Browser::ctor () - read local session settings(file={0}) - success..."
+                                , fileNameSession));
                         }
+                        else
+                            logging(String.Format(
+                                "Browser::ctor () - read local session settings(file={0}) - not exists..."
+                                , fileNameSession));
                     } else
                         ;
 
                     if (string.IsNullOrEmpty(value) == false) {
+                        logging(String.Format("Browser::ctor (cookies={0}) - cookis not empty..."
+                            , value));
+
                         List<Cookie> list = JsonConvert.DeserializeObject<List<Cookie>>(value);
-                        foreach (Cookie current in list) {
-                            MainWindow.InternetSetCookie(string.Format("{0}/", CatalogApi.UrlConstants.ChevroletOpelGroup), current.Name, current.Value);
+                        try
+                        {
+                            foreach (Cookie current in list)
+                            {
+                                logging(String.Format("Browser::ctor () - InternetSetCookie key={0}, value={1}..."
+                                    , current.Name,
+                                    current.Value));
+
+                                MainWindow.InternetSetCookie(string.Format("{0}/", CatalogApi.UrlConstants.ChevroletOpelGroup)
+                                    , current.Name,
+                                    current.Value);
+                            }
                         }
+                        catch (Exception ex)
+                        {
+                            logging(ex);
+                        }
+
+                        logging(String.Format("Browser to Navigate (Url={0}) - ..."
+                            , commandLineArgs[1]));
+
                         base.Dispatcher.BeginInvoke(new Action(delegate
                         {
-                            this.InternetExplorer.Navigate(CatalogApi.UrlConstants.ChevroletOpelGroupUserLoginDo);
+                            this.InternetExplorer.Navigate(commandLineArgs[1]);
                         }), new object[0]);
                     } else {
-                        System.Windows.MessageBox.Show("Error opening catalog. Please report to administrator.");
+                        System.Windows.MessageBox.Show(string.Format("Error opening catalog. Please report to administrator.{0}"
+                                + "Кол-во аргументов: {1}{0}"
+                                + "1-ый аргумент={2}{0}"
+                                + "2-ой аргумент={3}{0}"
+                                + "cookie={4}"
+                            , Environment.NewLine
+                            , commandLineArgs.Length
+                            , commandLineArgs.Length > 1 ? commandLineArgs[1] : "отсутсвует"
+                            , commandLineArgs.Length > 2 ? commandLineArgs[2] : "отсутсвует"
+                            , string.IsNullOrWhiteSpace(value) == false ? value : "отсутсвуют"));
                     }
                 });
             } catch (Exception ex) {
-                System.Windows.MessageBox.Show("Message: " + ex.Message + " || StackTrace: " + ex.StackTrace);
+                logging(ex);
             }
         }
 
@@ -112,31 +151,30 @@ namespace BrowserExtension
             };
             this.InternetExplorer.StartNewWindow += new EventHandler<BrowserExtendedNavigatingEventArgs>(this.InternetExplorerOnStartNewWindow);
             this.InternetExplorer.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(this.InternetExplorerOnDocumentCompleted);
+
+            //logging(string.Format("Browser::StartNewEventSession (Title={0}) - ...", this.Title));
         }
 
         private void InternetExplorerOnQuit(object sender, EventArgs eventArgs)
         {
+            logging(string.Format("Browser::InternetExplorerOnQuit (Title={0}) - ...", this.Title));
+
+            Close();
         }
 
         private void InternetExplorerOnNavigating(object sender, WebBrowserNavigatingEventArgs webBrowserNavigatingEventArgs)
         {
-            try {
-                using (FileStream fileStream = new FileStream("Log.txt", FileMode.Append, FileAccess.Write)) {
-                    using (StreamWriter streamWriter = new StreamWriter(fileStream)) {
-                        streamWriter.WriteLine(webBrowserNavigatingEventArgs.Url.AbsoluteUri);
-                    }
-                }
-            } catch (Exception ex) {
-                using (FileStream fileStream = new FileStream("Log.txt", FileMode.Append, FileAccess.Write)) {
-                    using (StreamWriter streamWriter = new StreamWriter(fileStream)) {
-                        streamWriter.WriteLine(ex.Message);
-                    }
-                }
-            }
+            logging(string.Format("Browser::InternetExplorerOnNavigating (Title={0}, AbsoluteUri={1}) - ..."
+                , this.Title
+                , webBrowserNavigatingEventArgs.Url.AbsoluteUri));
         }
 
         private void InternetExplorerOnStartNewWindow(object sender, BrowserExtendedNavigatingEventArgs browserExtendedNavigatingEventArgs)
         {
+            logging(string.Format("Browser::InternetExplorerOnStartNewWindow (Title={0}, argUrl={1}) - ..."
+                , this.Title
+                , browserExtendedNavigatingEventArgs.Url.ToString()));
+
             if (!(browserExtendedNavigatingEventArgs.Url != null)
                 || (!(browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("about:blank")))) {
                 if ((browserExtendedNavigatingEventArgs.Url != null)
@@ -165,35 +203,61 @@ namespace BrowserExtension
             }
         }
 
+        private bool IsDocumentValidate
+        {
+            get
+            {
+                return (!(this.InternetExplorer.Document == null))
+                    && (!(this.InternetExplorer.Document.Body == null))
+                    && (!(this.InternetExplorer.Document.Window == null))
+                    && (!(this.InternetExplorer.Document.Window.Frames == null));
+            }
+        }
+
         private void InternetExplorerOnDocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs webBrowserDocumentCompletedEventArgs)
         {
-            try {
-                if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("index.html")) {
-                    this.InternetExplorer.Navigate(string.Format("{0}/subscriptions.html", CatalogApi.UrlConstants.ChevroletOpelGroup));
-                } else if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/users/login.html")) {
-                    this.InternetExplorer.Navigate(string.Format("{0}/subscriptions.html", CatalogApi.UrlConstants.ChevroletOpelGroup));
-                } else if ((!(this.InternetExplorer.Document == null))
-                           && (!(this.InternetExplorer.Document.Body == null))
-                           && (!(this.InternetExplorer.Document.Window == null))
-                           && (!(this.InternetExplorer.Document.Window.Frames == null))) {
-                    // EPC
-                    foreach (HtmlElement htmlElement in InternetExplorer.Document.GetElementsByTagName("form")) {
-                        if (CatalogApi.Autocomplit.ClickEPCSubmit(htmlElement) == true) {
-                            this.DelayForNextNavigation(this.IeHost, 3000, 4000);
+            logging(string.Format("Browser::InternetExplorerOnDocumentCompleted (Title={0}, argUrl={1}) - ..."
+                , this.Title
+                , webBrowserDocumentCompletedEventArgs.Url.ToString()));
 
-                            return;
-                        } else
+            try {
+                if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/users/login.html") == true) {
+                    if (IsDocumentValidate == true)
+                    // Credentials
+                        foreach (HtmlElement htmlElement in InternetExplorer.Document.GetElementsByTagName("form"))
+                        {
+                            if (CatalogApi.Autocomplit.TypeCredentials(this.InternetExplorer.Document
+                                , htmlElement
+                                , "logon", "avtoritetepc", "password", "Hugoboss5070") == true)
+                            {
+                                this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
+
+                                break;
+                            }
+                            else
+                                ;
+                        }
+                    else
                             ;
-                    }
-                } else
+                } else if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/subscriptions.html"))
+                    {
+                    if (IsDocumentValidate == true)
+                        // EPC
+                        foreach (HtmlElement htmlElement in this.InternetExplorer.Document.GetElementsByTagName("form")) {
+                            if (CatalogApi.Autocomplit.ClickEPCSubmit(htmlElement) == true) {
+                                this.DelayForNextNavigation(this.IeHost, 3000, 4000);
+
+                                break;
+                            } else
+                                ;
+                        }
+                    else
+                        ;
+                }
+                else
                     ;
             } catch (Exception ex) {
-                Debug.WriteLine("[{0}] {1} / {2}", new object[]
-                {
-                    DateTime.Now,
-                    ex.Message,
-                    ex.StackTrace
-                });
+                logging(ex);
             }
         }
 
@@ -210,6 +274,24 @@ namespace BrowserExtension
                     System.Windows.MessageBox.Show(string.Format("[{0}] {1} / {2}", DateTime.Now, ex.Message, ex.StackTrace));
                 }
             }).Start();
+        }
+
+        private void logging(string mes)
+        {
+            using (FileStream fileStream = new FileStream(string.Format("{0}.log", System.IO.Path.GetFileNameWithoutExtension(Assembly.GetAssembly(this.GetType()).FullName)), FileMode.Append, FileAccess.Write)) {
+                using (StreamWriter streamWriter = new StreamWriter(fileStream)) {
+                    streamWriter.WriteLine(mes);
+                }
+            }
+        }
+
+        private void logging(Exception e)
+        {
+            logging(string.Format("[{0}] {1} / {2}"
+                , DateTime.Now
+                , e.Message
+                , e.StackTrace
+            ));
         }
     }
 }

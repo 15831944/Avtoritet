@@ -16,7 +16,6 @@ using System.Windows.Controls;
 using System.Windows.Markup;
 using System.Windows.Media.Imaging;
 
-
 namespace NewLauncher.View
 {
     /// <summary>
@@ -69,16 +68,22 @@ namespace NewLauncher.View
                 string url = ((ButtonModel)sender).DataContext.ToString();
                 if (url.StartsWith("http") || url.StartsWith("https"))
                 {
-                    if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true)
-                    {
-                        StartSeparateProcess(url);
-                    }
-                    else
-                    {
-                        string loginFromDB = SettingsFactory.GetLoginFromDB(((ButtonModel)sender).ProviderId);
-                        string pswFromDB = SettingsFactory.GetPswFromDB(((ButtonModel)sender).ProviderId);
-                        string content = ((ButtonModel)sender).Content;
-                        new BrowserLauncherView(url, content, this.time, loginFromDB, pswFromDB).Show();
+                    if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true) {
+                        // вариант №1 (отдельный броаузер)
+                        //StartSeparateProcess(url);
+
+                        // вариант №2 (как у всех остальных Brand)
+                        Uri uri;
+                        string urlSession = string.Empty;
+
+                        uri = new Uri(url);
+                        urlSession = string.Format("{0}://{1}", uri.Scheme, uri.Host);
+
+                        NewBrowserLauncherView(((ButtonModel)sender).ProviderId
+                            , urlSession
+                            , ((ButtonModel)sender).Content);
+                    } else {
+                        NewBrowserLauncherView(((ButtonModel)sender).ProviderId, url, ((ButtonModel)sender).Content);
                     }
                 }
                 else
@@ -96,6 +101,13 @@ namespace NewLauncher.View
                 MessageBox.Show(exception.Message + " | " + exception.StackTrace);
                 new ReportWindow().ShowReportWindow(exception);
             }
+        }
+
+        private void NewBrowserLauncherView(long providerId, string url, string content)
+        {
+            string loginFromDB = SettingsFactory.GetLoginFromDB(providerId);
+            string pswFromDB = SettingsFactory.GetPswFromDB(providerId);
+            new BrowserLauncherView(url, content, this.time, loginFromDB, pswFromDB).Show();
         }
 
         private void OnActivated(object sender, EventArgs eventArgs)
@@ -218,16 +230,15 @@ namespace NewLauncher.View
 
         private static void StartSeparateProcess(string url)
         {
+            string fileNameBrowser = "BrowserExtension.exe";
+
             FileStream stream;
             StreamWriter writer;
             RequestHelper.Client.OpenSession(url, true);
             string cookies = RequestHelper.Client.GetCookies(url);
-            if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
-            {
-                using (stream = new FileStream("Session_ChevroletOpelGroup.txt", FileMode.Create, FileAccess.Write))
-                {
-                    using (writer = new StreamWriter(stream))
-                    {
+            if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot)) {
+                using (stream = new FileStream("Session_ChevroletOpelGroup.txt", FileMode.Create, FileAccess.Write)) {
+                    using (writer = new StreamWriter(stream)) {
                         writer.Write(cookies);
                     }
                 }
@@ -253,10 +264,10 @@ namespace NewLauncher.View
                 Process process = new Process() {
                     StartInfo =
                     {
-                        FileName = "BrowserExtension.exe",
-                        Arguments = url,
-                        CreateNoWindow = true,
-                        UseShellExecute = false
+                        FileName = fileNameBrowser
+                        , Arguments = CatalogApi.UrlConstants.ChevroletOpelGroupUserLoginDo
+                        , CreateNoWindow = true
+                        , UseShellExecute = false
                     }
                 };
 
@@ -265,8 +276,8 @@ namespace NewLauncher.View
                 else
                     ;
             } catch (Exception e) {
-                ErrorLogHelper.AddErrorInLog("Process.Start: BrowserExtension.exe", e.Message + " | " + e.StackTrace);
-                Debug.WriteLine("[{0}] {1} / {2}", new object[] {DateTime.Now, e.Message, e.StackTrace});
+                ErrorLogHelper.AddErrorInLog(string.Format("Process.Start: {0}", fileNameBrowser), e.Message + " | " + e.StackTrace);
+                Debug.WriteLine("[{0}-{1}] {2} / {3}", new object[] { DateTime.Now, fileNameBrowser, e.Message, e.StackTrace });
             }
         }
     }

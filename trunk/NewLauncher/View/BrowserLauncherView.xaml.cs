@@ -12,6 +12,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -236,31 +237,26 @@ namespace NewLauncher.View
                 GeckoElement element3;
                 this.Captcha.Text = "Загрузка...";
                 this.Message.Text = "Пожалуйста, ждите...";
-                if (this.url.Contains("wpc.mobis.co.kr") || this.url.Contains("wpc.mobis.co.kr"))
-                {
+
+                #region wpc.mobis.co.kr
+                if (this.url.Contains("wpc.mobis.co.kr") || this.url.Contains("wpc.mobis.co.kr")) {
                     if ((from x in this.GeckoWeb.Document.GetElementsByTagName("form")
-                         where x.GetAttribute("name").Equals("CheckForm")
-                         select x).Any<GeckoHtmlElement>())
-                    {
+                        where x.GetAttribute("name").Equals("CheckForm")
+                        select x).Any<GeckoHtmlElement>()) {
                         GeckoElement elementById = this.GeckoWeb.Document.GetElementById("chkID");
-                        if (elementById != null)
-                        {
+                        if (elementById != null) {
                             elementById.SetAttribute("value", this.login);
                         }
                         GeckoElement element2 = this.GeckoWeb.Document.GetElementById("chkPW");
-                        if (element2 != null)
-                        {
+                        if (element2 != null) {
                             element2.SetAttribute("value", this.password);
                         }
                         element3 = this.GeckoWeb.Document.GetElementById("logon");
-                        if (element3 == null)
-                        {
+                        if (element3 == null) {
                             return;
                         }
                         new GeckoInputElement(element3.DomObject).Click();
-                    }
-                    else
-                    {
+                    } else {
                         FilterContent(geckoEventArgs.Window.Document, "a", "Searching-CKD");
                         FilterContent(geckoEventArgs.Window.Document, "a", "Searching-PDF");
                         FilterContent(geckoEventArgs.Window.Document, "a", "Searching-Tools");
@@ -273,11 +269,14 @@ namespace NewLauncher.View
                         this.DelayForNextNavigation(this.GeckoHost, 0x1388, 0x1b58);
                     }
                 }
-                if (this.url.Contains("partslink24"))
+                #endregion
+
+                #region partslink24
+                if (this.url.Contains(CatalogApi.UrlConstants.Partslink24Root))
                 {
                     if (this.NeedRefresh(geckoEventArgs.Uri))
                     {
-                        if (this.RefreshSession(".partslink24.com", geckoEventArgs.Uri.AbsoluteUri))
+                        if (this.RefreshSession(string.Format(".{0}", CatalogApi.UrlConstants.Partslink24Com), geckoEventArgs.Uri.AbsoluteUri))
                         {
                             this.GeckoWeb.Navigate(this.url);
                         }
@@ -425,6 +424,8 @@ namespace NewLauncher.View
                         this.DelayForNextNavigation(this.GeckoHost, 0x7d0, 0xbb8);
                     }
                 }
+                #endregion
+
                 if (this.url.Contains("saf-axles"))
                 {
                     this.DelayForNextNavigation(this.GeckoHost, 300, 500);
@@ -438,6 +439,8 @@ namespace NewLauncher.View
                 {
                     this.DelayForNextNavigation(this.GeckoHost, 300, 500);
                 }
+
+                #region ssangyong
                 if (this.url.Contains("ssangyong"))
                 {
                     GeckoElement element11 = this.GeckoWeb.Document.GetElementById("login");
@@ -469,6 +472,7 @@ namespace NewLauncher.View
                         this.DelayForNextNavigation(this.GeckoHost, 300, 500);
                     }
                 }
+                #endregion
             }
             catch (Exception exception)
             {
@@ -717,6 +721,8 @@ namespace NewLauncher.View
                     flag = true;
                     this.DelayForNextNavigation(this.IeHost, 500, 0xbb8);
                 }
+
+                #region bmwgroup
                 if (this.url.Contains("bmwgroup"))
                 {
                     flag = true;
@@ -773,6 +779,9 @@ namespace NewLauncher.View
                         }
                     }
                 }
+                #endregion
+
+                #region Ford
                 if (this.url.Contains("Ford"))
                 {
                     flag = true;
@@ -839,6 +848,9 @@ namespace NewLauncher.View
                         }
                     }
                 }
+                #endregion
+
+                #region mazdaeur
                 if (this.url.Contains("mazdaeur"))
                 {
                     flag = true;
@@ -869,6 +881,7 @@ namespace NewLauncher.View
                             }
                         }
                     }
+
                     if (((this.IeWeb.Document != null) && (this.IeWeb.Document.Url != null)) && this.IeWeb.Document.Url.AbsoluteUri.Contains("DisplayWarning.html"))
                     {
                         flag = true;
@@ -896,6 +909,9 @@ namespace NewLauncher.View
                         this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
                     }
                 }
+                #endregion
+
+                #region EWA-net
                 if (this.url.Contains("EWA-net"))
                 {
                     flag = true;
@@ -929,8 +945,9 @@ namespace NewLauncher.View
                         }
                     }
                 }
+                #endregion
 
-                #region Chevrolet|Opel Group
+                #region Chevrolet-Opel Group
                 if (this.url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true)
                 {
                     flag = true;
@@ -988,9 +1005,16 @@ namespace NewLauncher.View
                         else
                             ;
 
-                        this.OpenSession(this.url, true);
-                        //this.IeWeb.Navigate("https://www.gme-infotech.com/subscriptions.html");
-                        return;
+                        //!!! Сессия открывается не здесь, а в Rendering
+                        //string urlSession = string.Empty;
+                        //Uri uri;
+
+                        //uri = new Uri(url);
+                        //urlSession = string.Format("{0}://{1}", uri.Scheme, uri.Host);
+
+                        //this.OpenSession(this.url, true);
+                        ////this.IeWeb.Navigate("https://www.gme-infotech.com/subscriptions.html");
+                        //return;
                     }
                     else
                         ;
@@ -1012,18 +1036,18 @@ namespace NewLauncher.View
                             (
                                 (
                                     (this.url.Contains(CatalogApi.Catalogs.AlfaRomeo)
-                                        || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=F&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")
+                                        || this.url.Contains(CatalogApi.Catalogs.Fiat)
                                     )
                                     || (this.url.Contains("http://172.16.24.38:351/PQMace/")
-                                            || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=T&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")
+                                            || this.url.Contains(CatalogApi.Catalogs.FiatProfessional)
                                     )
                                 )
                                 || (
-                                    (this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=L&MAKE=L&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")
-                                        || this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=C&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")
+                                    (this.url.Contains(CatalogApi.Catalogs.Lancia)
+                                        || this.url.Contains(CatalogApi.Catalogs.Abarth)
                                     )
                                     || (
-                                        this.url.Contains("http://172.16.24.41:7080/navi?COUNTRY=012&SBMK=F&MAKE=F&RMODE=DEFAULT&LANGUAGE=N&WINDOW_ID=1&SB_CODE=-1&KEY=HOME&GUI_LANG=N&EPER_CAT=SP")
+                                        this.url.Contains(CatalogApi.Catalogs.Fiat)
                                             || this.url.Contains(CatalogApi.Catalogs.Opel_main)
                                     )
                                 )
@@ -1048,6 +1072,8 @@ namespace NewLauncher.View
                     flag = true;
                     this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
                 }
+
+                #region cargobull
                 if (this.url.Contains("cargobull"))
                 {
                     flag = true;
@@ -1092,6 +1118,8 @@ namespace NewLauncher.View
                         element10.InvokeMember("click");
                     }
                 }
+                #endregion
+
                 if (!flag)
                 {
                     this.DelayForNextNavigation(this.IeHost, 500, 0xbb8);
@@ -1261,14 +1289,13 @@ namespace NewLauncher.View
                 if (this.url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true)
                 {
                     flag = true;
-                    RequestHelper.Client.OpenSession(CatalogApi.UrlConstants.ChevroletOpelGroupUserLoginDo, false);
-                    string cookies = RequestHelper.Client.GetCookies(CatalogApi.UrlConstants.ChevroletOpelGroupUserLoginDo);
-                    Process process = new Process
-                    {
-                        StartInfo = { FileName = "WebBrowserEx.exe", Arguments = cookies }
-                    };
-                    process.Start();
-                    process.WaitForExit();
+
+                    //!!! Нельзя здесь откр. новый процесс, т.к стандартный браузер уже выполняется (Rendered)
+                    // this.OpenSession - внутри 'StartSeparateProcess'
+                    //StartSeparateProcess(url);
+
+                    this.OpenSession(url, false);
+                    this.IeWeb.Navigate(string.Format("{0}/users/login.html", url));
                 }
                 #endregion
 
@@ -1433,7 +1460,7 @@ namespace NewLauncher.View
             List<System.Net.Cookie> cookies = JsonConvert.DeserializeObject<List<System.Net.Cookie>>(RequestHelper.Client.GetCookies(this.url));
             if ((cookies != null) && (cookies.Count > 0))
             {
-                if (!host.Contains("gme-infotech.com"))
+                if (!host.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot)) // "gme-infotech.com"
                 {
                     this.ClearCookies();
                     this.InsertCookies(host, cookies);
@@ -1472,6 +1499,6 @@ namespace NewLauncher.View
             this.GeckoHost.Visibility = Visibility.Visible;
             return true;
         }
-
     }
 }
+

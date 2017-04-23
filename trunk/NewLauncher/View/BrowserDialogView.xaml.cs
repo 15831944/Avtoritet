@@ -122,7 +122,6 @@ namespace NewLauncher.View
         {
         }
 
-
         [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool InternetSetCookie(string lpszUrlName, string lbszCookieName, string lpszCookieData);
         public void SetCookies(string url, string cookies)

@@ -18,6 +18,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -342,33 +343,32 @@ namespace NewLauncher
             {
                 using (AvtoritetEntities entities = new AvtoritetEntities())
                 {
-                    int? settingVersion = entities.SettingUpdate.FirstOrDefault<SettingUpdate>().SettingVersion;
-                    Version version = new Version(entities.VersionLog.FirstOrDefault<VersionLog>().Value);
-                    Version version2 = new Version(JsonConvert.DeserializeObject<VersionEntity>(FileHelper.OpenFile("Version.json")).Version);
-                    if (version > version2)
-                    {
-                        try
-                        {
+                    //if (!(entities.Database.Connection.State == ConnectionState.Closed))
+                    //{
+                        int? settingVersion = entities.SettingUpdate.FirstOrDefault<SettingUpdate>().SettingVersion;
+                        Version version = new Version(entities.VersionLog.FirstOrDefault<VersionLog>().Value)
+                            , version2 = new Version(JsonConvert.DeserializeObject<VersionEntity>(FileHelper.OpenFile("Version.json")).Version);
+                        if (version > version2) {
+                            try {
+                            } catch (Exception exception1) {
+                                exception = exception1;
+                                ErrorLogHelper.AddErrorInLog("LoadUpdates()", exception.Message + " | " + exception.StackTrace);
+                            }
                         }
-                        catch (Exception exception1)
-                        {
-                            exception = exception1;
-                            ErrorLogHelper.AddErrorInLog("LoadUpdates()", exception.Message + " | " + exception.StackTrace);
+                        if (!System.IO.File.Exists("settingver.txt")) {
+                            System.IO.File.WriteAllText("settingver.txt", "1");
                         }
-                    }
-                    if (!System.IO.File.Exists("settingver.txt"))
-                    {
-                        System.IO.File.WriteAllText("settingver.txt", "1");
-                    }
-                    int num = int.Parse(System.IO.File.ReadAllText("settingver.txt"));
-                    int? nullable2 = settingVersion;
-                    int num2 = num;
-                    if ((nullable2.GetValueOrDefault() > num2) && nullable2.HasValue)
-                    {
-                        launcherSettings = new SettingsFactory(categoryEventHandler).DownloadSettings(true, true);
-                        System.IO.File.WriteAllText("settingver.txt", settingVersion.ToString());
-                        HaveNewUpdate = true;
-                    }
+                        int num = int.Parse(System.IO.File.ReadAllText("settingver.txt"));
+                        int? nullable2 = settingVersion;
+                        int num2 = num;
+                        if ((nullable2.GetValueOrDefault() > num2) && nullable2.HasValue) {
+                            launcherSettings = new SettingsFactory(categoryEventHandler).DownloadSettings(true, true);
+                            System.IO.File.WriteAllText("settingver.txt", settingVersion.ToString());
+                            HaveNewUpdate = true;
+                        }
+                    //}
+                    //else
+                    //ErrorLogHelper.AddErrorInLog("Обновление приложения - LoadUpdates() - ...", string.Format("Состояние БД={0}", entities.Database.Connection.State.ToString()));
                 }
             }
             catch (Exception exception2)
