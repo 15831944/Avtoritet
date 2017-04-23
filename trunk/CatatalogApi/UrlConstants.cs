@@ -18,7 +18,7 @@ namespace CatalogApi
         #endregion
 
         #region chevrolet/opel
-        private static int chevroletopelgroup_version = 1;
+        private static int chevroletopelgroup_version = 0;
         private static string[] chevroletopelgroup_root_array = { "imtportal.gm", "gme-infotech" };
         public static string ChevroletOpelGroupRoot = chevroletopelgroup_root_array[chevroletopelgroup_version];
         private static string[] chevroletopelgroup_array = { "https://imtportal.gm.com", "https://gme-infotech.com" };

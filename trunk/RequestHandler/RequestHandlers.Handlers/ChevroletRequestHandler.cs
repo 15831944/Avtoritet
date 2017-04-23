@@ -56,7 +56,13 @@ namespace RequestHandlers.Handlers
 
 		public async Task<HttpResponseMessage> OpenSessionAsync(CookieContainer cookieContainer)
 		{
-			return await HttpProxyServer.SendRequest(ChevroletRequestFactory.CreateLoginRequest(this.login, this.password), cookieContainer);
+			return await HttpProxyServer.SendRequest(ChevroletRequestFactory.CreateLoginRequest(
+			    // вар№0"https://imtportal.gm.com"
+                CatalogApi.UrlConstants.ChevroletOpelGroup // вар№1 
+                // вар№2 "https://gme-infotech.com"
+                , this.login
+                , this.password)
+                , cookieContainer);
 		}
 
 		private static void PrintCookies(IEnumerable cookies)

@@ -5,20 +5,20 @@ namespace RequestHandlers
 {
 	public static class RequestHandlerFactory
 	{
-		public static IRequestHandler Create(string url, string Login, string Password, string optional = null)
+		public static IRequestHandler Create(string url, string login, string password, string optional = null)
 		{
 			IRequestHandler result;
 			if (url.Contains("citroen"))
 			{
-				result = new CitroenRequestHandler(Login, Password);
+				result = new CitroenRequestHandler(login, password);
 			}
 			else if (url.Contains("peugeot"))
 			{
-				result = new PeugeotRequestHandler(Login, Password);
+				result = new PeugeotRequestHandler(login, password);
 			}
 			else if (url.Contains(CatalogApi.UrlConstants.Partslink24Root))
 			{
-				result = new PartsLink24RequestHandler(Login, Password);
+				result = new PartsLink24RequestHandler(login, password);
 			}
 			else
 			{
@@ -28,11 +28,11 @@ namespace RequestHandlers
 				}
 				if (!string.IsNullOrEmpty(optional))
 				{
-					result = new OpelRequestHandler(Login, Password);
+					result = new OpelRequestHandler(login, password);
 				}
 				else
 				{
-					result = new ChevroletRequestHandler(Login, Password);
+					result = new ChevroletRequestHandler(login, password);
 				}
 			}
 			return result;

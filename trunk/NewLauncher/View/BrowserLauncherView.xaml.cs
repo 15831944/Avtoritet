@@ -959,6 +959,23 @@ namespace NewLauncher.View
                     }
                     else
                         ;
+                    // Navigate To scriptions - login is before success
+                    if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/index.html"))
+                    {
+                        string navigateToLogin = string.Empty;
+
+                        navigateToLogin =
+                            webBrowserDocumentCompletedEventArgs.Url.ToString().Replace("/index.html", "/subscriptions.html")
+                            //"https://gme-infotech.com/users/login.html"
+                            ;
+
+                        this.IeWeb.Navigate(navigateToLogin);
+                        this.DelayForNextNavigation(this.IeHost, 0x1388, 0x1f40);
+
+                        return;
+                    }
+                    else
+                        ;
                     // Auto Log-on
                     if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/users/login.html"))
                         foreach (HtmlElement element in this.IeWeb.Document.GetElementsByTagName("form"))

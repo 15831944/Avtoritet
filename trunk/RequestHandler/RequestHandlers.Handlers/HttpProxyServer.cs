@@ -11,8 +11,9 @@ namespace RequestHandlers.Handlers
 		public static async Task<HttpResponseMessage> SendRequest(HttpRequestMessage httpRequestMessage, CookieContainer cookieContainer)
 		{
 			int arg_54_0 = 0;
-			httpRequestMessage.RequestUri.AbsoluteUri.IndexOf("partslink24.com");
-			HttpResponseMessage result;
+			//httpRequestMessage.RequestUri.AbsoluteUri.IndexOf(string.Format("{0}.com", CatalogApi.UrlConstants.Partslink24Root));
+
+            HttpResponseMessage result;
 			if (arg_54_0 != 0)
 			{
 				HttpProxyServer.ConfigureMessageHeaders(httpRequestMessage);
@@ -20,15 +21,18 @@ namespace RequestHandlers.Handlers
 				{
 					httpClient.BaseAddress = httpRequestMessage.RequestUri;
 					result = await httpClient.SendAsync(httpRequestMessage);
+
 					return result;
 				}
 			}
+
 			HttpProxyServer.ConfigureMessageHeaders(httpRequestMessage);
 			using (HttpClient httpClient2 = new HttpClient(HttpProxyServer.CreateClientHandler(cookieContainer), true))
 			{
 				httpClient2.BaseAddress = httpRequestMessage.RequestUri;
 				result = await httpClient2.SendAsync(httpRequestMessage);
 			}
+
 			return result;
 		}
 
@@ -43,14 +47,14 @@ namespace RequestHandlers.Handlers
 
 		private static HttpClientHandler CreateClientHandler2(CookieContainer cookieContainer)
 		{
-			ConsoleHelper.Info("WebProxy - http://40d002f8ae14.sn.mynetname.net:5190");
+			ConsoleHelper.Info(string.Format("WebProxy - {0}", CatalogApi.UrlConstants.WEB_PROXY));
 			return new HttpClientHandler
 			{
 				AllowAutoRedirect = true,
 				ClientCertificateOptions = ClientCertificateOption.Automatic,
 				UseCookies = true,
 				CookieContainer = cookieContainer,
-				Proxy = new WebProxy("http://40d002f8ae14.sn.mynetname.net:5190", false),
+				Proxy = new WebProxy(CatalogApi.UrlConstants.WEB_PROXY, false),
 				UseProxy = true
 			};
 		}

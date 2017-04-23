@@ -2,6 +2,10 @@ namespace CatalogApi
 {
     public static class UrlConstants
     {
+        #region SERVICE
+        public const string WEB_PROXY = "http://40d002f8ae14.sn.mynetname.net:5190";
+        #endregion
+
         #region BMW
         public const string BMW_Root = "bmwgroup";
         public const string BMW_ETKEntry = "https://www.parts.bmwgroup.com/tetis/starteApplikationAction.do?ENTRY_ID=WebETK_START";
@@ -18,7 +22,7 @@ namespace CatalogApi
         #endregion
 
         #region chevrolet/opel
-        private static int chevroletopelgroup_version = 1;
+        private static int chevroletopelgroup_version = 0;
         private static string[] chevroletopelgroup_root_array = { "imtportal.gm", "gme-infotech" };
         public static string ChevroletOpelGroupRoot = chevroletopelgroup_root_array[chevroletopelgroup_version];
         private static string[] chevroletopelgroup_array = { "https://imtportal.gm.com", "https://gme-infotech.com" };

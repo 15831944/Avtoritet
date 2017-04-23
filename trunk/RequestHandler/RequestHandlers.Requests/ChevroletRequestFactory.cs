@@ -6,13 +6,13 @@ namespace RequestHandlers.Requests
 {
 	public class ChevroletRequestFactory
 	{
-		public static HttpRequestMessage CreateLoginRequest(string Login, string Password)
+		public static HttpRequestMessage CreateLoginRequest(string url, string login, string password)
 		{
 			return new HttpRequestMessage
 			{
-				Content = ChevroletRequestFactory.FormUrlEncodedContent(Login, Password),
+				Content = ChevroletRequestFactory.FormUrlEncodedContent(login, password),
 				Method = HttpMethod.Post,
-				RequestUri = new Uri(CatalogApi.UrlConstants.ChevroletOpelGroupUserLoginDo)
+				RequestUri = new Uri(url)
 			};
 		}
 
@@ -26,12 +26,12 @@ namespace RequestHandlers.Requests
 			};
 		}
 
-		private static FormUrlEncodedContent FormUrlEncodedContent(string Login, string Password)
+		private static FormUrlEncodedContent FormUrlEncodedContent(string login, string password)
 		{
 			List<KeyValuePair<string, string>> postData = new List<KeyValuePair<string, string>>
 			{
-				new KeyValuePair<string, string>("logon", Login),
-				new KeyValuePair<string, string>("password", Password)
+				new KeyValuePair<string, string>("logon", login),
+				new KeyValuePair<string, string>("password", password)
 			};
 			return new FormUrlEncodedContent(postData);
 		}

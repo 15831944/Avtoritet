@@ -33,8 +33,8 @@ namespace RelayServer.Portals
 		    //Uri uri;
 		    string
                 urlSession = string.Empty,
-		        Login = string.Empty,
-		        Password = string.Empty;
+		        login = string.Empty,
+		        password = string.Empty;
 
             using (AvtoritetEntities ae = new AvtoritetEntities())
             {
@@ -42,8 +42,8 @@ namespace RelayServer.Portals
                 ProvAcc provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).FirstOrDefault<ProvAcc>();
                 if (provider != null)
                 {
-                    Login = provider.Login;
-                    Password = provider.Password;
+                    login = provider.Login;
+                    password = provider.Password;
                 }
             }
 
@@ -51,7 +51,7 @@ namespace RelayServer.Portals
 		    //urlSession = string.Format("{0}://{1}", uri.Scheme, uri.Host);
 		    urlSession = url;
 
-            this.requestHandler = RequestHandlerFactory.Create(urlSession, Login, Password, null);
+            this.requestHandler = RequestHandlerFactory.Create(urlSession, login, password, null);
 			HttpResponseMessage responseMessage = this.GetResponse(urlSession, forceSession, this.requestHandler, ChevroletPortal.CookieContainer);
 			if (responseMessage != null)
 			{
