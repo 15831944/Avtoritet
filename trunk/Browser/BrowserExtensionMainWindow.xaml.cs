@@ -61,36 +61,42 @@ namespace BrowserExtension
 
                 Task.Factory.StartNew(delegate
                 {
-                    string fileNameSession = "Session_ChevroletOpelGroup.txt";
+                    string fileNameSession = string.Empty; // "Session_ChevroletOpelGroup.txt";
                     string[] commandLineArgs = Environment.GetCommandLineArgs();
                     string value = string.Empty;
                     if ((commandLineArgs.Length > 1)
                         && (commandLineArgs[1].Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true)) {
-                        base.Dispatcher.BeginInvoke(new Action(delegate
-                        {
-                            base.Title = "***Chevrolet-Opel Dealer Online***";
-                        }), new object[0]);
+                        if (commandLineArgs.Length > 2) {
+                            fileNameSession = commandLineArgs[2];
 
-                        logging(String.Format("Browser::ctor () - read local session settings(file={0}) - ???..."
-                            , fileNameSession));
-                        if (File.Exists(fileNameSession) == true)
-                        {
-                            using (FileStream fileStream =
-                                new FileStream(fileNameSession, FileMode.Open, FileAccess.Read))
+                            base.Dispatcher.BeginInvoke(new Action(delegate
                             {
-                                using (StreamReader streamReader = new StreamReader(fileStream))
+                                base.Title = "***Chevrolet-Opel Dealer Online***";
+                            }), new object[0]);
+
+                            logging(String.Format("Browser::ctor () - read local session settings(file={0}) - ???..."
+                                , fileNameSession));
+                            if (File.Exists(fileNameSession) == true)
+                            {
+                                using (FileStream fileStream =
+                                    new FileStream(fileNameSession, FileMode.Open, FileAccess.Read))
                                 {
-                                    value = streamReader.ReadToEnd();
+                                    using (StreamReader streamReader = new StreamReader(fileStream))
+                                    {
+                                        value = streamReader.ReadToEnd();
+                                    }
                                 }
+                                logging(String.Format(
+                                    "Browser::ctor () - read local session settings(file={0}) - success..."
+                                    , fileNameSession));
                             }
-                            logging(String.Format(
-                                "Browser::ctor () - read local session settings(file={0}) - success..."
-                                , fileNameSession));
-                        }
-                        else
-                            logging(String.Format(
-                                "Browser::ctor () - read local session settings(file={0}) - not exists..."
-                                , fileNameSession));
+                            else
+                                logging(String.Format(
+                                    "Browser::ctor () - read local session settings(file={0}) - not exists..."
+                                    , fileNameSession));
+                        } else
+                        // в аргументах не указан файл в котором сохранены cookie
+                            ;
                     } else
                         ;
 
@@ -129,11 +135,13 @@ namespace BrowserExtension
                                 + "Кол-во аргументов: {1}{0}"
                                 + "1-ый аргумент={2}{0}"
                                 + "2-ой аргумент={3}{0}"
-                                + "cookie={4}"
+                                + "3-ий аргумент={4}{0}"
+                                + "cookie={5}"
                             , Environment.NewLine
                             , commandLineArgs.Length
                             , commandLineArgs.Length > 1 ? commandLineArgs[1] : "отсутсвует"
                             , commandLineArgs.Length > 2 ? commandLineArgs[2] : "отсутсвует"
+                            , commandLineArgs.Length > 3 ? commandLineArgs[3] : "отсутсвует"
                             , string.IsNullOrWhiteSpace(value) == false ? value : "отсутсвуют"));
                     }
                 });
@@ -221,26 +229,31 @@ namespace BrowserExtension
                 , webBrowserDocumentCompletedEventArgs.Url.ToString()));
 
             try {
-                if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/users/login.html") == true) {
+                if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/index.html") == true)
+                {
                     if (IsDocumentValidate == true)
-                    // Credentials
-                        foreach (HtmlElement htmlElement in InternetExplorer.Document.GetElementsByTagName("form"))
-                        {
+                    {
+                        InternetExplorer.Navigate(webBrowserDocumentCompletedEventArgs.Url.ToString().Replace("index.html", "subscriptions.html"));
+
+                        this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
+                    }
+                    else
+                        ;
+                } else /*if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/users/login.html") == true) {
+                    if (IsDocumentValidate == true)
+                        // Credentials
+                        foreach (HtmlElement htmlElement in InternetExplorer.Document.GetElementsByTagName("form")) {
                             if (CatalogApi.Autocomplit.TypeCredentials(this.InternetExplorer.Document
                                 , htmlElement
-                                , "logon", "avtoritetepc", "password", "Hugoboss5070") == true)
-                            {
+                                , "logon", "avtoritetepc", "password", "Hugoboss5070") == true) {
                                 this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
 
                                 break;
-                            }
-                            else
+                            } else
                                 ;
-                        }
-                    else
-                            ;
-                } else if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/subscriptions.html"))
-                    {
+                    } else
+                        ;
+                } else*/ if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/subscriptions.html")) {
                     if (IsDocumentValidate == true)
                         // EPC
                         foreach (HtmlElement htmlElement in this.InternetExplorer.Document.GetElementsByTagName("form")) {
@@ -250,11 +263,9 @@ namespace BrowserExtension
                                 break;
                             } else
                                 ;
-                        }
-                    else
-                        ;
-                }
-                else
+                    } else
+                    ;
+                } else
                     ;
             } catch (Exception ex) {
                 logging(ex);
