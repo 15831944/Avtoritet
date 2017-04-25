@@ -1,5 +1,6 @@
 using RequestHandlers.Handlers;
 using System;
+using RequestHandlers.Helpers;
 
 namespace RequestHandlers
 {
@@ -7,7 +8,9 @@ namespace RequestHandlers
 	{
 		public static IRequestHandler Create(string url, string login, string password, string optional = null)
 		{
-			IRequestHandler result;
+		    ConsoleHelper.Trace(string.Format("RequestHandlerFactory::Create(url={0}, login={1}, password={2})", url, login, password));
+
+            IRequestHandler result;
 			if (url.Contains("citroen"))
 			{
 				result = new CitroenRequestHandler(login, password);

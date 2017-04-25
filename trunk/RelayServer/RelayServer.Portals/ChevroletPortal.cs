@@ -38,7 +38,15 @@ namespace RelayServer.Portals
 
             using (AvtoritetEntities ae = new AvtoritetEntities())
             {
-                string sql = string.Format("SELECT        TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password\r\n                                            FROM dbo.Provider INNER JOIN\r\n                                            dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId\r\n                                            WHERE(dbo.Provider.Uri LIKE N'%{0}%') AND(dbo.ProviderAccount.Enable = 1)", CatalogApi.UrlConstants.ChevroletOpelGroupRoot);
+                string sql = string.Format(
+                    //"SELECT        TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password\r\n                                            FROM dbo.Provider INNER JOIN\r\n                                            dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId\r\n                                            WHERE(dbo.Provider.Uri LIKE N'%{0}%') AND(dbo.ProviderAccount.Enable = 1)"
+                    //, CatalogApi.UrlConstants.ChevroletOpelGroupRoot)
+                    "SELECT TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{0}{1}"
+                    + "FROM dbo.Provider{0}{1}"
+                    + "INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{0}{1}"
+                    + "WHERE(dbo.Provider.Uri = N'{2}') AND (dbo.ProviderAccount.Enable = 1)"
+                    , "\r\n", "                                            ", url)
+                    ;
                 ProvAcc provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).FirstOrDefault<ProvAcc>();
                 if (provider != null)
                 {
@@ -48,7 +56,7 @@ namespace RelayServer.Portals
             }
 
 		    //uri = new Uri(url);
-		    //urlSession = string.Format("{0}://{1}", uri.Scheme, uri.Host);
+		    //urlSession = string.Format("{0}://{1}/", uri.Scheme, uri.Host);
 		    urlSession = url;
 
             this.requestHandler = RequestHandlerFactory.Create(urlSession, login, password, null);
@@ -93,7 +101,7 @@ namespace RelayServer.Portals
                 ConsoleHelper.Debug("CHEVROLET");
 				if (reqHandler.NeedAuthorization(url, container))
 				{
-					HttpResponseMessage session = reqHandler.OpenSessionAsync(url, container);
+					HttpResponseMessage session = reqHandler.OpenSessionAsync(string.Format("{0}/users/login.html", url), container);
 					ConsoleHelper.Info(string.Format("Open session status: {0}", session.StatusCode));
 					if (!this.SessionHasError(session))
 					{// Success

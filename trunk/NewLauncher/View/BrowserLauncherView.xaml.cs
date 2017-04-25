@@ -976,23 +976,23 @@ namespace NewLauncher.View
                     }
                     else
                         ;
-                    // Auto Log-on
-                    if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/users/login.html"))
-                        foreach (HtmlElement element in this.IeWeb.Document.GetElementsByTagName("form"))
-                        {
-                            if (CatalogApi.Autocomplit.TypeCredentials(this.IeWeb.Document
-                                , element
-                                , "logon", login, "password", password) == true)
-                            {
-                                this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
+                    //// Auto Log-on
+                    //if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/users/login.html"))
+                    //    foreach (HtmlElement element in this.IeWeb.Document.GetElementsByTagName("form"))
+                    //    {
+                    //        if (CatalogApi.Autocomplit.TypeCredentials(this.IeWeb.Document
+                    //            , element
+                    //            , "logon", login, "password", password) == true)
+                    //        {
+                    //            this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
 
-                                return;
-                            }
-                            else
-                                ;
-                        }
-                    else
-                        ;
+                    //            return;
+                    //        }
+                    //        else
+                    //            ;
+                    //    }
+                    //else
+                    //    ;
                     // EPC
                     if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/subscriptions.html"))
                         foreach (HtmlElement element in this.IeWeb.Document.GetElementsByTagName("form"))

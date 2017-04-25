@@ -69,19 +69,19 @@ namespace NewLauncher.View
                 if (url.StartsWith("http") || url.StartsWith("https"))
                 {
                     if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true) {
-                        // вариант №1(отдельный броаузер)
-                        StartSeparateProcess(url);
+                        // вариант №1 (отдельный броаузер)
+                        //StartSeparateProcess(url);
 
-                        //// вариант №2 (как у всех остальных Brand)
-                        //Uri uri;
-                        //string urlSession = string.Empty;
+                        // вариант №2 (как у всех остальных Brand)
+                        Uri uri;
+                        string urlSession = string.Empty;
 
-                        //uri = new Uri(url);
-                        //urlSession = string.Format("{0}://{1}", uri.Scheme, uri.Host);
+                        uri = new Uri(url);
+                        urlSession = string.Format("{0}://{1}", uri.Scheme, uri.Host);
 
-                        //NewBrowserLauncherView(((ButtonModel)sender).ProviderId
-                        //    , urlSession
-                        //    , ((ButtonModel)sender).Content);
+                        NewBrowserLauncherView(((ButtonModel)sender).ProviderId
+                            , urlSession
+                            , ((ButtonModel)sender).Content);
                     } else {
                         NewBrowserLauncherView(((ButtonModel)sender).ProviderId, url, ((ButtonModel)sender).Content);
                     }
@@ -230,15 +230,14 @@ namespace NewLauncher.View
 
         private static void StartSeparateProcess(string url)
         {
-            string fileNameBrowser = "BrowserExtension.exe"
-                , fileNameSessionCookies = "Session_ChevroletOpelGroup.txt";
+            string fileNameBrowser = "BrowserExtension.exe";
 
             FileStream stream;
             StreamWriter writer;
             RequestHelper.Client.OpenSession(url, true);
             string cookies = RequestHelper.Client.GetCookies(url);
             if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot)) {
-                using (stream = new FileStream(fileNameSessionCookies, FileMode.Create, FileAccess.Write)) {
+                using (stream = new FileStream("Session_ChevroletOpelGroup.txt", FileMode.Create, FileAccess.Write)) {
                     using (writer = new StreamWriter(stream)) {
                         writer.Write(cookies);
                     }
@@ -266,7 +265,7 @@ namespace NewLauncher.View
                     StartInfo =
                     {
                         FileName = fileNameBrowser
-                        , Arguments = String.Join(" ", new string[] { string.Format("{0}/users/login.html", url), fileNameSessionCookies }) // CatalogApi.UrlConstants.ChevroletOpelGroupUserLoginDo
+                        , Arguments = CatalogApi.UrlConstants.ChevroletOpelGroupUserLoginDo
                         , CreateNoWindow = true
                         , UseShellExecute = false
                     }

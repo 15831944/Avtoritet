@@ -179,11 +179,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DataContext.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="DataContext.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DataContext.tt</DependentUpon>
-    </Compile>
     <Compile Include="DataContext.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -360,9 +355,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="app.config" />
     <EntityDeploy Include="DataContext.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>DataContext.Designer.cs</LastGenOutput>
