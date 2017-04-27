@@ -12,7 +12,7 @@ namespace RequestHandlers.Requests
 			{
 				Content = ChevroletRequestFactory.FormUrlEncodedContent(login, password),
 				Method = HttpMethod.Post,
-				RequestUri = new Uri(url)
+				RequestUri = new Uri(string.Format("{0}/users/login.html", url))
 			};
 		}
 

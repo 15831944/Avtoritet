@@ -32,10 +32,12 @@ namespace RequestHandlers.Handlers
 		public bool NeedAuthorization(string url, CookieContainer cookieContainer)
 		{
 			CookieCollection cookies = cookieContainer.GetCookies(new Uri(url));
-			if (cookies.Count > 0)
-			{
-				ChevroletRequestHandler.PrintCookies(cookies);
-			}
+
+		    if (cookies.Count > 0)
+		        ChevroletRequestHandler.PrintCookies(cookies);
+		    else
+		        ;
+
 			return cookies.Count == 0;
 		}
 
@@ -58,7 +60,7 @@ namespace RequestHandlers.Handlers
 		{
 			return await HttpProxyServer.SendRequest(ChevroletRequestFactory.CreateLoginRequest(
 			    // вар№0"https://imtportal.gm.com"
-                CatalogApi.UrlConstants.ChevroletOpelGroup // вар№1 
+                string.Format("{0}/", CatalogApi.UrlConstants.ChevroletOpelGroup) // вар№1 
                 // вар№2 "https://gme-infotech.com"
                 , this.login
                 , this.password)

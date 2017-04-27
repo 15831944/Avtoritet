@@ -4,13 +4,17 @@ using NewLauncher.Entities;
 using NewLauncher.Factory;
 using NewLauncher.Helper;
 using NewLauncher.Interop;
+using Newtonsoft.Json;
 using System;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Reflection;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
@@ -69,7 +73,7 @@ namespace NewLauncher.View
                 if (url.StartsWith("http") || url.StartsWith("https"))
                 {
                     if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true) {
-                        // вариант №1 (отдельный броаузер)
+                        //// вариант №1(отдельный броаузер)
                         //StartSeparateProcess(url);
 
                         // вариант №2 (как у всех остальных Brand)
@@ -79,9 +83,7 @@ namespace NewLauncher.View
                         uri = new Uri(url);
                         urlSession = string.Format("{0}://{1}", uri.Scheme, uri.Host);
 
-                        NewBrowserLauncherView(((ButtonModel)sender).ProviderId
-                            , urlSession
-                            , ((ButtonModel)sender).Content);
+                        NewBrowserLauncherView(((ButtonModel)sender).ProviderId, urlSession, ((ButtonModel)sender).Content);
                     } else {
                         NewBrowserLauncherView(((ButtonModel)sender).ProviderId, url, ((ButtonModel)sender).Content);
                     }
@@ -230,12 +232,15 @@ namespace NewLauncher.View
 
         private static void StartSeparateProcess(string url)
         {
-            string fileNameBrowser = "BrowserExtension.exe";
+            string fileNameBrowser = "BrowserExtension.exe"
+                , fileNameSession = "Session_ChevroletOpelGroup.txt";
 
             FileStream stream;
             StreamWriter writer;
             RequestHelper.Client.OpenSession(url, true);
             string cookies = RequestHelper.Client.GetCookies(url);
+            //List<System.Net.Cookie> listCookies = JsonConvert.DeserializeObject<List<System.Net.Cookie>>(cookies);
+            // куки передаем через командную строку
             if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot)) {
                 using (stream = new FileStream("Session_ChevroletOpelGroup.txt", FileMode.Create, FileAccess.Write)) {
                     using (writer = new StreamWriter(stream)) {
@@ -243,42 +248,41 @@ namespace NewLauncher.View
                     }
                 }
             }
-            // вариант №1 (рабочий)
-            //using (Process process = new Process()
-            //    { StartInfo =
+            // вариант №1(рабочий)
+            using (Process process = new Process() {
+                StartInfo =
+                    {
+                        FileName = fileNameBrowser
+                        , Arguments = string.Join(" ", new string[] { url, fileNameSession })
+                        , CreateNoWindow = true
+                        , UseShellExecute = false
+                    }
+            }) {
+                if (process.Start() == false)
+                    ErrorLogHelper.AddErrorInLog(string.Format("Process.Start: {0}", fileNameBrowser), "Unknown reason");
+                else
+                    ;
+            }
+            //// вариант №2 (для отладки)
+            //try {
+            //    Process process = new Process() {
+            //        StartInfo =
             //        {
-            //            FileName = "BrowserExtension.exe",
-            //            Arguments = url,
-            //            CreateNoWindow = true,
-            //            UseShellExecute = false
+            //            FileName = fileNameBrowser
+            //            , Arguments = string.Join(" ", new string[] {url, fileNameSession /*cookies*/})
+            //            , CreateNoWindow = true
+            //            , UseShellExecute = false
             //        }
-            //    })
-            //{
+            //    };
+
             //    if (process.Start() == false)
             //        ErrorLogHelper.AddErrorInLog("Process.Start: BrowserExtension.exe", "Unknown reason");
             //    else
             //        ;
+            //} catch (Exception e) {
+            //    ErrorLogHelper.AddErrorInLog(string.Format("Process.Start: {0}", fileNameBrowser), e.Message + " | " + e.StackTrace);
+            //    Debug.WriteLine("[{0}-{1}] {2} / {3}", new object[] { DateTime.Now, fileNameBrowser, e.Message, e.StackTrace });
             //}
-            // вариант №2 (для отладки)
-            try {
-                Process process = new Process() {
-                    StartInfo =
-                    {
-                        FileName = fileNameBrowser
-                        , Arguments = CatalogApi.UrlConstants.ChevroletOpelGroupUserLoginDo
-                        , CreateNoWindow = true
-                        , UseShellExecute = false
-                    }
-                };
-
-                if (process.Start() == false)
-                    ErrorLogHelper.AddErrorInLog("Process.Start: BrowserExtension.exe", "Unknown reason");
-                else
-                    ;
-            } catch (Exception e) {
-                ErrorLogHelper.AddErrorInLog(string.Format("Process.Start: {0}", fileNameBrowser), e.Message + " | " + e.StackTrace);
-                Debug.WriteLine("[{0}-{1}] {2} / {3}", new object[] { DateTime.Now, fileNameBrowser, e.Message, e.StackTrace });
-            }
         }
     }
 }

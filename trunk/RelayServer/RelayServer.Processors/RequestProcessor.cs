@@ -178,7 +178,17 @@ namespace RelayServer.Processors
 		public string GetCookies(string url)
 		{
 			string result;
-			try
+
+		    Uri uri = new Uri(url);
+		    ConsoleHelper.Debug(string.Format("GetCookies() - url={0} || —хема={1} || ’ост={2} || абс.={3} || лок.={4} || файл?={5}"
+                , url
+                , uri.Scheme
+		        , uri.Host
+		        , uri.AbsolutePath
+		        , uri.LocalPath
+		        , uri.IsFile));
+
+            try
 			{
 				if (url.Contains("citroen"))
 				{
@@ -188,49 +198,24 @@ namespace RelayServer.Processors
 				{
 					result = RequestProcessor.PeugeotPortal.GetCookies(url);
 				}
-				else
+				else if (url.Contains(CatalogApi.UrlConstants.Partslink24Root))
+			    {
+			        result = RequestProcessor.PartslinkPortal.GetCookies(url);
+
+			    } else if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
 				{
-					if (!url.Contains(CatalogApi.UrlConstants.Partslink24Root))
-					{
-						if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
-						{
-						    Uri uri = new Uri(url);
-						    string urlToCookies = string.Format("{0}://{1}", uri.Scheme, uri.Host);
-                            ConsoleHelper.Debug(string.Format("ToCookis={0} || ’ост={1} || абс.={2} || лок.={3} || файл?={4}"
-						        , urlToCookies
-                                , uri.Host
-						        , uri.AbsolutePath
-						        , uri.LocalPath
-						        , uri.IsFile));
-
-                            result = RequestProcessor.ChevroletPortal.GetCookies(urlToCookies);
-
-                            return result;
-
-                            //if (url.Contains("opel"))
-                            //{
-                            //	result = RequestProcessor.OpelPortal.GetCookies(url.Replace("opel", string.Empty));
-                            //	return result;
-                            //}
-                            //if (url.Contains("chevrolet"))
-                            //{
-                            //	result = RequestProcessor.ChevroletPortal.GetCookies(url.Replace("opel", string.Empty));
-                            //	return result;
-                            //}
-                        }
-
-						throw new System.Exception("Getting cookies error");
-					}
-
-					result = RequestProcessor.PartslinkPortal.GetCookies(url);
+                    result = RequestProcessor.ChevroletPortal.GetCookies(url);
 				}
-			}
+				else
+				    throw new System.Exception(string.Format("Getting cookies error (url={0}) - ..", url));
+            }
 			catch (System.Exception ex)
 			{
 				ErrorLogHelper.AddErrorInLog("GetCookies()", ex.Message + "|" + ex.StackTrace);
 				ConsoleHelper.Error(string.Format("{0} || {1} || {2}", ex.Message, ex.StackTrace, ex.Data));
 				result = string.Empty;
 			}
+
 			return result;
 		}
 

@@ -61,62 +61,71 @@ namespace BrowserExtension
 
                 Task.Factory.StartNew(delegate
                 {
-                    string fileNameSession = "Session_ChevroletOpelGroup.txt";
+                    //string fileNameSession = "Session_ChevroletOpelGroup.txt";
                     string[] commandLineArgs = Environment.GetCommandLineArgs();
-                    string value = string.Empty;
-                    if ((commandLineArgs.Length > 1)
-                        && (commandLineArgs[1].Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true)) {
+                    string fileNameSession;
+                    string cookies = string.Empty;
+                    if ((commandLineArgs.Length > 2)
+                        && (commandLineArgs[1].Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true)
+                        && ((string.IsNullOrWhiteSpace(commandLineArgs[2])) == false)) {
                         base.Dispatcher.BeginInvoke(new Action(delegate
                         {
                             base.Title = "***Chevrolet-Opel Dealer Online***";
                         }), new object[0]);
 
+                        fileNameSession = commandLineArgs[2];
                         logging(String.Format("Browser::ctor () - read local session settings(file={0}) - ???..."
                             , fileNameSession));
-                        if (File.Exists(fileNameSession) == true)
-                        {
+                        if (File.Exists(fileNameSession) == true) {
                             using (FileStream fileStream =
-                                new FileStream(fileNameSession, FileMode.Open, FileAccess.Read))
-                            {
-                                using (StreamReader streamReader = new StreamReader(fileStream))
-                                {
-                                    value = streamReader.ReadToEnd();
+                                new FileStream(fileNameSession, FileMode.Open, FileAccess.Read)) {
+                                using (StreamReader streamReader = new StreamReader(fileStream)) {
+                                    cookies = streamReader.ReadToEnd();
                                 }
                             }
                             logging(String.Format(
                                 "Browser::ctor () - read local session settings(file={0}) - success..."
                                 , fileNameSession));
-                        }
-                        else
+                        } else
                             logging(String.Format(
                                 "Browser::ctor () - read local session settings(file={0}) - not exists..."
                                 , fileNameSession));
                     } else
                         ;
 
-                    if (string.IsNullOrEmpty(value) == false) {
-                        logging(String.Format("Browser::ctor (cookies={0}) - cookis not empty..."
-                            , value));
+                    if (string.IsNullOrEmpty(cookies) == false) {
+                        logging(String.Format("Browser::ctor (cookies={0}) - cookies not empty..."
+                            , cookies));
 
-                        string urlSetCookie = string.Format("{0}/", commandLineArgs[1])
-                            , urlNavigateDoLogin = string.Format("{0}/users/login.html", commandLineArgs[1]);
+                        string urlSetCookie = string.Format("{0}/", commandLineArgs[1]) // /
+                            , urlNavigateDoLogin = string.Format("{0}/users/login.html", commandLineArgs[1]); // /users/login.html
 
-                        List<Cookie> list = JsonConvert.DeserializeObject<List<Cookie>>(value);
-                        try
-                        {
-                            foreach (Cookie current in list)
-                            {
+                        logging(String.Format("Url to SetCookie (Url={0}) - ..."
+                            , urlSetCookie));
+
+                        logging(String.Format("Url to navigate do login (Url={0}) - ..."
+                            , urlNavigateDoLogin));
+
+                        List<Cookie> list;
+                        try {
+                            list = JsonConvert.DeserializeObject<List<Cookie>>(cookies);
+
+                            logging(String.Format("Cookies DeserializeObject ... (Length={0})", list.Count));
+  
+                            foreach (Cookie c in list) {
                                 logging(String.Format("Browser::ctor () - InternetSetCookie to={0}, key={1}, value={2}..."
                                     , urlSetCookie
-                                    , current.Name,
-                                    current.Value));
+                                    , c.Name
+                                    , c.Value));
 
-                                MainWindow.InternetSetCookie(urlSetCookie
-                                    , current.Name,
-                                    current.Value);
+                                if (MainWindow.InternetSetCookie(urlSetCookie
+                                    , c.Name,
+                                    c.Value) == false)
+                                    logging(string.Format("::InternetSetCookie () - ошибка..."));
+                                else
+                                    ;
                             }
-                        }
-                        catch (Exception ex)
+                        } catch (Exception ex)
                         {
                             logging(ex);
                         }
@@ -133,12 +142,10 @@ namespace BrowserExtension
                                 + "Кол-во аргументов: {1}{0}"
                                 + "1-ый аргумент={2}{0}"
                                 + "2-ой аргумент={3}{0}"
-                                + "cookie={4}"
                             , Environment.NewLine
                             , commandLineArgs.Length
                             , commandLineArgs.Length > 1 ? commandLineArgs[1] : "отсутсвует"
-                            , commandLineArgs.Length > 2 ? commandLineArgs[2] : "отсутсвует"
-                            , string.IsNullOrWhiteSpace(value) == false ? value : "отсутсвуют"));
+                            , commandLineArgs.Length > 2 ? commandLineArgs[2] : "отсутсвует"));
                     }
                 });
             } catch (Exception ex) {
@@ -225,7 +232,7 @@ namespace BrowserExtension
                 , webBrowserDocumentCompletedEventArgs.Url.ToString()));
 
             try {
-                if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/users/login.html") == true) {
+                /*if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/users/login.html") == true) {
                     if (IsDocumentValidate == true)
                     // Credentials
                         foreach (HtmlElement htmlElement in InternetExplorer.Document.GetElementsByTagName("form"))
@@ -243,8 +250,17 @@ namespace BrowserExtension
                         }
                     else
                             ;
-                } else if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/subscriptions.html"))
-                    {
+                } else*/ if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/index.html") == true) {
+                    if (IsDocumentValidate == true) {
+                        this.InternetExplorer.Navigate(webBrowserDocumentCompletedEventArgs.Url.ToString()
+                            .Replace("/index.html", "/subscriptions.html"));
+
+                        this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
+                    } else
+                        ;
+                }
+                else if(webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/subscriptions.html"))
+                {
                     if (IsDocumentValidate == true)
                         // EPC
                         foreach (HtmlElement htmlElement in this.InternetExplorer.Document.GetElementsByTagName("form")) {

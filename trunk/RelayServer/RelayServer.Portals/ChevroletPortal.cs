@@ -86,8 +86,8 @@ namespace RelayServer.Portals
 
 		public string GetCookies(string url)
 		{
-			string json = JsonConvert.SerializeObject(ChevroletPortal.CookieContainer.GetCookies(new Uri(url)).Cast<Cookie>().ToList<Cookie>());
-			ConsoleHelper.Debug(String.Format("Cookies obtained succesfully: {0}"
+			string json = JsonConvert.SerializeObject(ChevroletPortal.CookieContainer.GetCookies(new Uri(string.Format("{0}/", url))).Cast<Cookie>().ToList<Cookie>());
+			ConsoleHelper.Debug(String.Format("Cookies obtained successfully: {0}"
                 , json.Length > 0 ? json : "отсутствует"));
 			return json;
 		}
@@ -99,10 +99,10 @@ namespace RelayServer.Portals
 			lock (ChevroletPortal.AutorizeLock)
 			{
                 ConsoleHelper.Debug("CHEVROLET");
-				if (reqHandler.NeedAuthorization(url, container))
+				if (reqHandler.NeedAuthorization(string.Format("{0}/",url), container))
 				{
-					HttpResponseMessage session = reqHandler.OpenSessionAsync(string.Format("{0}/users/login.html", url), container);
-					ConsoleHelper.Info(string.Format("Open session status: {0}", session.StatusCode));
+					HttpResponseMessage session = reqHandler.OpenSessionAsync(string.Format("{0}/", url), container); // /users/login.html
+                    ConsoleHelper.Info(string.Format("Open session status: {0}", session.StatusCode));
 					if (!this.SessionHasError(session))
 					{// Success
 						result = session;
@@ -110,8 +110,8 @@ namespace RelayServer.Portals
 					}
 					ConsoleHelper.Error(string.Format("Open session error: {0}", url));
 				}
-				Task<HttpResponseMessage> session2 = reqHandler.GetSessionAsync(string.Format("{0}/subscriptions.html", url), container);
-				session2.Wait();
+				Task<HttpResponseMessage> session2 = reqHandler.GetSessionAsync(string.Format("{0}/", url), container); // /subscriptions.html
+                session2.Wait();
 				HttpResponseMessage responseMessage = session2.Result;
 				ConsoleHelper.Info(string.Format("Url Navigation: {0}", responseMessage.RequestMessage.RequestUri.AbsoluteUri));
 				HttpResponseMessage forcedSession = reqHandler.OpenSessionAsync(url, container);

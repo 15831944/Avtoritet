@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -978,20 +979,16 @@ namespace NewLauncher.View
                         ;
                     //// Auto Log-on
                     //if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/users/login.html"))
-                    //    foreach (HtmlElement element in this.IeWeb.Document.GetElementsByTagName("form"))
-                    //    {
+                    //    foreach (HtmlElement element in this.IeWeb.Document.GetElementsByTagName("form")) {
                     //        if (CatalogApi.Autocomplit.TypeCredentials(this.IeWeb.Document
                     //            , element
-                    //            , "logon", login, "password", password) == true)
-                    //        {
+                    //            , "logon", login, "password", password) == true) {
                     //            this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
 
                     //            return;
-                    //        }
-                    //        else
+                    //        } else
                     //            ;
-                    //    }
-                    //else
+                    //    } else
                     //    ;
                     // EPC
                     if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/subscriptions.html"))
@@ -1008,7 +1005,7 @@ namespace NewLauncher.View
                         }
                     else
                         ;
-
+                    //??? Log Out
                     if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/spongepc") == true)
                     {
                         if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/logout") == true)
@@ -1021,17 +1018,6 @@ namespace NewLauncher.View
                         }
                         else
                             ;
-
-                        //!!! Сессия открывается не здесь, а в Rendering
-                        //string urlSession = string.Empty;
-                        //Uri uri;
-
-                        //uri = new Uri(url);
-                        //urlSession = string.Format("{0}://{1}", uri.Scheme, uri.Host);
-
-                        //this.OpenSession(this.url, true);
-                        ////this.IeWeb.Navigate("https://www.gme-infotech.com/subscriptions.html");
-                        //return;
                     }
                     else
                         ;
@@ -1307,12 +1293,8 @@ namespace NewLauncher.View
                 {
                     flag = true;
 
-                    //!!! Нельзя здесь откр. новый процесс, т.к стандартный браузер уже выполняется (Rendered)
-                    // this.OpenSession - внутри 'StartSeparateProcess'
-                    //StartSeparateProcess(url);
-
                     this.OpenSession(url, false);
-                    this.IeWeb.Navigate(string.Format("{0}/users/login.html", url));
+                    this.IeWeb.Navigate(string.Format("{0}/users/login.html", url)); // /users/login.html
                 }
                 #endregion
 
@@ -1473,8 +1455,11 @@ namespace NewLauncher.View
 
         private void OpenSession(string host, bool force = false)
         {
+            string session_cookies = string.Empty;
+
             RequestHelper.Client.OpenSession(this.url, force);
-            List<System.Net.Cookie> cookies = JsonConvert.DeserializeObject<List<System.Net.Cookie>>(RequestHelper.Client.GetCookies(this.url));
+            session_cookies = RequestHelper.Client.GetCookies(this.url);
+            List<System.Net.Cookie> cookies = JsonConvert.DeserializeObject<List<System.Net.Cookie>>(session_cookies);
             if ((cookies != null) && (cookies.Count > 0))
             {
                 if (!host.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot)) // "gme-infotech.com"
@@ -1483,12 +1468,12 @@ namespace NewLauncher.View
                     this.InsertCookies(host, cookies);
                 }
                 else
-                {
+                //??? только для Chevrolet-Opel Group
                     foreach (System.Net.Cookie cookie in cookies)
-                    {
-                        InternetSetCookie(host, cookie.Name, cookie.Value);
-                    }
-                }
+                        if (InternetSetCookie(host, cookie.Name, cookie.Value) == false)
+                            logging(string.Format(@"::OpenSession () - InternetSetCookie (host={0}, cookie-name={1}, cookie-value={2}) - ...", host, cookie.Name, cookie.Value));
+                        else
+                            ;
             }
         }
 
@@ -1515,6 +1500,24 @@ namespace NewLauncher.View
             this.GeckoWeb.Navigate(geckoUrl);
             this.GeckoHost.Visibility = Visibility.Visible;
             return true;
+        }
+
+        private void logging(string mes)
+        {
+            using (FileStream fileStream = new FileStream(string.Format("{0}.log", System.IO.Path.GetFileNameWithoutExtension(Assembly.GetAssembly(this.GetType()).FullName)), FileMode.Append, FileAccess.Write)) {
+                using (StreamWriter streamWriter = new StreamWriter(fileStream)) {
+                    streamWriter.WriteLine(mes);
+                }
+            }
+        }
+
+        private void logging(Exception e)
+        {
+            logging(string.Format("[{0}] {1} / {2}"
+                , DateTime.Now
+                , e.Message
+                , e.StackTrace
+            ));
         }
     }
 }

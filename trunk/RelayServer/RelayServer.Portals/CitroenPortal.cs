@@ -69,7 +69,7 @@ namespace RelayServer.Portals
 		public string GetCookies(string url)
 		{
 			string json = JsonConvert.SerializeObject(CitroenPortal.CookieContainer.GetCookies(new Uri(url)).Cast<Cookie>().ToList<Cookie>());
-			ConsoleHelper.Debug("Cookies obtained succesfully");
+			ConsoleHelper.Debug("Cookies obtained successfully");
 			return json;
 		}
 

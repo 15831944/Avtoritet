@@ -23,21 +23,18 @@ namespace RequestHandlers
 			{
 				result = new PartsLink24RequestHandler(login, password);
 			}
-			else
+			else if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
 			{
-				if (!url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
-				{
-					throw new NotImplementedException(string.Format("Processor for url: '{0}' is not implemented", url));
-				}
-				if (!string.IsNullOrEmpty(optional))
-				{
-					result = new OpelRequestHandler(login, password);
-				}
-				else
-				{
-					result = new ChevroletRequestHandler(login, password);
-				}
-			}
+			    result = new ChevroletRequestHandler(login, password);
+			    
+            } else if (string.IsNullOrEmpty(optional) == false)
+			{
+			    result = new OpelRequestHandler(login, password);
+			} else
+			{
+			    throw new NotImplementedException(string.Format("Processor for url: '{0}' is not implemented", url));
+            }
+
 			return result;
 		}
 	}
