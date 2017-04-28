@@ -178,6 +178,15 @@ namespace BrowserExtension
             logging(string.Format("Browser::InternetExplorerOnNavigating (Title={0}, AbsoluteUri={1}) - ..."
                 , this.Title
                 , webBrowserNavigatingEventArgs.Url.AbsoluteUri));
+
+            if ((webBrowserNavigatingEventArgs.Url.AbsoluteUri.Contains("spongepc.xw.gm.com/CStoneEPC"))
+                    && (webBrowserNavigatingEventArgs.Url.AbsoluteUri.Contains("/logout?silent"))) {
+                if (IsDocumentValidate == true)
+                    Close();
+                else
+                    ;
+            } else
+                ;
         }
 
         private void InternetExplorerOnStartNewWindow(object sender, BrowserExtendedNavigatingEventArgs browserExtendedNavigatingEventArgs)
@@ -186,34 +195,31 @@ namespace BrowserExtension
                 , this.Title
                 , browserExtendedNavigatingEventArgs.Url.ToString()));
 
-            if (!(browserExtendedNavigatingEventArgs.Url != null)
-                || (!(browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("about:blank")))) {
-                if ((browserExtendedNavigatingEventArgs.Url != null)
-                    && (browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=notify")
-                    || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=news")
-                    || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=bulletinboard")
-                    || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=feedback")
-                    || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=about")
-                    || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=downloads")
-                    || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=ug")
-                    || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("/privacy/")
-                    || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=help"))) {
+            if ((browserExtendedNavigatingEventArgs.Url == null)
+                || (browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("about:blank") == false)) {
+                if (ValidateUrlToNavigating(browserExtendedNavigatingEventArgs.Url) == false) {
                     browserExtendedNavigatingEventArgs.Cancel = true;
                 } else {
                     if ((!(browserExtendedNavigatingEventArgs.Url == null))
                         && (browserExtendedNavigatingEventArgs.Url.LocalPath.Contains("http://10.0.0.10:351/PQMace/login.fve"))) {
                         base.Close();
-                    }
+                    } else
+                        ;
+
                     if ((!(browserExtendedNavigatingEventArgs.Url == null))
                         && (browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("navlevel=year&action=navigate&aid=epc&fid=nav"))) {
                         base.Close();
-                    }
+                    } else
+                        ;
+
                     ExtendedWebBrowser extendedWebBrowser = this.WindowManager.New(false, base.Title);
                     browserExtendedNavigatingEventArgs.AutomationObject = extendedWebBrowser.Application;
                 }
             }
         }
-
+        /// <summary>
+        /// Проверить наличие содержимого окна (повтор для Геко)
+        /// </summary>
         private bool IsDocumentValidate
         {
             get
@@ -225,6 +231,20 @@ namespace BrowserExtension
             }
         }
 
+        private bool ValidateUrlToNavigating (Uri uri)
+        {
+            return !((uri != null)
+                    && ((((uri.AbsoluteUri.Contains("fid=notify")
+                    || uri.AbsoluteUri.Contains("fid=news"))
+                    || (uri.AbsoluteUri.Contains("fid=bulletinboard")
+                    || uri.AbsoluteUri.Contains("fid=feedback")))
+                    || ((uri.AbsoluteUri.Contains("fid=about")
+                    || uri.AbsoluteUri.Contains("fid=downloads"))
+                    || (uri.AbsoluteUri.Contains("fid=ug")
+                    || uri.AbsoluteUri.Contains("/privacy/"))))
+                    || uri.AbsoluteUri.Contains("fid=help")));
+        }
+
         private void InternetExplorerOnDocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs webBrowserDocumentCompletedEventArgs)
         {
             logging(string.Format("Browser::InternetExplorerOnDocumentCompleted (Title={0}, argUrl={1}) - ..."
@@ -232,15 +252,13 @@ namespace BrowserExtension
                 , webBrowserDocumentCompletedEventArgs.Url.ToString()));
 
             try {
+                // Credentials
                 /*if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/users/login.html") == true) {
                     if (IsDocumentValidate == true)
-                    // Credentials
-                        foreach (HtmlElement htmlElement in InternetExplorer.Document.GetElementsByTagName("form"))
-                        {
+                        foreach (HtmlElement htmlElement in InternetExplorer.Document.GetElementsByTagName("form")) {
                             if (CatalogApi.Autocomplit.TypeCredentials(this.InternetExplorer.Document
                                 , htmlElement
-                                , "logon", "avtoritetepc", "password", "Hugoboss5070") == true)
-                            {
+                                , "logon", "avtoritetepc", "password", "Hugoboss5070") == true) {
                                 this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
 
                                 break;
@@ -249,7 +267,7 @@ namespace BrowserExtension
                                 ;
                         }
                     else
-                            ;
+                        ;
                 } else*/ if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/index.html") == true) {
                     if (IsDocumentValidate == true) {
                         this.InternetExplorer.Navigate(webBrowserDocumentCompletedEventArgs.Url.ToString()
@@ -259,10 +277,9 @@ namespace BrowserExtension
                     } else
                         ;
                 }
-                else if(webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/subscriptions.html"))
-                {
+                // EPC
+                else if (webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri.Contains("/subscriptions.html")) {
                     if (IsDocumentValidate == true)
-                        // EPC
                         foreach (HtmlElement htmlElement in this.InternetExplorer.Document.GetElementsByTagName("form")) {
                             if (CatalogApi.Autocomplit.ClickEPCSubmit(htmlElement) == true) {
                                 this.DelayForNextNavigation(this.IeHost, 3000, 4000);

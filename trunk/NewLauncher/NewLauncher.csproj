@@ -355,7 +355,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <EntityDeploy Include="DataContext.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>DataContext.Designer.cs</LastGenOutput>

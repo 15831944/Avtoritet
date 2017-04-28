@@ -10,6 +10,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -73,17 +74,22 @@ namespace NewLauncher.View
                 if (url.StartsWith("http") || url.StartsWith("https"))
                 {
                     if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true) {
-                        //// вариант №1(отдельный броаузер)
-                        //StartSeparateProcess(url);
-
+                        if (ConfigurationManager.AppSettings["ChevroletOpelGroupBrowser"] == "Separate")
+                        // вариант №1(отдельный броаузер)
+                            StartSeparateProcess(url);
+                        else if (ConfigurationManager.AppSettings["ChevroletOpelGroupBrowser"] == "Common") {
                         // вариант №2 (как у всех остальных Brand)
-                        Uri uri;
-                        string urlSession = string.Empty;
+                            Uri uri;
+                            string urlSession = string.Empty;
 
-                        uri = new Uri(url);
-                        urlSession = string.Format("{0}://{1}", uri.Scheme, uri.Host);
+                            uri = new Uri(url);
+                            urlSession = string.Format("{0}://{1}", uri.Scheme, uri.Host);
 
-                        NewBrowserLauncherView(((ButtonModel)sender).ProviderId, urlSession, ((ButtonModel)sender).Content);
+                            NewBrowserLauncherView(((ButtonModel)sender).ProviderId, urlSession, ((ButtonModel)sender).Content);
+                        } else {
+                            ErrorLogHelper.AddErrorInLog("::InitButtonClick () - ", "смотреть файл конфигурации key=ChevroletOpelGroupBrowser");
+                            MessageBox.Show("Некорректные установки в файле конфигурации, key=ChevroletOpelGroupBrowser");
+                        }
                     } else {
                         NewBrowserLauncherView(((ButtonModel)sender).ProviderId, url, ((ButtonModel)sender).Content);
                     }

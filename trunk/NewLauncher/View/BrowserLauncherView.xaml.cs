@@ -704,6 +704,10 @@ namespace NewLauncher.View
         {
             try
             {
+                logging(string.Format("Browser::IeWebOnDocumentCompleted (Title={0}, AbsoluteUri={1}) - ..."
+                    , this.Title
+                    , webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri));
+
                 HtmlElement[] elementArray;
                 HtmlElement elementById;
                 HtmlElement element3;
@@ -1139,6 +1143,20 @@ namespace NewLauncher.View
         {
             try
             {
+#if DEBUG
+                logging(string.Format("Browser::IeWebOnNavigating (Title={0}, AbsoluteUri={1}) - ..."
+                    , this.Title
+                    , webBrowserNavigatingEventArgs.Url.AbsoluteUri));
+#endif
+
+                if ((webBrowserNavigatingEventArgs.Url.AbsoluteUri.Contains("spongepc.xw.gm.com/CStoneEPC"))
+                    && (webBrowserNavigatingEventArgs.Url.AbsoluteUri.Contains("/logout?silent"))) {
+                    if (IsDocumentValidate == true)
+                        Close();
+                    else
+                        ;
+                } else
+                    ;
             }
             catch (Exception exception)
             {
@@ -1154,16 +1172,45 @@ namespace NewLauncher.View
                 base.Close();
             }
         }
+        /// <summary>
+        /// Проверить наличие содержимого окна (повтор для Геко)
+        /// </summary>
+        private bool IsDocumentValidate
+        {
+            get
+            {
+                return (!(this.IeWeb.Document == null))
+                    && (!(this.IeWeb.Document.Body == null))
+                    && (!(this.IeWeb.Document.Window == null))
+                    && (!(this.IeWeb.Document.Window.Frames == null));
+            }
+        }
+
+        private bool ValidateUrlToNavigating (Uri uri)
+        {
+            return !((uri != null)
+                    && ((((uri.AbsoluteUri.Contains("fid=notify")
+                    || uri.AbsoluteUri.Contains("fid=news"))
+                    || (uri.AbsoluteUri.Contains("fid=bulletinboard")
+                    || uri.AbsoluteUri.Contains("fid=feedback")))
+                    || ((uri.AbsoluteUri.Contains("fid=about")
+                    || uri.AbsoluteUri.Contains("fid=downloads"))
+                    || (uri.AbsoluteUri.Contains("fid=ug")
+                    || uri.AbsoluteUri.Contains("/privacy/"))))
+                    || uri.AbsoluteUri.Contains("fid=help")));
+        }
 
         private void IeWebOnStartNewWindow(object sender, BrowserExtendedNavigatingEventArgs browserExtendedNavigatingEventArgs)
         {
-            if ((browserExtendedNavigatingEventArgs.Url == null) || !browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("about:blank"))
+            if ((browserExtendedNavigatingEventArgs.Url == null)
+                || (browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("about:blank") == false))
             {
-                if ((browserExtendedNavigatingEventArgs.Url != null) && browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("mazdaeur"))
+                if ((browserExtendedNavigatingEventArgs.Url != null)
+                    && browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("mazdaeur"))
                 {
                     browserExtendedNavigatingEventArgs.Cancel = true;
                 }
-                else if ((browserExtendedNavigatingEventArgs.Url != null) && ((((browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=notify") || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=news")) || (browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=bulletinboard") || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=feedback"))) || ((browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=about") || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=downloads")) || (browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=ug") || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("/privacy/")))) || browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("fid=help")))
+                else if (ValidateUrlToNavigating(browserExtendedNavigatingEventArgs.Url) == false)
                 {
                     browserExtendedNavigatingEventArgs.Cancel = true;
                 }
@@ -1182,11 +1229,11 @@ namespace NewLauncher.View
                     }
                     else if (this.url.Contains(CatalogApi.UrlConstants.BMW_Root))
                             browserExtendedNavigatingEventArgs.Cancel = true;
-                        else
-                        {
-                            ExtendedWebBrowser browser = this.WindowManager.New(false);
-                            browserExtendedNavigatingEventArgs.AutomationObject = browser.Application;
-                        }
+                    else
+                    {
+                        ExtendedWebBrowser browser = this.WindowManager.New(false);
+                        browserExtendedNavigatingEventArgs.AutomationObject = browser.Application;
+                    }
                 }
             }
         }
