@@ -100,7 +100,7 @@ namespace NewLauncher
                                 GroupBox = box.Title,
                                 BrandName = brand.NameAndFolder,
                                 BrandIcon = LoadImage(brand.IconPathImg),
-                                ClickCommand = new RelayCommand<CatalogApi.Settings.Brand>(Button_Click),
+                                ClickCommand = new RelayCommand<CatalogApi.Settings.Brand>(button_onClick),
                                 Top = brand.Top,
                                 Left = brand.Left,
                                 Height = brand.Height,
@@ -136,7 +136,7 @@ namespace NewLauncher
             }), new object[0]);
         }
 
-        private void Button_Click(Brand brandown)
+        private void button_onClick(Brand brandown)
         {
             LoadUpdates();
             //minimizeMemory();
@@ -178,8 +178,14 @@ namespace NewLauncher
                         }
                         else
                         {
-                            url = (url.StartsWith("http") || url.StartsWith("https")) ? url : Path.Combine(ResourceManager.Root, brandown.NameAndFolder, url);
-                            string str6 = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ResourceManager.Root, brandown.NameAndFolder);
+                            url = (url.StartsWith("http") || url.StartsWith("https"))
+                                ? url
+                                    : Path.Combine(ResourceManager.Root, brandown.NameAndFolder, url);
+
+                            string str6 = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+                                , ResourceManager.Root
+                                , brandown.NameAndFolder);
+
                             using (Process process = new Process { StartInfo = { UseShellExecute = false, FileName = url, CreateNoWindow = true, Verb = url } })
                             {
                                 process.Start();
@@ -473,10 +479,10 @@ namespace NewLauncher
             }
         }
 
-
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("kernel32.dll")]
         private static extern bool SetProcessWorkingSetSize(IntPtr process, IntPtr minimumWorkingSetSize, IntPtr maximumWorkingSetSize);
+
         private void SetWindowStartupLocation()
         {
             base.Top = 50.0;
@@ -494,15 +500,16 @@ namespace NewLauncher
         {
             try
             {
+//#if !DEBUG
                 base.Closing += delegate(object sender, System.ComponentModel.CancelEventArgs args)
                 {
-                    if ((!(NewLauncher.App.IsRelease(Assembly.GetAssembly(this.GetType())))
-                        || (this.isNormalShutdownMode == true)))
-                    {
-                        args.Cancel = false;
-                    }
-                    else
-                    {
+//                    if ((!(NewLauncher.App.IsRelease(Assembly.GetAssembly(this.GetType())))
+//                        || (this.isNormalShutdownMode == true)))
+//                    {
+//                        args.Cancel = false;
+//                    }
+//                    else
+//                    {
                         args.Cancel = true;
                         base.WindowState = WindowState.Minimized;
                         base.ShowInTaskbar = true;
@@ -510,8 +517,9 @@ namespace NewLauncher
                         {
                             this.brandLauncher.Visibility = Visibility.Hidden;
                         }
-                    }
+//                    }
                 };
+//#endif
                 base.StateChanged += delegate //(object sender, System.EventArgs args)
                 {
                     try
@@ -525,7 +533,7 @@ namespace NewLauncher
                             catch (Exception)
                             {
                             }
-                            MainWindow.ShowWindow(new WindowInteropHelper(this.brandLauncher).Handle, 9);
+                            MainWindow.ShowWindow(new WindowInteropHelper(this.brandLauncher).Handle, SwRestore);
                         }
                     }
                     catch (System.Exception ex2)
@@ -534,6 +542,7 @@ namespace NewLauncher
                         MessageBox.Show(ex2.Message + " | " + ex2.StackTrace);
                     }
                 };
+
                 base.LocationChanged += delegate //(object sender, System.EventArgs args)
                 {
                     if (this.DownFlag)
@@ -557,6 +566,7 @@ namespace NewLauncher
                         this.brandLauncher.Top = base.Top + this.TopLength;
                     }
                 };
+
                 Microsoft.Win32.SystemEvents.SessionEnding += delegate(object sender, Microsoft.Win32.SessionEndingEventArgs args)
                 {
                     Microsoft.Win32.SessionEndReasons arg_07_0 = args.Reason;

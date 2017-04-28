@@ -46,7 +46,7 @@ namespace NewLauncher.View
         private void AddLaunchButton(Brand newBrand, BrandProvider provider)
         {
             ButtonModel item = CreateLaunchButton(newBrand, provider);
-            item.Click += new RoutedEventHandler(this.InitButtonClick);
+            item.Click += new RoutedEventHandler(this.button_onClick);
             this.categories.Add(item);
         }
 
@@ -55,18 +55,40 @@ namespace NewLauncher.View
             string uri = (provider.Uri.StartsWith("http") || provider.Uri.StartsWith("https")) ? provider.Uri : Path.Combine(ResourceManager.Root, brand.NameAndFolder, provider.Uri);
             try
             {
-                if (((!provider.Uri.StartsWith("http") && !provider.Uri.StartsWith("https")) && ((provider.Uri.IndexOf(@"\") >= 0) & (provider.Uri.ToLower().IndexOf(".exe") >= 0))) && File.Exists(provider.Uri))
-                {
+                if (
+                    (
+                        ((provider.Uri.StartsWith("http") == false)
+                            && (provider.Uri.StartsWith("https") == false)
+                        )
+                    && (
+                            (provider.Uri.IndexOf(@"\") >= 0) & (provider.Uri.ToLower().IndexOf(".exe") >= 0)
+                        )
+                    )
+                    && File.Exists(provider.Uri)) {
                     uri = provider.Uri;
-                }
+                } else
+                    ;
             }
             catch
             {
             }
-            return new ButtonModel { Height = 40.0, HorizontalContentAlignment = HorizontalAlignment.Center, Margin = new Thickness(0.0, 0.0, 0.0, 0.0), Content = provider.Title, DataContext = uri, Login = provider.Login, Password = provider.Password, ButtonStyle = brand.ButtonStyle, ProviderId = provider.ProviderId };
+
+            return new ButtonModel {
+                Height = 40.0
+                , HorizontalContentAlignment = HorizontalAlignment.Center
+                , Margin = new Thickness(0.0, 0.0, 0.0, 0.0)
+                , Content = provider.Title
+                , DataContext = uri
+                , Login = provider.Login
+                , Password = provider.Password
+                , ButtonStyle = brand.ButtonStyle
+                , ProviderId = provider.ProviderId
+            };
         }
 
-        private void InitButtonClick(object sender, RoutedEventArgs e)
+        private enum MODE_BROWSE : ushort { Separate, Common }
+
+        private void button_onClick(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -74,10 +96,12 @@ namespace NewLauncher.View
                 if (url.StartsWith("http") || url.StartsWith("https"))
                 {
                     if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true) {
-                        if (ConfigurationManager.AppSettings["ChevroletOpelGroupBrowser"] == "Separate")
+                        string appKey = "ChevroletOpelGroupBrowser";
+
+                        if (ConfigurationManager.AppSettings[appKey] == MODE_BROWSE.Separate.ToString())
                         // вариант №1(отдельный броаузер)
                             StartSeparateProcess(url);
-                        else if (ConfigurationManager.AppSettings["ChevroletOpelGroupBrowser"] == "Common") {
+                        else if (ConfigurationManager.AppSettings[appKey] == MODE_BROWSE.Common.ToString()) {
                         // вариант №2 (как у всех остальных Brand)
                             Uri uri;
                             string urlSession = string.Empty;
@@ -87,8 +111,8 @@ namespace NewLauncher.View
 
                             NewBrowserLauncherView(((ButtonModel)sender).ProviderId, urlSession, ((ButtonModel)sender).Content);
                         } else {
-                            ErrorLogHelper.AddErrorInLog("::InitButtonClick () - ", "смотреть файл конфигурации key=ChevroletOpelGroupBrowser");
-                            MessageBox.Show("Некорректные установки в файле конфигурации, key=ChevroletOpelGroupBrowser");
+                            ErrorLogHelper.AddErrorInLog("::button_onClick () - ...", string.Format("см. файл конфигурации key={0}", appKey));
+                            MessageBox.Show(string.Format("Некорректные установки в файле конфигурации, key={0}", appKey));
                         }
                     } else {
                         NewBrowserLauncherView(((ButtonModel)sender).ProviderId, url, ((ButtonModel)sender).Content);
@@ -96,16 +120,25 @@ namespace NewLauncher.View
                 }
                 else
                 {
-                    string str6 = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ResourceManager.Root, this.brand.NameAndFolder);
-                    using (Process process = new Process { StartInfo = { UseShellExecute = false, FileName = url, CreateNoWindow = true, Verb = url } })
-                    {
+                    string str6 = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+                        , ResourceManager.Root
+                        , this.brand.NameAndFolder);
+
+                    using (Process process = new Process {
+                        StartInfo = {
+                            UseShellExecute = false
+                            , FileName = url
+                            , CreateNoWindow = true
+                            , Verb = url
+                        }
+                    }) {
                         process.Start();
                     }
                 }
             }
             catch (Exception exception)
             {
-                ErrorLogHelper.AddErrorInLog("InitButtonClick", exception.Message + " | " + exception.StackTrace);
+                ErrorLogHelper.AddErrorInLog("button_onClick () - ...", exception.Message + " | " + exception.StackTrace);
                 MessageBox.Show(exception.Message + " | " + exception.StackTrace);
                 new ReportWindow().ShowReportWindow(exception);
             }

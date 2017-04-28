@@ -55,22 +55,32 @@ namespace NewLauncher
 
         protected override void OnExit(System.Windows.ExitEventArgs e)
         {
-            if(_mutex != null)
+            if (_mutex != null)
                 _mutex.ReleaseMutex();
+            else
+                ;
+
             base.OnExit(e);
         }
 
         public static bool IsRelease(Assembly assembly)
         {
+            bool bRes = false; // DEBUG - default result-value 
+
             object[] attributes = assembly.GetCustomAttributes(typeof(DebuggableAttribute), true);
-            if (attributes == null || attributes.Length == 0)
-                return true;
 
-            var d = (DebuggableAttribute)attributes[0];
-            if ((d.DebuggingFlags & DebuggableAttribute.DebuggingModes.Default) == DebuggableAttribute.DebuggingModes.None)
-                return true;
+            if ((attributes == null)
+                || (attributes.Length == 0))
+                bRes = true; // RELEASE
+            else {
+                var d = (DebuggableAttribute)attributes[0];
+                if ((d.DebuggingFlags & DebuggableAttribute.DebuggingModes.Default) == DebuggableAttribute.DebuggingModes.None)
+                    bRes = true; // RELEASE
+                else
+                    ;
+            }
 
-            return false;
+            return bRes;
         }
     }
 }
