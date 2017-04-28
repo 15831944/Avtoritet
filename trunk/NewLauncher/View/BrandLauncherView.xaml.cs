@@ -144,11 +144,14 @@ namespace NewLauncher.View
             }
         }
 
+        public event Action<string, string, SystemTime, string, string> EventNewBrowserLauncherView;
+
         private void NewBrowserLauncherView(long providerId, string url, string content)
         {
             string loginFromDB = SettingsFactory.GetLoginFromDB(providerId);
             string pswFromDB = SettingsFactory.GetPswFromDB(providerId);
-            new BrowserLauncherView(url, content, this.time, loginFromDB, pswFromDB).Show();
+
+            EventNewBrowserLauncherView?.Invoke(url, content, this.time, loginFromDB, pswFromDB);
         }
 
         private void OnActivated(object sender, EventArgs eventArgs)

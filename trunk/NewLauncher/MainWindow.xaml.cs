@@ -15,6 +15,7 @@ using NewLauncher.View;
 using NewLauncher.ViewModel;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
@@ -55,6 +56,8 @@ namespace NewLauncher
         public bool TopFlag;
         public double TopLength;
 
+        List<BrowserLauncherView> _listBrowserLauncherView;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public MainWindow()
@@ -67,6 +70,8 @@ namespace NewLauncher
                 this.InitializeSettings();
                 this.StartNewEventSession();
                 this.CheckForUpdateAndStartProcess();
+
+                _listBrowserLauncherView = new List<BrowserLauncherView>();
             }
             catch (Exception exception)
             {
@@ -136,6 +141,18 @@ namespace NewLauncher
             }), new object[0]);
         }
 
+        private void newBrowserLauncherView(string url, string content, Interop.SystemTime time, string login, string pass)
+        {
+            _listBrowserLauncherView.Add(new BrowserLauncherView(url, content, time, login, pass));
+            _listBrowserLauncherView[_listBrowserLauncherView.Count - 1].Closing += new CancelEventHandler(closingBrowserLauncherView); 
+            _listBrowserLauncherView[_listBrowserLauncherView.Count - 1].Show();
+        }
+
+        private void closingBrowserLauncherView (object obj, CancelEventArgs ev)
+        {
+            _listBrowserLauncherView.Remove(obj as BrowserLauncherView);
+        }
+
         private void button_onClick(Brand brandown)
         {
             LoadUpdates();
@@ -163,6 +180,7 @@ namespace NewLauncher
                             ShowActivated = false,
                             Owner = this
                         };
+                        view.EventNewBrowserLauncherView += new Action<string, string, Interop.SystemTime, string, string> (newBrowserLauncherView);
                         this.brandLauncher = view;
                         this.brandLauncher.Show();
                     }
@@ -174,7 +192,7 @@ namespace NewLauncher
                         url = brandown.Providers[0].Uri;
                         if (url.StartsWith("http") || url.StartsWith("https"))
                         {
-                            new BrowserLauncherView(url, title, this.time, loginFromDB, pswFromDB).Show();
+                            newBrowserLauncherView(url, title, this.time, loginFromDB, pswFromDB);
                         }
                         else
                         {
@@ -500,26 +518,37 @@ namespace NewLauncher
         {
             try
             {
-//#if !DEBUG
                 base.Closing += delegate(object sender, System.ComponentModel.CancelEventArgs args)
                 {
-//                    if ((!(NewLauncher.App.IsRelease(Assembly.GetAssembly(this.GetType())))
-//                        || (this.isNormalShutdownMode == true)))
-//                    {
-//                        args.Cancel = false;
-//                    }
-//                    else
-//                    {
+                    if ((App.IsAssemblyRelease(Assembly.GetAssembly(this.GetType())) == false)
+                        || (this.isNormalShutdownMode == true)) {
+                        args.Cancel = false;
+
+                        if (this.brandLauncher != null) {
+                            this.brandLauncher.Close();
+                        } else
+                            ;
+
+                        _listBrowserLauncherView.ForEach(view => {
+                            view.Closing -= new CancelEventHandler(closingBrowserLauncherView);
+                            view.Close();
+                        });
+                        _listBrowserLauncherView.Clear();
+
+                        MainWindow.FreeOccupiedAccount();
+                    } else {
                         args.Cancel = true;
+
                         base.WindowState = WindowState.Minimized;
                         base.ShowInTaskbar = true;
-                        if (this.brandLauncher != null)
-                        {
+
+                        if (this.brandLauncher != null) {
                             this.brandLauncher.Visibility = Visibility.Hidden;
-                        }
-//                    }
+                        } else
+                            ;
+                    }
                 };
-//#endif
+
                 base.StateChanged += delegate //(object sender, System.EventArgs args)
                 {
                     try

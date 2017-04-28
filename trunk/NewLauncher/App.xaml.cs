@@ -38,18 +38,24 @@ namespace NewLauncher
         protected override void OnStartup(System.Windows.StartupEventArgs e)
         {
             bool createdMutex;
+
+            this.ShutdownMode = IsRelease == true ? ShutdownMode.OnExplicitShutdown : ShutdownMode.OnMainWindowClose;
+
             _mutex = new Mutex(true, "MyApplicationMutex", out createdMutex);
+
             	GeckoWebBrowser.UseCustomPrompt();
 				Xpcom.Initialize(System.AppDomain.CurrentDomain.BaseDirectory + "xulrunner");
 				GeckoPreferences.Default["extensions.blocklist.enabled"] = false;
 				RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
-            if (!createdMutex)
-            {
+
+            if (!createdMutex) {
                 _mutex = null;
                 MessageBox.Show("The application is already running.");
                 Application.Current.Shutdown();
                 return;
-            }
+            } else
+                ;
+
             base.OnStartup(e);
         }
 
@@ -63,7 +69,15 @@ namespace NewLauncher
             base.OnExit(e);
         }
 
-        public static bool IsRelease(Assembly assembly)
+        public bool IsRelease
+        {
+            get
+            {
+                return IsAssemblyRelease(Assembly.GetAssembly(this.GetType()));
+            }
+        }
+
+        public static bool IsAssemblyRelease(Assembly assembly)
         {
             bool bRes = false; // DEBUG - default result-value 
 
