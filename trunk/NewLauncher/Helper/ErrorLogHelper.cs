@@ -13,7 +13,7 @@
             {
                 using (AvtoritetEntities entities = new AvtoritetEntities())
                 {
-                    LogErrors entity = new LogErrors();
+                    LogErrorsSet entity = new LogErrorsSet();
                     string hostName = Dns.GetHostName();
                     string str2 = "";
                     for (int i = 0; i < Dns.GetHostEntry(hostName).AddressList.Length; i++)
@@ -34,7 +34,7 @@
                     entity.ExeName = "Лаунчер";
                     entity.NameError = NameError;
                     entity.DescrError = DescrError;
-                    entities.LogErrors.Add(entity);
+                    entities.LogErrorsSet.Add(entity);
                     entities.SaveChanges();
                 }
             }

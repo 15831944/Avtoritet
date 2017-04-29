@@ -369,8 +369,8 @@ namespace NewLauncher
                 {
                     //if (!(entities.Database.Connection.State == ConnectionState.Closed))
                     //{
-                        int? settingVersion = entities.SettingUpdate.FirstOrDefault<SettingUpdate>().SettingVersion;
-                        Version version = new Version(entities.VersionLog.FirstOrDefault<VersionLog>().Value)
+                        int? settingVersion = entities.SettingUpdate.FirstOrDefault().SettingVersion;
+                        Version version = new Version(entities.VersionLog.FirstOrDefault().Value)
                             , version2 = new Version(JsonConvert.DeserializeObject<VersionEntity>(FileHelper.OpenFile("Version.json")).Version);
                         if (version > version2) {
                             try {
