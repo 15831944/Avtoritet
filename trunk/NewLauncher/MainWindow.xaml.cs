@@ -313,6 +313,8 @@ namespace NewLauncher
             {
                 ErrorLogHelper.AddErrorInLog("CheckForUpdateAndStartProcess()", exception.Message + " | " + exception.StackTrace);
                 MessageBox.Show(exception.Message + " | " + exception.StackTrace);
+
+                Application.Current.Shutdown(-1);
             }
         }
 

@@ -4,6 +4,7 @@
     using System;
     using System.Net;
     using System.Reflection;
+    using System.Windows;
 
     public class ErrorLogHelper
     {
@@ -41,6 +42,8 @@
             catch (Exception e)
             {
                 MainWindow.Logging(e);
+
+                Application.Current.Shutdown(-1);
             }
         }
     }
