@@ -12,7 +12,7 @@ namespace RelayServer.Helpers
 			{
 				using (AvtoritetEntities ae = new AvtoritetEntities())
 				{
-					LogErrors log = new LogErrors();
+                    RelayServer.DataContext.LogErrorsSet log = new RelayServer.DataContext.LogErrorsSet();
 					string myHost = Dns.GetHostName();
 					string compIP = "";
 					for (int i = 0; i < Dns.GetHostEntry(myHost).AddressList.Length; i++)
@@ -30,19 +30,17 @@ namespace RelayServer.Helpers
 					string compName = System.Environment.MachineName;
 					log.Computer = string.Concat(new string[]
 					{
-						myHost,
-						", ",
-						compIP,
-						", ",
-						userNameWin,
-						", ",
+						myHost, ", ",
+						compIP, ", ",
+						userNameWin, ", ",
 						compName
 					});
 					log.DateError = new System.DateTime?(System.DateTime.Now);
 					log.ExeName = "Прокси сервер";
 					log.NameError = NameError;
 					log.DescrError = DescrError;
-					ae.LogErrors.Add(log);
+
+					ae.LogErrorsSet.Add(log);
 					ae.SaveChanges();
 				}
 			}

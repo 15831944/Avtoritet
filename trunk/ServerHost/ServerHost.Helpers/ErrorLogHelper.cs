@@ -12,7 +12,7 @@ namespace ServerHost.Helpers
 			{
 				using (AvtoritetEntities ae = new AvtoritetEntities())
 				{
-					LogErrors log = new LogErrors();
+					LogErrorsSet log = new LogErrorsSet();
 					string myHost = Dns.GetHostName();
 					string compIP = "";
 					for (int i = 0; i < Dns.GetHostEntry(myHost).AddressList.Length; i++)
@@ -30,19 +30,16 @@ namespace ServerHost.Helpers
 					string compName = Environment.MachineName;
 					log.Computer = string.Concat(new string[]
 					{
-						myHost,
-						", ",
-						compIP,
-						", ",
-						userNameWin,
-						", ",
+						myHost, ", ",
+						compIP, ", ",
+						userNameWin, ", ",
 						compName
 					});
 					log.DateError = new DateTime?(DateTime.Now);
 					log.ExeName = "Прокси сервер";
 					log.NameError = NameError;
 					log.DescrError = DescrError;
-					ae.LogErrors.Add(log);
+					ae.LogErrorsSet.Add(log);
 					ae.SaveChanges();
 				}
 			}

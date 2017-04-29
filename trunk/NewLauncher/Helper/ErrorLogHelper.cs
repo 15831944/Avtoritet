@@ -35,6 +35,7 @@
                     entity.ExeName = "Лаунчер";
                     entity.NameError = NameError;
                     entity.DescrError = DescrError;
+
                     entities.LogErrorsSet.Add(entity);
                     entities.SaveChanges();
                 }

@@ -104,6 +104,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DataContext.Context.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataContext.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DataContext.tt</DependentUpon>
+    </Compile>
     <Compile Include="DataContext.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

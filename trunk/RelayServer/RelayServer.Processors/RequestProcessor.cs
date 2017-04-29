@@ -228,7 +228,7 @@ namespace RelayServer.Processors
 				{
 					using (AvtoritetEntities ae = new AvtoritetEntities())
 					{
-						SettingUpdate updateFlag = ae.SettingUpdate.FirstOrDefault<SettingUpdate>();
+						SettingUpdate updateFlag = ae.SettingUpdate.FirstOrDefault();
 						string settings = string.Empty;
 						string baseDir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 						string root = System.IO.Path.Combine(baseDir, ResourceManager.Root);
@@ -404,7 +404,7 @@ namespace RelayServer.Processors
 											while (enumerator4.MoveNext())
 											{
 												RelayServer.DataContext.Provider provider = enumerator4.Current;
-												ProviderAccount provAcc = ae.ProviderAccount.FirstOrDefault((ProviderAccount t) => t.ProviderId == provider.ProviderId && t.Enable);
+												ProviderAccount provAcc = ae.ProviderAccount.FirstOrDefault(t => t.ProviderId == provider.ProviderId && t.Enable);
 												System.Collections.Generic.List<RelayServer.Models.CommandFile> commandFiles = (from t in ae.CommandFile
 												where t.ProviderId == (int?)provider.ProviderId
 												select t into r
