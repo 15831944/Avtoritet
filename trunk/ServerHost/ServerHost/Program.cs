@@ -43,7 +43,10 @@ namespace ServerHost
 						ConsoleHelper.Info(string.Format("Proxy Address: {0}", new Uri(ConfigurationManager.AppSettings["ProxyAddress"]).Authority));
 						while (true)
 						{
-							ConsoleKey pressedKey = Console.ReadKey(true).Key;
+							ConsoleKey pressedKey =
+                                Console.ReadKey(true).Key
+                                //Console.Read()
+                                ;
 							ConsoleKey consoleKey = pressedKey;
 							if (consoleKey != ConsoleKey.Escape)
 							{

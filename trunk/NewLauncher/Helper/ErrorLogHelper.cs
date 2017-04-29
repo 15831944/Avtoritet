@@ -3,6 +3,7 @@
     using NewLauncher.DataContext;
     using System;
     using System.Net;
+    using System.Reflection;
 
     public class ErrorLogHelper
     {
@@ -37,8 +38,9 @@
                     entities.SaveChanges();
                 }
             }
-            catch
+            catch (Exception e)
             {
+                MainWindow.Logging(e);
             }
         }
     }

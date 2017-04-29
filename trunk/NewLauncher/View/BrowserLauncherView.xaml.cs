@@ -704,7 +704,7 @@ namespace NewLauncher.View
         {
             try
             {
-                logging(string.Format("Browser::IeWebOnDocumentCompleted (Title={0}, AbsoluteUri={1}) - ..."
+                MainWindow.Logging(string.Format("Browser::IeWebOnDocumentCompleted (Title={0}, AbsoluteUri={1}) - ..."
                     , this.Title
                     , webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri));
 
@@ -1144,7 +1144,7 @@ namespace NewLauncher.View
             try
             {
 #if DEBUG
-                logging(string.Format("Browser::IeWebOnNavigating (Title={0}, AbsoluteUri={1}) - ..."
+                MainWindow.Logging(string.Format("Browser::IeWebOnNavigating (Title={0}, AbsoluteUri={1}) - ..."
                     , this.Title
                     , webBrowserNavigatingEventArgs.Url.AbsoluteUri));
 #endif
@@ -1518,7 +1518,7 @@ namespace NewLauncher.View
                 //??? только для Chevrolet-Opel Group
                     foreach (System.Net.Cookie cookie in cookies)
                         if (InternetSetCookie(host, cookie.Name, cookie.Value) == false)
-                            logging(string.Format(@"::OpenSession () - InternetSetCookie (host={0}, cookie-name={1}, cookie-value={2}) - ...", host, cookie.Name, cookie.Value));
+                            MainWindow.Logging(string.Format(@"::OpenSession () - InternetSetCookie (host={0}, cookie-name={1}, cookie-value={2}) - ...", host, cookie.Name, cookie.Value));
                         else
                             ;
             }
@@ -1549,23 +1549,19 @@ namespace NewLauncher.View
             return true;
         }
 
-        private void logging(string mes)
-        {
-            using (FileStream fileStream = new FileStream(string.Format("{0}.log", System.IO.Path.GetFileNameWithoutExtension(Assembly.GetAssembly(this.GetType()).FullName)), FileMode.Append, FileAccess.Write)) {
-                using (StreamWriter streamWriter = new StreamWriter(fileStream)) {
-                    streamWriter.WriteLine(mes);
-                }
-            }
-        }
+        //private void logging(string mes)
+        //{
+        //    logging(this.GetType(), mes);
+        //}
 
-        private void logging(Exception e)
-        {
-            logging(string.Format("[{0}] {1} / {2}"
-                , DateTime.Now
-                , e.Message
-                , e.StackTrace
-            ));
-        }
+        //private void logging(Exception e)
+        //{
+        //    logging(string.Format("[{0}] {1} / {2}"
+        //        , DateTime.Now
+        //        , e.Message
+        //        , e.StackTrace
+        //    ));
+        //}
     }
 }
 

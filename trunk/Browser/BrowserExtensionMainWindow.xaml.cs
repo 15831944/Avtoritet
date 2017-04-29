@@ -52,9 +52,9 @@ namespace BrowserExtension
                 this.InitializeComponent();
                 this.StartNewEventSession();
 
-                //logging("Browser::ctor () - new WindowManager() - ???...");
+                //Logging("Browser::ctor () - new WindowManager() - ???...");
                 this.windowManager = new WindowManager();
-                logging(string.Format("{1}{0}Browser::ctor () - new WindowManager([DateTime={2}]) - processing.."
+                Logging(string.Format("{1}{0}Browser::ctor () - new WindowManager([DateTime={2}]) - processing.."
                     , Environment.NewLine
                     , string.Concat(Enumerable.Repeat("*---", 16))
                     , DateTime.UtcNow));
@@ -74,7 +74,7 @@ namespace BrowserExtension
                         }), new object[0]);
 
                         fileNameSession = commandLineArgs[2];
-                        logging(String.Format("Browser::ctor () - read local session settings(file={0}) - ???..."
+                        Logging(String.Format("Browser::ctor () - read local session settings(file={0}) - ???..."
                             , fileNameSession));
                         if (File.Exists(fileNameSession) == true) {
                             using (FileStream fileStream =
@@ -83,37 +83,37 @@ namespace BrowserExtension
                                     cookies = streamReader.ReadToEnd();
                                 }
                             }
-                            logging(String.Format(
+                            Logging(String.Format(
                                 "Browser::ctor () - read local session settings(file={0}) - success..."
                                 , fileNameSession));
                         } else
-                            logging(String.Format(
+                            Logging(String.Format(
                                 "Browser::ctor () - read local session settings(file={0}) - not exists..."
                                 , fileNameSession));
                     } else
                         ;
 
                     if (string.IsNullOrEmpty(cookies) == false) {
-                        logging(String.Format("Browser::ctor (cookies={0}) - cookies not empty..."
+                        Logging(String.Format("Browser::ctor (cookies={0}) - cookies not empty..."
                             , cookies));
 
                         string urlSetCookie = string.Format("{0}/", commandLineArgs[1]) // /
                             , urlNavigateDoLogin = string.Format("{0}/users/login.html", commandLineArgs[1]); // /users/login.html
 
-                        logging(String.Format("Url to SetCookie (Url={0}) - ..."
+                        Logging(String.Format("Url to SetCookie (Url={0}) - ..."
                             , urlSetCookie));
 
-                        logging(String.Format("Url to navigate do login (Url={0}) - ..."
+                        Logging(String.Format("Url to navigate do login (Url={0}) - ..."
                             , urlNavigateDoLogin));
 
                         List<Cookie> list;
                         try {
                             list = JsonConvert.DeserializeObject<List<Cookie>>(cookies);
 
-                            logging(String.Format("Cookies DeserializeObject ... (Length={0})", list.Count));
+                            Logging(String.Format("Cookies DeserializeObject ... (Length={0})", list.Count));
   
                             foreach (Cookie c in list) {
-                                logging(String.Format("Browser::ctor () - InternetSetCookie to={0}, key={1}, value={2}..."
+                                Logging(String.Format("Browser::ctor () - InternetSetCookie to={0}, key={1}, value={2}..."
                                     , urlSetCookie
                                     , c.Name
                                     , c.Value));
@@ -121,16 +121,16 @@ namespace BrowserExtension
                                 if (MainWindow.InternetSetCookie(urlSetCookie
                                     , c.Name,
                                     c.Value) == false)
-                                    logging(string.Format("::InternetSetCookie () - ошибка..."));
+                                    Logging(string.Format("::InternetSetCookie () - ошибка..."));
                                 else
                                     ;
                             }
                         } catch (Exception ex)
                         {
-                            logging(ex);
+                            Logging(ex);
                         }
 
-                        logging(String.Format("Browser to Navigate (Url={0}) - ..."
+                        Logging(String.Format("Browser to Navigate (Url={0}) - ..."
                             , urlNavigateDoLogin));
 
                         base.Dispatcher.BeginInvoke(new Action(delegate
@@ -149,7 +149,7 @@ namespace BrowserExtension
                     }
                 });
             } catch (Exception ex) {
-                logging(ex);
+                Logging(ex);
             }
         }
 
@@ -163,19 +163,19 @@ namespace BrowserExtension
             this.InternetExplorer.StartNewWindow += new EventHandler<BrowserExtendedNavigatingEventArgs>(this.InternetExplorerOnStartNewWindow);
             this.InternetExplorer.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(this.InternetExplorerOnDocumentCompleted);
 
-            //logging(string.Format("Browser::StartNewEventSession (Title={0}) - ...", this.Title));
+            //Logging(string.Format("Browser::StartNewEventSession (Title={0}) - ...", this.Title));
         }
 
         private void InternetExplorerOnQuit(object sender, EventArgs eventArgs)
         {
-            logging(string.Format("Browser::InternetExplorerOnQuit (Title={0}) - ...", this.Title));
+            Logging(string.Format("Browser::InternetExplorerOnQuit (Title={0}) - ...", this.Title));
 
             Close();
         }
 
         private void InternetExplorerOnNavigating(object sender, WebBrowserNavigatingEventArgs webBrowserNavigatingEventArgs)
         {
-            logging(string.Format("Browser::InternetExplorerOnNavigating (Title={0}, AbsoluteUri={1}) - ..."
+            Logging(string.Format("Browser::InternetExplorerOnNavigating (Title={0}, AbsoluteUri={1}) - ..."
                 , this.Title
                 , webBrowserNavigatingEventArgs.Url.AbsoluteUri));
 
@@ -191,7 +191,7 @@ namespace BrowserExtension
 
         private void InternetExplorerOnStartNewWindow(object sender, BrowserExtendedNavigatingEventArgs browserExtendedNavigatingEventArgs)
         {
-            logging(string.Format("Browser::InternetExplorerOnStartNewWindow (Title={0}, argUrl={1}) - ..."
+            Logging(string.Format("Browser::InternetExplorerOnStartNewWindow (Title={0}, argUrl={1}) - ..."
                 , this.Title
                 , browserExtendedNavigatingEventArgs.Url.ToString()));
 
@@ -247,7 +247,7 @@ namespace BrowserExtension
 
         private void InternetExplorerOnDocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs webBrowserDocumentCompletedEventArgs)
         {
-            logging(string.Format("Browser::InternetExplorerOnDocumentCompleted (Title={0}, argUrl={1}) - ..."
+            Logging(string.Format("Browser::InternetExplorerOnDocumentCompleted (Title={0}, argUrl={1}) - ..."
                 , this.Title
                 , webBrowserDocumentCompletedEventArgs.Url.ToString()));
 
@@ -294,7 +294,7 @@ namespace BrowserExtension
                 else
                     ;
             } catch (Exception ex) {
-                logging(ex);
+                Logging(ex);
             }
         }
 
@@ -313,22 +313,25 @@ namespace BrowserExtension
             }).Start();
         }
 
-        private void logging(string mes)
+        public static void Logging(Exception e)
         {
-            using (FileStream fileStream = new FileStream(string.Format("{0}.log", System.IO.Path.GetFileNameWithoutExtension(Assembly.GetAssembly(this.GetType()).FullName)), FileMode.Append, FileAccess.Write)) {
+            Logging(string.Format("[{0}] {1} / {2}"
+                    , DateTime.Now
+                    , e.Message
+                    , e.StackTrace
+            ));
+        }
+
+        public static void Logging(string mes)
+        {
+            var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
+            FileInfo appFileInfo = new FileInfo(location.AbsolutePath);
+
+            using (FileStream fileStream = new FileStream(string.Format("{0}.log", System.IO.Path.GetFileNameWithoutExtension(appFileInfo.FullName)), FileMode.Append, FileAccess.Write)) {
                 using (StreamWriter streamWriter = new StreamWriter(fileStream)) {
                     streamWriter.WriteLine(mes);
                 }
             }
-        }
-
-        private void logging(Exception e)
-        {
-            logging(string.Format("[{0}] {1} / {2}"
-                , DateTime.Now
-                , e.Message
-                , e.StackTrace
-            ));
         }
     }
 }

@@ -628,5 +628,25 @@ namespace NewLauncher
             }
         }
 
+        public static void Logging(Exception e)
+        {
+            Logging(string.Format("[{0}] {1} / {2}"
+                    , DateTime.Now
+                    , e.Message
+                    , e.StackTrace
+            ));
+        }
+
+        public static void Logging(string mes)
+        {
+            var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
+            FileInfo appFileInfo = new FileInfo(location.AbsolutePath);
+
+            using (FileStream fileStream = new FileStream(string.Format("{0}.log", Path.GetFileNameWithoutExtension(appFileInfo.FullName)), FileMode.Append, FileAccess.Write)) {
+                using (StreamWriter streamWriter = new StreamWriter(fileStream)) {
+                    streamWriter.WriteLine(mes);
+                }
+            }
+        }
     }
 }
