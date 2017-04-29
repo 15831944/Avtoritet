@@ -24,8 +24,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Security;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -64,14 +66,14 @@ namespace NewLauncher
         {
             try
             {
+                _listBrowserLauncherView = new List<BrowserLauncherView>();
+
                 this.InitializeComponent();
                 base.DataContext = this.News;
                 this.NewsBox.ItemsSource = this.News;
                 this.InitializeSettings();
                 this.StartNewEventSession();
                 this.CheckForUpdateAndStartProcess();
-
-                _listBrowserLauncherView = new List<BrowserLauncherView>();
             }
             catch (Exception exception)
             {
@@ -296,18 +298,26 @@ namespace NewLauncher
         {
             try
             {
+                Logging(string.Format("::CheckForUpdateAndStartProcess() - вход..."));
+
                 if (Directory.Exists("Temp"))
                 {
                     IoHelper.DirectoryClear("Temp");
                 }
+
                 AccountManager.Account = RequestHelper.Client.GetUnoccupiedAccount();
+
                 launcherSettings = new SettingsFactory(categoryEventHandler).DownloadSettings(false, true);
                 this.BuildWindow();
-                if (System.IO.File.Exists("Version.json"))
-                {
+
+                if (System.IO.File.Exists("Version.json")) {
                     this.RefreshTitle(new Version(JsonConvert.DeserializeObject<VersionEntity>(FileHelper.OpenFile("Version.json")).Version).ToString());
-                }
+                } else
+                    ;
+
                 this.SetWindowVisibility(Visibility.Visible);
+
+                Logging(string.Format("::CheckForUpdateAndStartProcess() - успех..."));
             }
             catch (Exception exception)
             {
@@ -320,7 +330,8 @@ namespace NewLauncher
 
         private static void FreeOccupiedAccount()
         {
-            if (!((AccountManager.Account == null) || string.IsNullOrEmpty(AccountManager.Account.Name)))
+            if (!((AccountManager.Account == null)
+                || (string.IsNullOrEmpty(AccountManager.Account.Name) == true)))
             {
                 RequestHelper.Client.FreeOccupiedAccount(AccountManager.Account.Name);
             }
@@ -328,17 +339,55 @@ namespace NewLauncher
 
         private void InitializeSettings()
         {
+            Logging(string.Format("::InitializeSettings() - вход..."));
+
             if (RequestHelper.Client == null)
             {
                 RequestHelper.Client = new RequestProcessorClient();
             }
+            #region  Khryapin 2017/04/29
+            if ((Application.Current as App).IsRelease == false) {
+                var endpoint = RequestHelper.Client.Endpoint;
+                Logging(string.Format("EndPoint=[Name={0}, ListenUri={1}, ListenUriMode={2}, Contract.Name={3}, Binding.Name={4}, Address.Uri={5}]"
+                    , endpoint.Name
+                    , endpoint.ListenUri.ToString()
+                    , endpoint.ListenUriMode.ToString()
+                    , endpoint.Contract.Name
+                    , endpoint.Binding.Name
+                    , endpoint.Address.Uri));
+
+                var clientCredentials = RequestHelper.Client.ClientCredentials;
+                if (!(RequestHelper.Client.ClientCredentials == null))
+                    Logging(string.Format("ClientCredentials=[Certificate.SerialNumber={0}, UserName={1}, HttpDigest.UserName={2}, HttpDigest.Password={3}, Windows.AllowedImpersonationLevel={4}]"
+                        , (clientCredentials.ClientCertificate.Certificate == null) ? string.Empty : clientCredentials.ClientCertificate.Certificate.SerialNumber
+                        , clientCredentials.UserName.UserName
+                        , clientCredentials.HttpDigest.ClientCredential.UserName
+                        , clientCredentials.HttpDigest.ClientCredential.Password
+                        , clientCredentials.Windows.AllowedImpersonationLevel
+                    ));
+                else
+                    ;
+
+                Logging(string.Format("RequestHelper.Client.State={0}", RequestHelper.Client.State.ToString()));
+            } else
+                ;
+
+            #endregion
             this.SetWindowStartupLocation();
             this.SetWindowVisibility(Visibility.Hidden);
+
             FileHelper.CreateFileIfNotExist("Version.json");
             FileHelper.CreateDirectoryIfNotExist("Temp");
             InteropHelper.GetSystemTime(ref this.time);
-            //ServicePointManager.ServerCertificateValidationCallback = (RemoteCertificateValidationCallback)Delegate.Combine(ServicePointManager.ServerCertificateValidationCallback, (sender, certificate, chain, sslPolicyErrors) => true);
-            ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+
+            RemoteCertificateValidationCallback delegateCertificateValidationAlwaysTrust = (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) => { return true; };
+            //ServicePointManager.ServerCertificateValidationCallback =
+            //    (RemoteCertificateValidationCallback)Delegate.Combine(ServicePointManager.ServerCertificateValidationCallback
+            //        , delegateCertificateValidationAlwaysTrust);
+            ServicePointManager.ServerCertificateValidationCallback +=
+                delegateCertificateValidationAlwaysTrust;
+
+            Logging(string.Format("::InitializeSettings() - успех..."));
         }
 
         private static BitmapImage LoadImage(byte[] imageData)
@@ -516,10 +565,13 @@ namespace NewLauncher
 
         [DllImport("user32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
         private void StartNewEventSession()
         {
             try
             {
+                Logging(string.Format("::StartNewEventSession() - вход..."));
+
                 base.Closing += delegate(object sender, System.ComponentModel.CancelEventArgs args)
                 {
                     if ((App.IsAssemblyRelease(Assembly.GetAssembly(this.GetType())) == false)
@@ -555,7 +607,10 @@ namespace NewLauncher
                 {
                     try
                     {
-                        if (this.brandLauncher != null && (this.brandLauncher == null || this.brandLauncher.Visibility == Visibility.Hidden))
+                        if ((this.brandLauncher != null)
+                            && ((this.brandLauncher == null)
+                                || (this.brandLauncher.Visibility == Visibility.Hidden))
+                            )
                         {
                             try
                             {
@@ -564,6 +619,7 @@ namespace NewLauncher
                             catch (Exception)
                             {
                             }
+
                             MainWindow.ShowWindow(new WindowInteropHelper(this.brandLauncher).Handle, SwRestore);
                         }
                     }
@@ -581,16 +637,19 @@ namespace NewLauncher
                         this.brandLauncher.Top = base.Top + base.Height;
                         this.brandLauncher.Left = base.Left + this.LeftLength;
                     }
+
                     if (this.TopFlag)
                     {
                         this.brandLauncher.Top = base.Top - this.brandLauncher.Height;
                         this.brandLauncher.Left = base.Left + this.LeftLength;
                     }
+
                     if (this.LeftFlag)
                     {
                         this.brandLauncher.Left = base.Left - this.brandLauncher.Width;
                         this.brandLauncher.Top = base.Top + this.TopLength;
                     }
+
                     if (this.RightFlag)
                     {
                         this.brandLauncher.Left = base.Left + base.Width;
@@ -603,6 +662,8 @@ namespace NewLauncher
                     Microsoft.Win32.SessionEndReasons arg_07_0 = args.Reason;
                     MainWindow.FreeOccupiedAccount();
                 };
+
+                Logging(string.Format("::StartNewEventSession() - успех..."));
             }
             catch (System.Exception ex)
             {
