@@ -80,7 +80,11 @@ namespace NewLauncher
                 ErrorLogHelper.AddErrorInLog("Запуск приложения - MainWindow()",
                     exception.Message + " | " + exception.StackTrace);
                 MessageBox.Show(exception.Message + " | " + exception.StackTrace);
-                Application.Current.Shutdown(0);
+
+                if (!(Application.Current == null))
+                    Application.Current.Shutdown(0);
+                else
+                    ;
             }
         }
 
@@ -330,10 +334,15 @@ namespace NewLauncher
 
         private static void FreeOccupiedAccount()
         {
-            if (!((AccountManager.Account == null)
-                || (string.IsNullOrEmpty(AccountManager.Account.Name) == true)))
-            {
-                RequestHelper.Client.FreeOccupiedAccount(AccountManager.Account.Name);
+            try {
+                if (!((AccountManager.Account == null)
+                    || (string.IsNullOrEmpty(AccountManager.Account.Name) == true))) {
+                    RequestHelper.Client.FreeOccupiedAccount(AccountManager.Account.Name);
+                } else
+                    ;
+            } catch (Exception e) {
+                ErrorLogHelper.AddErrorInLog(string.Format(@"MainWindow::FreeOccupiedAccount () - ...")
+                    , string.Format("{0} | {1}", e.Message, e.StackTrace));
             }
         }
 

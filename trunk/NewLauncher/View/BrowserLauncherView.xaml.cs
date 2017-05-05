@@ -47,7 +47,7 @@ namespace NewLauncher.View
         public NewLauncher.Extension.WindowManager WindowManager { get; set; }
 
 
-        public BrowserLauncherView(string url, string brand, SystemTime startTime, string Login, string Password)
+        public BrowserLauncherView(string url, string brand, SystemTime startTime, string login, string password)
         {
             try
             {
@@ -55,8 +55,8 @@ namespace NewLauncher.View
                 this.time = startTime;
                 base.Title = brand;
                 this.url = url;
-                this.login = Login;
-                this.password = Password;
+                this.login = login;
+                this.password = password;
                 this.WindowManager = new NewLauncher.Extension.WindowManager();
                 StartNewEventSession();
             }
@@ -275,65 +275,65 @@ namespace NewLauncher.View
                 #region partslink24
                 if (this.url.Contains(CatalogApi.UrlConstants.Partslink24Root))
                 {
-                    if (this.NeedRefresh(geckoEventArgs.Uri))
-                    {
-                        if (this.RefreshSession(string.Format(".{0}", CatalogApi.UrlConstants.Partslink24Com), geckoEventArgs.Uri.AbsoluteUri))
-                        {
+                    if (this.NeedRefresh(geckoEventArgs.Uri)) {
+                        if (this.RefreshSession(string.Format(".{0}", CatalogApi.UrlConstants.Partslink24Com), geckoEventArgs.Uri.AbsoluteUri)) {
                             this.GeckoWeb.Navigate(this.url);
-                        }
-                        else
-                        {
+                        } else {
                             this.Captcha.Text = "Ошибка подключения!";
                             this.Message.Text = "Сервер не доступен, попробуйте подключиться позже...";
                             this.GeckoHost.Visibility = Visibility.Collapsed;
                             return;
                         }
-                    }
-                    if (this.NeedNavigation(geckoEventArgs.Uri))
-                    {
+                    } else
+                        ;
+
+                    if (this.NeedNavigation(geckoEventArgs.Uri)) {
                         this.GeckoWeb.Navigate(this.url);
-                    }
-                    if (this.PageHasDemoString(this.GeckoWeb.Document.Body.OuterHtml))
+                    } else
+                        ;
+
+                    /*if (this.PageHasDemoString(this.GeckoWeb.Document.Body.OuterHtml))
                     {
                         this.Captcha.Text = "Тайм-аут сессии";
                         this.Message.Text = "Перезапустите web-браузер";
                         this.GeckoHost.Visibility = Visibility.Collapsed;
-                    }
-                    else if (this.PageHasHeaderLogoString(this.GeckoWeb.Document.Body.OuterHtml))
-                    {
+                    } else*/ if (this.PageHasHeaderLogoString(this.GeckoWeb.Document.Body.OuterHtml)) {
                         GeckoElement element4 = this.GeckoWeb.Document.GetElementById("headerLogo");
-                        if (element4 != null)
-                        {
+                        if (element4 != null) {
                             element4.SetAttribute("style", "display:none");
-                        }
+                        } else
+                            ;
+
                         GeckoElement element5 = this.GeckoWeb.Document.GetElementById("headerLinks");
-                        if (element5 != null)
-                        {
+                        if (element5 != null) {
                             element5.SetAttribute("style", "display:none");
-                        }
+                        } else
+                            ;
+
                         GeckoElement element6 = this.GeckoWeb.Document.GetElementById("headerText");
-                        if (element6 != null)
-                        {
+                        if (element6 != null) {
                             element6.SetAttribute("style", "display:none");
-                        }
+                        } else
+                            ;
+
                         GeckoElement element7 = this.GeckoWeb.Document.GetElementById("portalMenu");
-                        if (element7 != null)
-                        {
+                        if (element7 != null) {
                             element7.SetAttribute("style", "display:none");
-                        }
+                        } else
+                            ;
+
                         GeckoElement element8 = this.GeckoWeb.Document.GetElementById("main-content");
-                        if (element8 != null)
-                        {
+                        if (element8 != null) {
                             element8.SetAttribute("style", "display:none");
-                        }
+                        } else
+                            ;
+
                         GeckoElement element9 = this.GeckoWeb.Document.GetElementById("otherInfoBox");
-                        if (element9 != null)
-                        {
+                        if (element9 != null) {
                             element9.SetAttribute("style", "display:none");
-                        }
-                    }
-                    else
-                    {
+                        } else
+                            ;
+                    } else {
                         if (geckoEventArgs.Window.Frames.Count > 0)
                         {
                             foreach (GeckoWindow window in geckoEventArgs.Window.Frames)
@@ -697,7 +697,14 @@ namespace NewLauncher.View
 
         private List<System.Net.Cookie> GetCookies(string geckoUrl)
         {
-            return JsonConvert.DeserializeObject<List<System.Net.Cookie>>(RequestHelper.Client.GetCookies(geckoUrl));
+            string cookies = RequestHelper.Client.GetCookies(geckoUrl);
+
+            NewLauncher.MainWindow.Logging(string.Format(@"Url={1}{0}, cookies={2}"
+                , Environment.NewLine
+                , geckoUrl
+                , cookies));
+
+            return JsonConvert.DeserializeObject<List<System.Net.Cookie>>(cookies);
         }
 
         private void IeWebOnDocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs webBrowserDocumentCompletedEventArgs)
@@ -1323,7 +1330,7 @@ namespace NewLauncher.View
                 {
                     flag = true;
                     InteropHelper.SetSystemTime(ref this.time);
-                    if (RequestHelper.Client.IsServiceAvailable())
+                    if (RequestHelper.Client.IsServiceAvailable(CatalogApi.UrlConstants.Partslink24Com))
                     {
                         this.OpenSession(string.Format(".{0}.com", CatalogApi.UrlConstants.Partslink24Root), false);
                         this.GeckoWeb.Navigate(string.Format("{0}/", CatalogApi.UrlConstants.Partslink24Com));
@@ -1507,21 +1514,24 @@ namespace NewLauncher.View
             RequestHelper.Client.OpenSession(this.url, force);
             session_cookies = RequestHelper.Client.GetCookies(this.url);
             List<System.Net.Cookie> cookies = JsonConvert.DeserializeObject<List<System.Net.Cookie>>(session_cookies);
-            if ((cookies != null) && (cookies.Count > 0))
+            if ((cookies != null)
+                && (cookies.Count > 0))
             {
-                if (!host.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot)) // "gme-infotech.com"
-                {
+                //if (!host.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot)) {
                     this.ClearCookies();
                     this.InsertCookies(host, cookies);
-                }
-                else
-                //??? только для Chevrolet-Opel Group
-                    foreach (System.Net.Cookie cookie in cookies)
-                        if (InternetSetCookie(host, cookie.Name, cookie.Value) == false)
-                            MainWindow.Logging(string.Format(@"::OpenSession () - InternetSetCookie (host={0}, cookie-name={1}, cookie-value={2}) - ...", host, cookie.Name, cookie.Value));
-                        else
-                            ;
-            }
+                //} else
+                ////??? только для Chevrolet-Opel Group
+                //    foreach (System.Net.Cookie cookie in cookies)
+                //        if (InternetSetCookie(host, cookie.Name, cookie.Value) == false)
+                //            MainWindow.Logging(string.Format(@"::OpenSession () - InternetSetCookie (host={0}, cookie-name={1}, cookie-value={2}) - ...", host, cookie.Name, cookie.Value));
+                //        else
+                //            ;
+            } else
+                ErrorLogHelper.AddErrorInLog(
+                    string.Format("::OpenSession ()")
+                    , string.Format("cookies: {0}", cookies == null ? "null" : "count = 0")
+                );
         }
 
         private bool PageHasDemoString(string outerHtml)

@@ -155,6 +155,7 @@
     <Compile Include="RelayServer.Models\GroupBox.cs" />
     <Compile Include="RelayServer.Models\Provider.cs" />
     <Compile Include="RelayServer.Models\ProviderFile.cs" />
+    <Compile Include="RelayServer.Portals\BrandPortal.cs" />
     <Compile Include="RelayServer.Portals\ChevroletPortal.cs" />
     <Compile Include="RelayServer.Portals\CitroenPortal.cs" />
     <Compile Include="RelayServer.Portals\OpelPortal.cs" />

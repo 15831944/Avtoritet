@@ -14,21 +14,19 @@ using System.Threading.Tasks;
 
 namespace RelayServer.Portals
 {
-	public class ChevroletPortal : ISessionHandler
+	public class ChevroletPortal : BrandPortal
 	{
-		private static readonly object AutorizeLock;
+        private static readonly object AutorizeLock;
 
-		private static readonly CookieContainer CookieContainer;
+        private static readonly CookieContainer CookieContainer;
 
-		private IRequestHandler requestHandler;
-
-		static ChevroletPortal()
+        static ChevroletPortal()
 		{
-			ChevroletPortal.AutorizeLock = new object();
-			ChevroletPortal.CookieContainer = new CookieContainer();
-		}
+            ChevroletPortal.AutorizeLock = new object();
+            ChevroletPortal.CookieContainer = new CookieContainer();
+        }
 
-		public void OpenSession(string url, bool forceSession)
+		public override void OpenSession(string url, bool forceSession)
 		{
 		    //Uri uri;
 		    string
@@ -59,40 +57,15 @@ namespace RelayServer.Portals
 		    //urlSession = string.Format("{0}://{1}/", uri.Scheme, uri.Host);
 		    urlSession = url;
 
-            this.requestHandler = RequestHandlerFactory.Create(urlSession, login, password, null);
-			HttpResponseMessage responseMessage = this.GetResponse(urlSession, forceSession, this.requestHandler, ChevroletPortal.CookieContainer);
+            this.m_requestHandler = RequestHandlerFactory.Create(urlSession, login, password, null);
+			HttpResponseMessage responseMessage = this.GetResponse(urlSession, forceSession, this.m_requestHandler, ChevroletPortal.CookieContainer);
 			if (responseMessage != null)
 			{
-				this.requestHandler.GetSessionResultAsync(responseMessage);
+				this.m_requestHandler.GetSessionResultAsync(responseMessage);
 			}
 		}
 
-		public void CloseSession(string url)
-		{
-			if (this.requestHandler != null)
-			{
-				this.requestHandler.Close(ChevroletPortal.CookieContainer).Wait();
-			}
-			else
-			{
-				IRequestHandler request = RequestHandlerFactory.Create(url, string.Empty, string.Empty, null);
-				if (request != null)
-				{
-					request.Close(ChevroletPortal.CookieContainer).Wait();
-				}
-			}
-			ConsoleHelper.Info("Session was closed");
-		}
-
-		public string GetCookies(string url)
-		{
-			string json = JsonConvert.SerializeObject(ChevroletPortal.CookieContainer.GetCookies(new Uri(string.Format("{0}/", url))).Cast<Cookie>().ToList<Cookie>());
-			ConsoleHelper.Debug(String.Format("Cookies obtained successfully: {0}"
-                , json.Length > 0 ? json : "отсутствует"));
-			return json;
-		}
-
-		public HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container)
+		public override HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container)
 		{
             HttpResponseMessage result;
 
@@ -130,10 +103,20 @@ namespace RelayServer.Portals
 			return result;
 		}
 
-		private bool SessionHasError(HttpResponseMessage responseMessage)
+		protected override bool SessionHasError(HttpResponseMessage responseMessage)
 		{
 			HttpStatusCode statusCode = responseMessage.StatusCode;
 			return statusCode != HttpStatusCode.OK || responseMessage.RequestMessage.RequestUri.AbsoluteUri.Contains("error403");
 		}
-	}
+
+        public override void CloseSession(string url)
+        {
+            BrandPortal.CloseSession(url, m_requestHandler, CookieContainer);
+        }
+
+        public override string GetCookies(string url)
+        {
+            return BrandPortal.GetCookies(url, CookieContainer, true);
+        }
+    }
 }

@@ -8,63 +8,35 @@ using System.Threading.Tasks;
 
 namespace RequestHandlers.Handlers
 {
-	public class PartsLink24RequestHandler : IRequestHandler
+	public class PartsLink24RequestHandler : BrandRequestHandler
 	{
 		public const string Pl24Sessionid = "PL24SESSIONID";
 
 		public const string Pl24LoggedInTrail = "pl24LoggedInTrail";
 
-		private readonly string login;
-
-		private readonly string password;
-
 		public PartsLink24RequestHandler(string login, string password)
+            : base (login, password)
 		{
-			this.login = login;
-			this.password = password;
 		}
 
-		public bool SessionHasEnded(string url, CookieContainer cookieContainer)
+		public override bool NeedAuthorization(string url, CookieContainer cookieContainer)
 		{
-			return this.NeedAuthorization(url, cookieContainer);
+            bool bRes = false;
+
+            bRes = base.NeedAuthorization(url, cookieContainer);
+            CookieCollection cookies = cookieContainer.GetCookies(new Uri(url));
+
+            return bRes || cookies[Pl24LoggedInTrail] == null;
 		}
 
-		public bool NeedAuthorization(string url, CookieContainer cookieContainer)
-		{
-			CookieCollection cookies = cookieContainer.GetCookies(new Uri(url));
-			if (cookies.Count > 0)
-			{
-				PartsLink24RequestHandler.PrintCookies(cookies);
-			}
-			return cookies.Count == 0 || cookies["pl24LoggedInTrail"] == null;
-		}
+        protected override HttpRequestMessage createLoginRequest()
+        {
+            return PartsLink24RequestFactory.CreateLoginRequest(m_login, m_password);
+        }
 
-		public async Task Close(CookieContainer cookieContainer)
-		{
-			await HttpProxyServer.SendRequest(PartsLink24RequestFactory.CreateLogoutRequest(), cookieContainer);
-		}
-
-		public async Task<string> GetSessionResultAsync(HttpResponseMessage responseMessage)
-		{
-			return await responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync();
-		}
-
-		public async Task<HttpResponseMessage> GetSessionAsync(string url, CookieContainer cookieContainer)
-		{
-			return await HttpProxyServer.SendRequest(RequestFactory.CreateGetRequest(url), cookieContainer);
-		}
-
-		public async Task<HttpResponseMessage> OpenSessionAsync(CookieContainer cookieContainer)
-		{
-			return await HttpProxyServer.SendRequest(PartsLink24RequestFactory.CreateLoginRequest(this.login, this.password), cookieContainer);
-		}
-
-		private static void PrintCookies(IEnumerable cookies)
-		{
-			foreach (Cookie cookie in cookies)
-			{
-				ConsoleHelper.Trace(string.Format("Cookie {0}={1}", cookie.Name, cookie.Value));
-			}
-		}
-	}
+        protected override HttpRequestMessage createLogoutRequest()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

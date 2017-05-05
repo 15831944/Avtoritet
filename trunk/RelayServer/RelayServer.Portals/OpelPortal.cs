@@ -13,13 +13,11 @@ using System.Threading.Tasks;
 
 namespace RelayServer.Portals
 {
-	public class OpelPortal : ISessionHandler
+	public class OpelPortal : BrandPortal
 	{
 		private static readonly object AutorizeLock;
 
 		private static readonly CookieContainer CookieContainer;
-
-		private IRequestHandler requestHandler;
 
 		static OpelPortal()
 		{
@@ -27,7 +25,7 @@ namespace RelayServer.Portals
 			OpelPortal.CookieContainer = new CookieContainer();
 		}
 
-		public void OpenSession(string url, bool forceSession)
+		public override void OpenSession(string url, bool forceSession)
 		{
 			string Login = string.Empty;
 			string Password = string.Empty;
@@ -41,39 +39,25 @@ namespace RelayServer.Portals
 					Password = provider.Password;
 				}
 			}
-			this.requestHandler = RequestHandlerFactory.Create(url, Login, Password, "opel");
-			HttpResponseMessage responseMessage = this.GetResponse(url, forceSession, this.requestHandler, OpelPortal.CookieContainer);
+			this.m_requestHandler = RequestHandlerFactory.Create(url, Login, Password, "opel");
+			HttpResponseMessage responseMessage = this.GetResponse(url, forceSession, this.m_requestHandler, OpelPortal.CookieContainer);
 			if (responseMessage != null)
 			{
-				this.requestHandler.GetSessionResultAsync(responseMessage);
+				this.m_requestHandler.GetSessionResultAsync(responseMessage);
 			}
 		}
 
-		public void CloseSession(string url)
+		public override void CloseSession(string url)
 		{
-			if (this.requestHandler != null)
-			{
-				this.requestHandler.Close(OpelPortal.CookieContainer).Wait();
-			}
-			else
-			{
-				IRequestHandler request = RequestHandlerFactory.Create(url, string.Empty, string.Empty, null);
-				if (request != null)
-				{
-					request.Close(OpelPortal.CookieContainer).Wait();
-				}
-			}
-			ConsoleHelper.Info("Session was closed");
+            BrandPortal.CloseSession(url, m_requestHandler, CookieContainer);
 		}
 
-		public string GetCookies(string url)
+		public override string GetCookies(string url)
 		{
-			string json = JsonConvert.SerializeObject(OpelPortal.CookieContainer.GetCookies(new Uri(url)).Cast<Cookie>().ToList<Cookie>());
-			ConsoleHelper.Debug("Cookies obtained successfully");
-			return json;
+            return BrandPortal.GetCookies(url, CookieContainer, true);
 		}
 
-		public HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container)
+		public override HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container)
 		{
 			HttpResponseMessage result;
 			lock (OpelPortal.AutorizeLock)
@@ -111,7 +95,7 @@ namespace RelayServer.Portals
 			return result;
 		}
 
-		private bool SessionHasError(HttpResponseMessage responseMessage)
+		protected override bool SessionHasError(HttpResponseMessage responseMessage)
 		{
 			HttpStatusCode statusCode = responseMessage.StatusCode;
 			return statusCode != HttpStatusCode.OK || responseMessage.RequestMessage.RequestUri.AbsoluteUri.Contains("error403");

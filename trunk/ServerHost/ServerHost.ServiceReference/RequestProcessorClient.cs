@@ -60,9 +60,9 @@ namespace ServerHost.ServiceReference
 			return base.Channel.GetUnoccupiedAccount();
 		}
 
-		public bool IsServiceAvailable()
+		public bool IsServiceAvailable(string serviceUri)
 		{
-			return base.Channel.IsServiceAvailable();
+			return base.Channel.IsServiceAvailable(serviceUri);
 		}
 
 		public void LogConnection(string machineName, string launcherVersion)

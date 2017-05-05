@@ -11,11 +11,11 @@ namespace RequestHandlers.Requests
 
 		private const string Partslink24ComPartslink24UserLogoutDo = "https://www.partslink24.com/partslink24/user/logout.do";
 
-		public static HttpRequestMessage CreateLoginRequest(string Login, string Password)
+		public static HttpRequestMessage CreateLoginRequest(string login, string password)
 		{
 			return new HttpRequestMessage
 			{
-				Content = PartsLink24RequestFactory.FormUrlEncodedContent(Login, Password),
+				Content = PartsLink24RequestFactory.FormUrlEncodedContent(login, password),
 				Method = HttpMethod.Post,
 				RequestUri = new Uri("https://www.partslink24.com/partslink24/login-ajax!login.action")
 			};
@@ -30,9 +30,9 @@ namespace RequestHandlers.Requests
 			};
 		}
 
-		private static FormUrlEncodedContent FormUrlEncodedContent(string Login, string Password)
+		private static FormUrlEncodedContent FormUrlEncodedContent(string id_login, string password)
 		{
-			string[] ar = Login.Split(new char[]
+			string[] ar = id_login.Split(new char[]
 			{
 				'/'
 			});
@@ -40,14 +40,14 @@ namespace RequestHandlers.Requests
 			string login = ar[1];
 			ConsoleHelper.Info("Partslink ID: " + id);
 			ConsoleHelper.Info("Partslink Login: " + login);
-			ConsoleHelper.Info("Partslink Password: " + Password);
+			ConsoleHelper.Info("Partslink Password: " + password);
 			List<KeyValuePair<string, string>> postData = new List<KeyValuePair<string, string>>
 			{
 				new KeyValuePair<string, string>("org.apache.struts.taglib.html.TOKEN", "7bfe4fc414c2621c309b7960a92d012e"),
 				new KeyValuePair<string, string>("loginAction", ""),
 				new KeyValuePair<string, string>("loginBean.accountLogin", id),
 				new KeyValuePair<string, string>("loginBean.userLogin", login),
-				new KeyValuePair<string, string>("loginBean.password", Password)
+				new KeyValuePair<string, string>("loginBean.password", password)
 			};
 			return new FormUrlEncodedContent(postData);
 		}

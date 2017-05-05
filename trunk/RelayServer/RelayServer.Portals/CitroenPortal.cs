@@ -13,13 +13,11 @@ using System.Threading.Tasks;
 
 namespace RelayServer.Portals
 {
-	public class CitroenPortal : ISessionHandler
+	public class CitroenPortal : BrandPortal
 	{
 		private static readonly object AutorizeLock;
 
 		private static readonly CookieContainer CookieContainer;
-
-		private IRequestHandler requestHandler;
 
 		static CitroenPortal()
 		{
@@ -27,7 +25,7 @@ namespace RelayServer.Portals
 			CitroenPortal.CookieContainer = new CookieContainer();
 		}
 
-		public void OpenSession(string url, bool forceSession)
+		public override void OpenSession(string url, bool forceSession)
 		{
 			string Login = string.Empty;
 			string Password = string.Empty;
@@ -41,39 +39,25 @@ namespace RelayServer.Portals
             //Login = "AC27525217";
             //Password = "Citroenepc";
 
-            this.requestHandler = RequestHandlerFactory.Create(url, Login, Password, null);
-			HttpResponseMessage responseMessage = this.GetResponse(url, forceSession, this.requestHandler, CitroenPortal.CookieContainer);
+            this.m_requestHandler = RequestHandlerFactory.Create(url, Login, Password, null);
+			HttpResponseMessage responseMessage = this.GetResponse(url, forceSession, this.m_requestHandler, CitroenPortal.CookieContainer);
 			if (responseMessage != null)
 			{
-				this.requestHandler.GetSessionResultAsync(responseMessage);
+				this.m_requestHandler.GetSessionResultAsync(responseMessage);
 			}
 		}
 
-		public void CloseSession(string url)
+		public override void CloseSession(string url)
 		{
-			if (this.requestHandler != null)
-			{
-				this.requestHandler.Close(CitroenPortal.CookieContainer).Wait();
-			}
-			else
-			{
-				IRequestHandler request = RequestHandlerFactory.Create(url, string.Empty, string.Empty, null);
-				if (request != null)
-				{
-					request.Close(CitroenPortal.CookieContainer).Wait();
-				}
-			}
-			ConsoleHelper.Info("Session was closed");
+            BrandPortal.CloseSession(url, m_requestHandler, CookieContainer);
 		}
 
-		public string GetCookies(string url)
+		public override string GetCookies(string url)
 		{
-			string json = JsonConvert.SerializeObject(CitroenPortal.CookieContainer.GetCookies(new Uri(url)).Cast<Cookie>().ToList<Cookie>());
-			ConsoleHelper.Debug("Cookies obtained successfully");
-			return json;
+            return BrandPortal.GetCookies(url, CookieContainer, false);
 		}
 
-		public HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container)
+		public override HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container)
 		{
 			HttpResponseMessage result;
 			lock (CitroenPortal.AutorizeLock)
@@ -111,7 +95,7 @@ namespace RelayServer.Portals
 			return result;
 		}
 
-		private bool SessionHasError(HttpResponseMessage responseMessage)
+		protected override bool SessionHasError(HttpResponseMessage responseMessage)
 		{
 			HttpStatusCode statusCode = responseMessage.StatusCode;
 			return statusCode != HttpStatusCode.OK || responseMessage.RequestMessage.RequestUri.AbsoluteUri.Contains("index.jsp");

@@ -13,21 +13,19 @@ using System.Threading.Tasks;
 
 namespace RelayServer.Portals
 {
-	public class PeugeotPortal : ISessionHandler
-	{
-		private static readonly object AutorizeLock;
+	public class PeugeotPortal : BrandPortal
+    {
+        private static readonly object AutorizeLock;
 
-		private static readonly CookieContainer CookieContainer;
+        private static readonly CookieContainer CookieContainer;
 
-		private IRequestHandler requestHandler;
-
-		static PeugeotPortal()
+        static PeugeotPortal()
 		{
-			PeugeotPortal.AutorizeLock = new object();
-			PeugeotPortal.CookieContainer = new CookieContainer();
-		}
+            PeugeotPortal.AutorizeLock = new object();
+            PeugeotPortal.CookieContainer = new CookieContainer();
+        }
 
-		public void OpenSession(string url, bool forceSession)
+		public override void OpenSession(string url, bool forceSession)
 		{
 			string Login = string.Empty;
 			string Password = string.Empty;
@@ -39,39 +37,15 @@ namespace RelayServer.Portals
                 Password = provider.Password;
             }
 
-            this.requestHandler = RequestHandlerFactory.Create(url, Login, Password, null);
-			HttpResponseMessage responseMessage = this.GetResponse(url, forceSession, this.requestHandler, PeugeotPortal.CookieContainer);
+            this.m_requestHandler = RequestHandlerFactory.Create(url, Login, Password, null);
+			HttpResponseMessage responseMessage = this.GetResponse(url, forceSession, this.m_requestHandler, PeugeotPortal.CookieContainer);
 			if (responseMessage != null)
 			{
-				this.requestHandler.GetSessionResultAsync(responseMessage);
+				this.m_requestHandler.GetSessionResultAsync(responseMessage);
 			}
 		}
 
-		public void CloseSession(string url)
-		{
-			if (this.requestHandler != null)
-			{
-				this.requestHandler.Close(PeugeotPortal.CookieContainer).Wait();
-			}
-			else
-			{
-				IRequestHandler request = RequestHandlerFactory.Create(url, string.Empty, string.Empty, null);
-				if (request != null)
-				{
-					request.Close(PeugeotPortal.CookieContainer).Wait();
-				}
-			}
-			ConsoleHelper.Info("Session was closed");
-		}
-
-		public string GetCookies(string url)
-		{
-			string json = JsonConvert.SerializeObject(PeugeotPortal.CookieContainer.GetCookies(new Uri(url)).Cast<Cookie>().ToList<Cookie>());
-			ConsoleHelper.Debug("Cookies obtained successfully");
-			return json;
-		}
-
-		public HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container)
+        public override HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container)
 		{
 			HttpResponseMessage result;
 			lock (PeugeotPortal.AutorizeLock)
@@ -112,10 +86,20 @@ namespace RelayServer.Portals
 			return result;
 		}
 
-		private bool SessionHasError(HttpResponseMessage responseMessage)
+        protected override bool SessionHasError(HttpResponseMessage responseMessage)
 		{
 			HttpStatusCode statusCode = responseMessage.StatusCode;
 			return statusCode != HttpStatusCode.OK || responseMessage.RequestMessage.RequestUri.AbsoluteUri.Contains("index.jsp");
 		}
-	}
+
+        public override void CloseSession(string url)
+        {
+            BrandPortal.CloseSession(url, m_requestHandler, CookieContainer);
+        }
+
+        public override string GetCookies(string url)
+        {
+            return BrandPortal.GetCookies(url, CookieContainer, false);
+        }
+    }
 }

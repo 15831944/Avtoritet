@@ -268,20 +268,21 @@ namespace RelayServer.Processors
 			return result;
 		}
 
-		public bool IsServiceAvailable()
+		public bool IsServiceAvailable(string serviceUri)
 		{
 			bool result;
 			try
 			{
 				CookieContainer cookieContainer = new CookieContainer();
-				IRequestHandler requestHandler = RequestHandlerFactory.Create("http://www.partslink24.com/", string.Empty, string.Empty, null);
-				Task<HttpResponseMessage> responseMessage = requestHandler.GetSessionAsync("http://www.partslink24.com/", cookieContainer);
+				IRequestHandler requestHandler = RequestHandlerFactory.Create(string.Format("{0}/", serviceUri), string.Empty, string.Empty, null);
+				Task<HttpResponseMessage> responseMessage = requestHandler.GetSessionAsync(string.Format("{0}/", serviceUri), cookieContainer);
 				string content = responseMessage.Result.Content.ReadAsStringAsync().Result;
-				result = (!content.Contains("maintenance_general") && int.Parse(RequestProcessor.GetConfig("Partslink")) > 0);
+				result = (!(content.Contains("maintenance_general") == true)
+                    && (int.Parse(RequestProcessor.GetConfig("Partslink")) > 0));
 			}
 			catch (System.Exception ex)
 			{
-				ErrorLogHelper.AddErrorInLog("IsServiceAvailable()", ex.Message + "|" + ex.StackTrace);
+				ErrorLogHelper.AddErrorInLog(string.Format("IsServiceAvailable(uri={0})", serviceUri), ex.Message + "|" + ex.StackTrace);
 				ConsoleHelper.Error(string.Format("{0} || {1} || {2}", ex.Message, ex.StackTrace, ex.Data));
 				result = false;
 			}

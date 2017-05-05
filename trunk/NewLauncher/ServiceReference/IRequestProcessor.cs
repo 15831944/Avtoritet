@@ -18,7 +18,7 @@
         [OperationContract(Action="http://tempuri.org/IRequestProcessor/GetUnoccupiedAccount", ReplyAction="http://tempuri.org/IRequestProcessor/GetUnoccupiedAccountResponse")]
         AccountModel GetUnoccupiedAccount();
         [OperationContract(Action="http://tempuri.org/IRequestProcessor/IsServiceAvailable", ReplyAction="http://tempuri.org/IRequestProcessor/IsServiceAvailableResponse")]
-        bool IsServiceAvailable();
+        bool IsServiceAvailable(string serviceUri);
         [OperationContract(Action="http://tempuri.org/IRequestProcessor/LogConnection", ReplyAction="http://tempuri.org/IRequestProcessor/LogConnectionResponse")]
         void LogConnection(string machineName, string launcherVersion);
         [OperationContract(Action="http://tempuri.org/IRequestProcessor/OpenSession", ReplyAction="http://tempuri.org/IRequestProcessor/OpenSessionResponse")]

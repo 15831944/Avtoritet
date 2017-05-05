@@ -14,72 +14,60 @@ using System.Threading.Tasks;
 
 namespace RelayServer.Portals
 {
-	public class PartslinkPortal : ISessionHandler
+	public class PartslinkPortal : BrandPortal
 	{
-		private static readonly object AutorizeLock;
+        private static readonly object AutorizeLock;
 
-		private static readonly CookieContainer CookieContainer;
+        private static readonly CookieContainer CookieContainer;
 
-		private static bool partslinkIsBlocked;
-
-		private IRequestHandler requestHandler;
+        private static bool partslinkIsBlocked;
 
 		static PartslinkPortal()
 		{
-			PartslinkPortal.AutorizeLock = new object();
-			PartslinkPortal.CookieContainer = new CookieContainer();
-		}
+            PartslinkPortal.AutorizeLock = new object();
+            PartslinkPortal.CookieContainer = new CookieContainer();
+        }
 
-		public void OpenSession(string url, bool forceSession)
+		public override void OpenSession(string url, bool forceSession)
 		{
-			string Login = string.Empty;
-			string Password = string.Empty;
+			string login = string.Empty;
+			string password = string.Empty;
 			using (AvtoritetEntities ae = new AvtoritetEntities())
 			{
-				string sql = "SELECT          dbo.ProviderAccount.Login, dbo.ProviderAccount.Password\r\n                                            FROM dbo.Provider INNER JOIN\r\n                                            dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId\r\n                                            WHERE(dbo.Provider.Uri LIKE N'%partslink%') AND(dbo.ProviderAccount.Enable = 1)";
+				string sql = string.Format("SELECT dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{1}{0}{0}{0}{0}"
+                    + "FROM dbo.Provider{1}{0}{0}{0}{0}"
+                    + "INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{1}{0}{0}{0}{0}"
+                    + "WHERE(dbo.Provider.Uri LIKE N'%partslink%') AND (dbo.ProviderAccount.Enable = 1)"
+                    , "          "
+                    , "\r\n");
 				System.Collections.Generic.List<ProvAcc> provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).ToList<ProvAcc>();
 				if (provider.Count > 0)
 				{
 					System.Random random = new System.Random();
 					int randomValue = (provider.Count > 1) ? random.Next(provider.Count - 1) : 0;
-					Login = provider[randomValue].Login;
-					Password = provider[randomValue].Password;
+					login = provider[randomValue].Login;
+					password = provider[randomValue].Password;
 				}
 			}
-			this.requestHandler = RequestHandlerFactory.Create(url, Login, Password, null);
-			HttpResponseMessage responseMessage = this.GetResponse(url, forceSession, this.requestHandler, PartslinkPortal.CookieContainer);
+			this.m_requestHandler = RequestHandlerFactory.Create(url, login, password, null);
+			HttpResponseMessage responseMessage = this.GetResponse(url, forceSession, this.m_requestHandler, PartslinkPortal.CookieContainer);
 			if (responseMessage != null)
 			{
-				this.requestHandler.GetSessionResultAsync(responseMessage);
+				this.m_requestHandler.GetSessionResultAsync(responseMessage);
 			}
 		}
 
-		public void CloseSession(string url)
+		public override void CloseSession(string url)
 		{
-			if (this.requestHandler != null)
-			{
-				this.requestHandler.Close(PartslinkPortal.CookieContainer).Wait();
-			}
-			else
-			{
-				IRequestHandler request = RequestHandlerFactory.Create(url, string.Empty, string.Empty, null);
-				if (request == null)
-				{
-					return;
-				}
-				request.Close(PartslinkPortal.CookieContainer).Wait();
-			}
-			ConsoleHelper.Info("Session was closed");
+            BrandPortal.CloseSession(url, m_requestHandler, CookieContainer);
 		}
 
-		public string GetCookies(string url)
+		public override string GetCookies(string url)
 		{
-			string json = JsonConvert.SerializeObject(PartslinkPortal.CookieContainer.GetCookies(new Uri(url)).Cast<Cookie>().ToList<Cookie>());
-			ConsoleHelper.Debug("Cookies obtained successfully");
-			return json;
+            return BrandPortal.GetCookies(url, CookieContainer, false);
 		}
 
-		public HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container)
+		public override HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container)
 		{
 			HttpResponseMessage result;
 			lock (PartslinkPortal.AutorizeLock)
@@ -131,7 +119,7 @@ namespace RelayServer.Portals
 			return result;
 		}
 
-		private bool SessionHasError(HttpResponseMessage responseMessage)
+		protected override bool SessionHasError(HttpResponseMessage responseMessage)
 		{
 			HttpStatusCode statusCode = responseMessage.StatusCode;
 			bool result;

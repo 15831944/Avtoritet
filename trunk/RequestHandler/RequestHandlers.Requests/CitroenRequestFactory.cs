@@ -10,11 +10,11 @@ namespace RequestHandlers.Requests
 
 		private const string CitroenLogoutDo = "http://service.citroen.com/do/logout";
 
-		public static HttpRequestMessage CreateLoginRequest(string Login, string Password)
+		public static HttpRequestMessage CreateLoginRequest(string login, string password)
 		{
 			return new HttpRequestMessage
 			{
-				Content = CitroenRequestFactory.FormUrlEncodedContent(Login, Password),
+				Content = CitroenRequestFactory.FormUrlEncodedContent(login, password),
 				Method = HttpMethod.Post,
 				RequestUri = new Uri("http://service.citroen.com/do/login")
 			};
@@ -29,12 +29,12 @@ namespace RequestHandlers.Requests
 			};
 		}
 
-		private static FormUrlEncodedContent FormUrlEncodedContent(string Login, string Password)
+		private static FormUrlEncodedContent FormUrlEncodedContent(string login, string password)
 		{
 			List<KeyValuePair<string, string>> postData = new List<KeyValuePair<string, string>>
 			{
-				new KeyValuePair<string, string>("userid", Login),
-				new KeyValuePair<string, string>("password", Password),
+				new KeyValuePair<string, string>("userid", login),
+				new KeyValuePair<string, string>("password", password),
 				new KeyValuePair<string, string>("window", "jbnvzV6B522C53oL3E")
 			};
 			return new FormUrlEncodedContent(postData);

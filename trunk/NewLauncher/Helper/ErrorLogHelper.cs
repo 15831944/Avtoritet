@@ -44,7 +44,10 @@
             {
                 MainWindow.Logging(e);
 
-                Application.Current.Shutdown(-1);
+                if (!(Application.Current == null))
+                    Application.Current.Shutdown(-1);
+                else
+                    ;
             }
         }
     }

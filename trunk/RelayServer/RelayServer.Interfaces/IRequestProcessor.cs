@@ -26,7 +26,7 @@ namespace RelayServer.Interfaces
 		AccountModel GetUnoccupiedAccount();
 
 		[OperationContract]
-		bool IsServiceAvailable();
+		bool IsServiceAvailable(string serviceUri);
 
 		[OperationContract]
 		void LogConnection(string machineName, string launcherVersion);

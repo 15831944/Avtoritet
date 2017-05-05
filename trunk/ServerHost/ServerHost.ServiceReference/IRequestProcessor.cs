@@ -27,7 +27,7 @@ namespace ServerHost.ServiceReference
 		AccountModel GetUnoccupiedAccount();
 
 		[OperationContract(Action = "http://tempuri.org/IRequestProcessor/IsServiceAvailable", ReplyAction = "http://tempuri.org/IRequestProcessor/IsServiceAvailableResponse")]
-		bool IsServiceAvailable();
+		bool IsServiceAvailable(string serviceUri);
 
 		[OperationContract(Action = "http://tempuri.org/IRequestProcessor/LogConnection", ReplyAction = "http://tempuri.org/IRequestProcessor/LogConnectionResponse")]
 		void LogConnection(string machineName, string launcherVersion);

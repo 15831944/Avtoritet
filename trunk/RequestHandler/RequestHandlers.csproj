@@ -67,6 +67,7 @@
     <Compile Include="RequestHandlers.Exceptions\AuthorizationException.cs" />
     <Compile Include="RequestHandlers.Exceptions\ExceptionHelper.cs" />
     <Compile Include="RequestHandlers.Extensions\RequestsExtension.cs" />
+    <Compile Include="RequestHandlers.Handlers\BrandRequestHandler.cs" />
     <Compile Include="RequestHandlers.Handlers\ChevroletRequestHandler.cs" />
     <Compile Include="RequestHandlers.Handlers\CitroenRequestHandler.cs" />
     <Compile Include="RequestHandlers.Handlers\HttpProxyServer.cs" />
