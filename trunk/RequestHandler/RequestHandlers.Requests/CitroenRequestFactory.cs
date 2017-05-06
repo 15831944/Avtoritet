@@ -31,7 +31,7 @@ namespace RequestHandlers.Requests
 			{
 				new KeyValuePair<string, string>("userid", login),
 				new KeyValuePair<string, string>("password", password),
-				new KeyValuePair<string, string>("window", "jbnvzV6B522C53oL3E")
+				new KeyValuePair<string, string>("window", "jbnvzV6B522C53oL3E") // "jbnCHH4pmdaz8BFqrp"
 			};
 			return new FormUrlEncodedContent(postData);
 		}

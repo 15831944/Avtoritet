@@ -1300,6 +1300,9 @@ namespace NewLauncher.View
             }
         }
 
+        //[DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        //public static extern void InternetClearCookie();
+
         [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool InternetSetCookie(string lpszUrlName, string lbszCookieName, string lpszCookieData);
 
@@ -1379,8 +1382,8 @@ namespace NewLauncher.View
                 }
                 #endregion
 
-                #region EWA
-                if (this.url.Contains("EWA-net"))
+                #region EWA-net
+                if (this.url.Contains(CatalogApi.Catalogs.Mercedez) == true)
                 {
                     flag = true;
                     this.IeWeb.Navigate(this.url);
@@ -1616,6 +1619,7 @@ namespace NewLauncher.View
 
         private void OpenSession(string host, bool force = false)
         {
+            string host_cookies = string.Empty;
             string session_cookies = string.Empty;
 
             RequestHelper.Client.OpenSession(this.url, force);
@@ -1624,29 +1628,41 @@ namespace NewLauncher.View
             if ((cookies != null)
                 && (cookies.Count > 0))
             {
-                //if (!host.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot)) {
-                    this.ClearCookies();
-                    this.InsertCookies(host, cookies);
+                this.ClearCookies();
+
+                if (host.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true) {
+                //??? только для Chevrolet-Opel Group
+                    host_cookies = url;
+
+                    //InternetClearCookie();
+
+                    foreach (System.Net.Cookie cookie in cookies) {
+                        bool success = InternetSetCookie(
+                                host_cookies
+                                , cookie.Name
+                                , cookie.Value);
+
+                        MainWindow.Logging(string.Format(@"::OpenSession () - InternetSetCookie ({3} - host={0}, cookie-name={1}, cookie-value={2}) - ..."
+                            , host_cookies, cookie.Name, cookie.Value
+                            , success == true ? "Ok" : "ERROR"));
+                    }
+                } else {
+                    host_cookies =
+                        //host
+                        string.Format("{0}://{1}/", new Uri(this.url).Scheme, new Uri(this.url).Host)
+                        //"http://service.citroen.com"
+                        //"http://service.citroen.com/do/login"
+                        ;
+
+                    this.InsertCookies(host_cookies, cookies);
 
                     foreach (System.Net.Cookie cookie in cookies)
                         MainWindow.Logging(string.Format(@"::OpenSession () - InsertCookies (host={0}, cookie-name={1}, cookie-value={2}) - ..."
-                            , host, cookie.Name, cookie.Value));
-                //} else {
-                ////??? только для Chevrolet-Opel Group
-                //    foreach (System.Net.Cookie cookie in cookies) {
-                //        bool success = InternetSetCookie(
-                //                string.Format("{0}/", host)
-                //                , cookie.Name
-                //                , cookie.Value);
-
-                //        MainWindow.Logging(string.Format(@"::OpenSession () - InternetSetCookie ({3} - host={0}, cookie-name={1}, cookie-value={2}) - ..."
-                //            , host, cookie.Name, cookie.Value
-                //            , success == true ? "Ok" : "ERROR"));
-                //    }
-                //}
+                            , host_cookies, cookie.Name, cookie.Value));                    
+                }
             } else
                 ErrorLogHelper.AddErrorInLog(
-                    string.Format("::OpenSession ()")
+                    string.Format("::OpenSession (host={0}, host_cookies={1})", host, host_cookies)
                     , string.Format("cookies: {0}", cookies == null ? "null" : "count = 0")
                 );
         }
