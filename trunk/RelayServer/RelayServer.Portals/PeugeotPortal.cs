@@ -27,8 +27,11 @@ namespace RelayServer.Portals
 
 		public override void OpenSession(string url, bool forceSession)
 		{
-			string Login = string.Empty;
-			string Password = string.Empty;
+            base.OpenSession(url, forceSession);
+
+			string login = string.Empty
+			    , password = string.Empty;
+
             using (AvtoritetEntities ae = new AvtoritetEntities())
             {
                 string sql = string.Format("SELECT TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{0}"
@@ -36,12 +39,13 @@ namespace RelayServer.Portals
                     + " INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{0}"
                     + " WHERE(dbo.Provider.Uri LIKE N'%peugeot%') AND(dbo.ProviderAccount.Enable = 1)"
                     , "\r\n");
+
                 ProvAcc provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).FirstOrDefault<ProvAcc>();
-                Login = provider.Login;
-                Password = provider.Password;
+                login = provider.Login;
+                password = provider.Password;
             }
 
-            this.m_requestHandler = RequestHandlerFactory.Create(url, Login, Password, null);
+            this.m_requestHandler = RequestHandlerFactory.Create(url, login, password, null);
 			HttpResponseMessage responseMessage = this.GetResponse(url, forceSession, this.m_requestHandler, PeugeotPortal.CookieContainer);
 			if (responseMessage != null)
 			{

@@ -46,7 +46,6 @@ namespace NewLauncher.View
         private bool viewChanged;
         public NewLauncher.Extension.WindowManager WindowManager { get; set; }
 
-
         public BrowserLauncherView(string url, string brand, SystemTime startTime, string login, string password)
         {
             try
@@ -167,7 +166,7 @@ namespace NewLauncher.View
             try
             {
                 BrowserDialogView view;
-                if (geckoCreateWindow2EventArgs.Uri.Contains("partslink24"))
+                if (geckoCreateWindow2EventArgs.Uri.Contains(CatalogApi.Catalogs.Partslink))
                 {
                     if ((geckoCreateWindow2EventArgs.Uri != null) && geckoCreateWindow2EventArgs.Uri.Contains("popupcheck.html"))
                     {
@@ -189,7 +188,9 @@ namespace NewLauncher.View
                         view.Show();
                     }
                 }
-                if (geckoCreateWindow2EventArgs.Uri.Contains("peugeot") || geckoCreateWindow2EventArgs.Uri.Contains("citroen"))
+
+                if (geckoCreateWindow2EventArgs.Uri.Contains(CatalogApi.Catalogs.Peugeot)
+                    || geckoCreateWindow2EventArgs.Uri.Contains(CatalogApi.Catalogs.Citroen))
                 {
                     geckoCreateWindow2EventArgs.Cancel = true;
                     view = new BrowserDialogView
@@ -202,14 +203,18 @@ namespace NewLauncher.View
                     view.GeckoWeb.Navigate(geckoCreateWindow2EventArgs.Uri);
                     view.Show();
                 }
+
                 if (geckoCreateWindow2EventArgs.Uri.Contains("mazdaeur"))
                 {
                     geckoCreateWindow2EventArgs.Cancel = true;
                 }
-                if (geckoCreateWindow2EventArgs.Uri.Contains("payment") || geckoCreateWindow2EventArgs.Uri.Contains("VendorLogin"))
+
+                if (geckoCreateWindow2EventArgs.Uri.Contains("payment")
+                    || geckoCreateWindow2EventArgs.Uri.Contains("VendorLogin"))
                 {
                     geckoCreateWindow2EventArgs.Cancel = true;
                 }
+
                 if (geckoCreateWindow2EventArgs.Uri.Contains("ssangyong"))
                 {
                     geckoCreateWindow2EventArgs.Cancel = true;
@@ -238,6 +243,12 @@ namespace NewLauncher.View
                 GeckoElement element3;
                 this.Captcha.Text = "Загрузка...";
                 this.Message.Text = "Пожалуйста, ждите...";
+
+#if DEBUG
+                MainWindow.Logging(string.Format("Browser::GeckoWebOnDocumentCompleted (Title={0}, AbsoluteUri={1}) - ..."
+                    , this.Title
+                    , geckoEventArgs.Uri.AbsoluteUri));
+#endif
 
                 #region wpc.mobis.co.kr
                 if (this.url.Contains("wpc.mobis.co.kr") || this.url.Contains("wpc.mobis.co.kr")) {
@@ -292,12 +303,14 @@ namespace NewLauncher.View
                     } else
                         ;
 
-                    /*if (this.PageHasDemoString(this.GeckoWeb.Document.Body.OuterHtml))
-                    {
+                    if (this.PartsLink24PageHasDemoString(this.GeckoWeb.Document.Body.OuterHtml)) {
                         this.Captcha.Text = "Тайм-аут сессии";
-                        this.Message.Text = "Перезапустите web-браузер";
+                        this.Message.Text = "ДЕМО-режим. Перезапустите web-браузер";
                         this.GeckoHost.Visibility = Visibility.Collapsed;
-                    } else*/ if (this.PageHasHeaderLogoString(this.GeckoWeb.Document.Body.OuterHtml)) {
+                    } else
+                        ;
+                    
+                    if (this.PartsLink24PageHasHeaderLogoString(this.GeckoWeb.Document.Body.OuterHtml)) {
                         GeckoElement element4 = this.GeckoWeb.Document.GetElementById("headerLogo");
                         if (element4 != null) {
                             element4.SetAttribute("style", "display:none");
@@ -338,7 +351,7 @@ namespace NewLauncher.View
                         {
                             foreach (GeckoWindow window in geckoEventArgs.Window.Frames)
                             {
-                                if (this.PageHasDemoString(window.Document.ActiveElement.OuterHtml))
+                                if (this.PartsLink24PageHasDemoString(window.Document.ActiveElement.OuterHtml))
                                 {
                                     this.Captcha.Text = "Тайм-аут сессии";
                                     this.Message.Text = "Перезапустите web-браузер";
@@ -503,7 +516,7 @@ namespace NewLauncher.View
             IEnumerable<GeckoElement> enumerable;
 
             #region Peugeot
-            if (this.url.Contains("peugeot"))
+            if (this.url.Contains(CatalogApi.Catalogs.Peugeot))
             {
                 if (this.GeckoWeb.Url.AbsoluteUri.Contains("docacc"))
                 {
@@ -553,7 +566,7 @@ namespace NewLauncher.View
             #endregion
 
             #region Citroen
-            if (this.url.Contains("citroen"))
+            if (this.url.Contains(CatalogApi.Catalogs.Citroen))
             {
                 if (this.GeckoWeb.Url.AbsoluteUri.Contains("docacc"))
                 {
@@ -619,7 +632,14 @@ namespace NewLauncher.View
 
         private void GeckoWebOnNavigating(object sender, GeckoNavigatingEventArgs geckoNavigatingEventArgs)
         {
-            if (this.url.Contains("vin-online") && geckoNavigatingEventArgs.Uri.AbsoluteUri.Contains("vin-online.ru/shop"))
+#if DEBUG
+            MainWindow.Logging(string.Format("Browser::GeckoWebOnNavigating (Title={0}, AbsoluteUri={1}) - ..."
+                , this.Title
+                , geckoNavigatingEventArgs.Uri.AbsoluteUri));
+#endif
+
+            if (this.url.Contains(CatalogApi.Catalogs.Etka)
+                && (geckoNavigatingEventArgs.Uri.AbsoluteUri.Contains(string.Format("{0}.ru/shop", CatalogApi.Catalogs.Etka)) == true))
             {
                 geckoNavigatingEventArgs.Cancel = true;
             }
@@ -707,7 +727,7 @@ namespace NewLauncher.View
         {
             string cookies = RequestHelper.Client.GetCookies(geckoUrl);
 
-            NewLauncher.MainWindow.Logging(string.Format(@"Url={1}{0}, cookies={2}"
+            NewLauncher.MainWindow.Logging(string.Format(@"BrowserLauncherView::GetCookies (Url={1}{0}, cookies={2})"
                 , Environment.NewLine
                 , geckoUrl
                 , cookies));
@@ -747,7 +767,7 @@ namespace NewLauncher.View
                 }
 
                 #region bmwgroup
-                if (this.url.Contains("bmwgroup"))
+                if (this.url.Contains(CatalogApi.Catalogs.BmwGroup))
                 {
                     flag = true;
                     string absoluteUri = this.IeWeb.Document.Url.AbsoluteUri;
@@ -806,7 +826,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Ford
-                if (this.url.Contains("Ford"))
+                if (this.url.Contains(CatalogApi.Catalogs.Ford))
                 {
                     flag = true;
                     if (this.IeWeb.Document != null)
@@ -875,7 +895,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region mazdaeur
-                if (this.url.Contains("mazdaeur"))
+                if (this.url.Contains(CatalogApi.Catalogs.Mazda))
                 {
                     flag = true;
                     if (this.IeWeb.Document != null)
@@ -936,7 +956,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region EWA-net
-                if (this.url.Contains("EWA-net"))
+                if (this.url.Contains(CatalogApi.Catalogs.Mercedez))
                 {
                     flag = true;
                     if (this.IeWeb.Document != null)
@@ -1048,7 +1068,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region BMW
-                if (this.url.Contains("bmwgroup"))
+                if (this.url.Contains(CatalogApi.Catalogs.BmwGroup))
                 {
                     flag = true;
                     this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
@@ -1149,7 +1169,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Citroen
-                if (this.url.Contains("citroen")) {
+                if (this.url.Contains(CatalogApi.Catalogs.Citroen)) {
                     flag = true;
                     this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
                 } else
@@ -1282,6 +1302,7 @@ namespace NewLauncher.View
 
         [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool InternetSetCookie(string lpszUrlName, string lbszCookieName, string lpszCookieData);
+
         private bool IsValidCookies(List<System.Net.Cookie> cookies)
         {
             return ((cookies != null) && (cookies.Count > 0));
@@ -1342,7 +1363,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Citroen
-                if (this.url.Contains("citroen"))
+                if (this.url.Contains(CatalogApi.Catalogs.Citroen))
                 {
                     flag = true;
                     this.OpenSession(".citroen.com", false);
@@ -1603,19 +1624,26 @@ namespace NewLauncher.View
             if ((cookies != null)
                 && (cookies.Count > 0))
             {
-                if (!host.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot)) {
+                //if (!host.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot)) {
                     this.ClearCookies();
                     this.InsertCookies(host, cookies);
-                } else
-                //??? только для Chevrolet-Opel Group
+
                     foreach (System.Net.Cookie cookie in cookies)
-                        if (InternetSetCookie(
-                                string.Format("{0}/", host)
-                                , cookie.Name
-                                , cookie.Value) == false)
-                            MainWindow.Logging(string.Format(@"::OpenSession () - InternetSetCookie (host={0}, cookie-name={1}, cookie-value={2}) - ...", host, cookie.Name, cookie.Value));
-                        else
-                            ;
+                        MainWindow.Logging(string.Format(@"::OpenSession () - InsertCookies (host={0}, cookie-name={1}, cookie-value={2}) - ..."
+                            , host, cookie.Name, cookie.Value));
+                //} else {
+                ////??? только для Chevrolet-Opel Group
+                //    foreach (System.Net.Cookie cookie in cookies) {
+                //        bool success = InternetSetCookie(
+                //                string.Format("{0}/", host)
+                //                , cookie.Name
+                //                , cookie.Value);
+
+                //        MainWindow.Logging(string.Format(@"::OpenSession () - InternetSetCookie ({3} - host={0}, cookie-name={1}, cookie-value={2}) - ..."
+                //            , host, cookie.Name, cookie.Value
+                //            , success == true ? "Ok" : "ERROR"));
+                //    }
+                //}
             } else
                 ErrorLogHelper.AddErrorInLog(
                     string.Format("::OpenSession ()")
@@ -1623,12 +1651,12 @@ namespace NewLauncher.View
                 );
         }
 
-        private bool PageHasDemoString(string outerHtml)
+        private bool PartsLink24PageHasDemoString(string outerHtml)
         {
             return outerHtml.Contains("pl24demo");
         }
 
-        private bool PageHasHeaderLogoString(string outerHtml)
+        private bool PartsLink24PageHasHeaderLogoString(string outerHtml)
         {
             return outerHtml.Contains("headerLogo");
         }
@@ -1647,20 +1675,6 @@ namespace NewLauncher.View
             this.GeckoHost.Visibility = Visibility.Visible;
             return true;
         }
-
-        //private void logging(string mes)
-        //{
-        //    logging(this.GetType(), mes);
-        //}
-
-        //private void logging(Exception e)
-        //{
-        //    logging(string.Format("[{0}] {1} / {2}"
-        //        , DateTime.Now
-        //        , e.Message
-        //        , e.StackTrace
-        //    ));
-        //}
     }
 }
 

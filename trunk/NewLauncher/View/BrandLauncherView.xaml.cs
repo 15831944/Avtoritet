@@ -93,7 +93,9 @@ namespace NewLauncher.View
         {
             try
             {
-                string url = ((ButtonModel)sender).DataContext.ToString();
+                string url =
+                    ((ButtonModel)sender).DataContext.ToString();
+
                 if (url.StartsWith("http") || url.StartsWith("https"))
                 {
                     if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true) {

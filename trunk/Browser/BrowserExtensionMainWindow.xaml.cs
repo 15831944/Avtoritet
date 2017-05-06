@@ -315,8 +315,7 @@ namespace BrowserExtension
 
         public static void Logging(Exception e)
         {
-            Logging(string.Format("[{0}] {1} / {2}"
-                    , DateTime.Now
+            Logging(string.Format("{0} / {1}"
                     , e.Message
                     , e.StackTrace
             ));
@@ -329,7 +328,10 @@ namespace BrowserExtension
 
             using (FileStream fileStream = new FileStream(string.Format("{0}.log", System.IO.Path.GetFileNameWithoutExtension(appFileInfo.FullName)), FileMode.Append, FileAccess.Write)) {
                 using (StreamWriter streamWriter = new StreamWriter(fileStream)) {
-                    streamWriter.WriteLine(mes);
+                    streamWriter.WriteLine(string.Format("[{1:o}]{0}{2}"
+                        , Environment.NewLine
+                        , DateTime.Now
+                        , mes));
                 }
             }
         }

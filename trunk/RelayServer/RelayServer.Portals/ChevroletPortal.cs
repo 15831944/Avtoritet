@@ -28,8 +28,10 @@ namespace RelayServer.Portals
 
 		public override void OpenSession(string url, bool forceSession)
 		{
-		    //Uri uri;
-		    string
+            base.OpenSession(url, forceSession);
+
+            //Uri uri;
+            string
                 urlSession = string.Empty,
 		        login = string.Empty,
 		        password = string.Empty;
@@ -40,11 +42,12 @@ namespace RelayServer.Portals
                     //"SELECT        TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password\r\n                                            FROM dbo.Provider INNER JOIN\r\n                                            dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId\r\n                                            WHERE(dbo.Provider.Uri LIKE N'%{0}%') AND(dbo.ProviderAccount.Enable = 1)"
                     //, CatalogApi.UrlConstants.ChevroletOpelGroupRoot)
                     "SELECT TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{0}{1}"
-                    + "FROM dbo.Provider{0}{1}"
-                    + "INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{0}{1}"
-                    + "WHERE(dbo.Provider.Uri = N'{2}') AND (dbo.ProviderAccount.Enable = 1)"
-                    , "\r\n", "                                            ", url)
+                        + "FROM dbo.Provider{0}{1}"
+                        + "INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{0}{1}"
+                        + "WHERE(dbo.Provider.Uri = N'{2}') AND (dbo.ProviderAccount.Enable = 1)"
+                        , "\r\n", "                                            ", url)
                     ;
+
                 ProvAcc provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).FirstOrDefault<ProvAcc>();
                 if (provider != null)
                 {

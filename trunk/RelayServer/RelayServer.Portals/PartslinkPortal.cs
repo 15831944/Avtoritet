@@ -30,8 +30,11 @@ namespace RelayServer.Portals
 
 		public override void OpenSession(string url, bool forceSession)
 		{
-			string login = string.Empty;
-			string password = string.Empty;
+            base.OpenSession(url, forceSession);
+
+            string login = string.Empty
+			    , password = string.Empty;
+
 			using (AvtoritetEntities ae = new AvtoritetEntities())
 			{
 				string sql = string.Format("SELECT dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{1}{0}{0}{0}{0}"
@@ -40,6 +43,7 @@ namespace RelayServer.Portals
                     + "WHERE(dbo.Provider.Uri LIKE N'%partslink%') AND (dbo.ProviderAccount.Enable = 1)"
                     , "          "
                     , "\r\n");
+
 				System.Collections.Generic.List<ProvAcc> provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).ToList<ProvAcc>();
 				if (provider.Count > 0)
 				{
