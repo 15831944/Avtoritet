@@ -1,4 +1,4 @@
-using RelayServer.DataContext;
+//using RelayServer.DataContext;
 using System;
 using System.Net;
 
@@ -12,7 +12,7 @@ namespace RelayServer.Helpers
 			{
 				using (AvtoritetEntities ae = new AvtoritetEntities())
 				{
-                    RelayServer.DataContext.LogErrorsSet log = new RelayServer.DataContext.LogErrorsSet();
+                    LogErrorsSet log = new LogErrorsSet();
 					string myHost = Dns.GetHostName();
 					string compIP = "";
 					for (int i = 0; i < Dns.GetHostEntry(myHost).AddressList.Length; i++)

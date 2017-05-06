@@ -7,15 +7,12 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RelayServer.DataContext
-{
-    using System;
-    using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
-    public partial class SettingUpdate
-    {
-        public int SettingUpdateId { get; set; }
-        public bool Update { get; set; }
-        public Nullable<int> SettingVersion { get; set; }
-    }
+public partial class SettingUpdate
+{
+    public int SettingUpdateId { get; set; }
+    public bool Update { get; set; }
+    public Nullable<int> SettingVersion { get; set; }
 }

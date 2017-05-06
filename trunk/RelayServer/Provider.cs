@@ -7,40 +7,37 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RelayServer.DataContext
+using System;
+using System.Collections.Generic;
+
+public partial class Provider
 {
-    using System;
-    using System.Collections.Generic;
-
-    public partial class Provider
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+    public Provider()
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Provider()
-        {
-            this.CommandFile1 = new HashSet<CommandFile>();
-            this.ProviderAccount = new HashSet<ProviderAccount>();
-            this.ProviderFile = new HashSet<ProviderFile>();
-        }
-
-        public int ProviderId { get; set; }
-        public string Uri { get; set; }
-        public string IconPath { get; set; }
-        public string Title { get; set; }
-        public int BrandId { get; set; }
-        public bool Enable { get; set; }
-        public byte[] IconImg { get; set; }
-        public string IconImgExt { get; set; }
-        public Nullable<long> IconImgSize { get; set; }
-        public string commandfile { get; set; }
-        public string commandcontent { get; set; }
-        public Nullable<int> Order { get; set; }
-
-        public virtual Brand Brand { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<CommandFile> CommandFile1 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ProviderAccount> ProviderAccount { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ProviderFile> ProviderFile { get; set; }
+        this.CommandFile1 = new HashSet<CommandFile>();
+        this.ProviderAccount = new HashSet<ProviderAccount>();
+        this.ProviderFile = new HashSet<ProviderFile>();
     }
+
+    public int ProviderId { get; set; }
+    public string Uri { get; set; }
+    public string IconPath { get; set; }
+    public string Title { get; set; }
+    public int BrandId { get; set; }
+    public bool Enable { get; set; }
+    public byte[] IconImg { get; set; }
+    public string IconImgExt { get; set; }
+    public Nullable<long> IconImgSize { get; set; }
+    public string commandfile { get; set; }
+    public string commandcontent { get; set; }
+    public Nullable<int> Order { get; set; }
+
+    public virtual Brand Brand { get; set; }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<CommandFile> CommandFile1 { get; set; }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<ProviderAccount> ProviderAccount { get; set; }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<ProviderFile> ProviderFile { get; set; }
 }

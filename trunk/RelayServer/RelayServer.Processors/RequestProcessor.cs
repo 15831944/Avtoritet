@@ -1,4 +1,4 @@
-using RelayServer.DataContext;
+//using RelayServer.DataContext;
 using RelayServer.Entities;
 using RelayServer.Helpers;
 using RelayServer.Interfaces;
@@ -358,53 +358,53 @@ namespace RelayServer.Processors
 			catalog.Rows = 2;
 			using (AvtoritetEntities ae = new AvtoritetEntities())
 			{
-				System.Collections.Generic.List<RelayServer.DataContext.Group> groups = (from r in ae.Group
+				System.Collections.Generic.List<Group> groups = (from r in ae.Group
 				where r.Enable
 				select r into t
 				orderby t.Order
-				select t).ToList<RelayServer.DataContext.Group>();
+				select t).ToList<Group>();
 				catalog.Groups = new System.Collections.Generic.List<RelayServer.Models.Group>();
-				using (System.Collections.Generic.List<RelayServer.DataContext.Group>.Enumerator enumerator = groups.GetEnumerator())
+				using (System.Collections.Generic.List<Group>.Enumerator enumerator = groups.GetEnumerator())
 				{
 					while (enumerator.MoveNext())
 					{
-						RelayServer.DataContext.Group group = enumerator.Current;
+						Group group = enumerator.Current;
 						RelayServer.Models.Group catalogGroup = new RelayServer.Models.Group();
-						System.Collections.Generic.List<RelayServer.DataContext.GroupBox> groupboxs = (from t in ae.GroupBox
+						System.Collections.Generic.List<GroupBox> groupboxs = (from t in ae.GroupBox
 						where t.GroupId == @group.GroupId && t.Enable
 						select t into r
 						orderby r.Title
-						select r).ToList<RelayServer.DataContext.GroupBox>();
+						select r).ToList<GroupBox>();
 						catalogGroup.GroupBoxs = new System.Collections.Generic.List<RelayServer.Models.GroupBox>();
-						using (System.Collections.Generic.List<RelayServer.DataContext.GroupBox>.Enumerator enumerator2 = groupboxs.GetEnumerator())
+						using (System.Collections.Generic.List<GroupBox>.Enumerator enumerator2 = groupboxs.GetEnumerator())
 						{
 							while (enumerator2.MoveNext())
 							{
-								RelayServer.DataContext.GroupBox groupBox = enumerator2.Current;
+								GroupBox groupBox = enumerator2.Current;
 								RelayServer.Models.GroupBox catalogGroupBox = new RelayServer.Models.GroupBox();
-								System.Collections.Generic.List<RelayServer.DataContext.Brand> brands = (from t in ae.Brand
+								System.Collections.Generic.List<Brand> brands = (from t in ae.Brand
 								where t.GroupBoxId == groupBox.GroupBoxId && t.Enable
 								select t into r
 								orderby r.NameAndFolder
-								select r).ToList<RelayServer.DataContext.Brand>();
+								select r).ToList<Brand>();
 								catalogGroupBox.Brands = new System.Collections.Generic.List<RelayServer.Models.Brand>();
-								using (System.Collections.Generic.List<RelayServer.DataContext.Brand>.Enumerator enumerator3 = brands.GetEnumerator())
+								using (System.Collections.Generic.List<Brand>.Enumerator enumerator3 = brands.GetEnumerator())
 								{
 									while (enumerator3.MoveNext())
 									{
-										RelayServer.DataContext.Brand brand = enumerator3.Current;
+										Brand brand = enumerator3.Current;
 										RelayServer.Models.Brand catalogBrand = new RelayServer.Models.Brand();
-										System.Collections.Generic.List<RelayServer.DataContext.Provider> providers = (from t in ae.Provider
+										System.Collections.Generic.List<Provider> providers = (from t in ae.Provider
 										where t.BrandId == brand.BrandId && t.Enable
 										select t into r
 										orderby r.Order
-										select r).ToList<RelayServer.DataContext.Provider>();
+										select r).ToList<Provider>();
 										catalogBrand.Providers = new System.Collections.Generic.List<RelayServer.Models.Provider>();
-										using (System.Collections.Generic.List<RelayServer.DataContext.Provider>.Enumerator enumerator4 = providers.GetEnumerator())
+										using (System.Collections.Generic.List<Provider>.Enumerator enumerator4 = providers.GetEnumerator())
 										{
 											while (enumerator4.MoveNext())
 											{
-												RelayServer.DataContext.Provider provider = enumerator4.Current;
+												Provider provider = enumerator4.Current;
 												ProviderAccount provAcc = ae.ProviderAccount.FirstOrDefault(t => t.ProviderId == provider.ProviderId && t.Enable);
 												System.Collections.Generic.List<RelayServer.Models.CommandFile> commandFiles = (from t in ae.CommandFile
 												where t.ProviderId == (int?)provider.ProviderId

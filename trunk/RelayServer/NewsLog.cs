@@ -7,16 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RelayServer.DataContext
-{
-    using System;
-    using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
-    public partial class NewsLog
-    {
-        public System.Guid Id { get; set; }
-        public string Title { get; set; }
-        public string Message { get; set; }
-        public Nullable<System.DateTime> PostTime { get; set; }
-    }
+public partial class NewsLog
+{
+    public System.Guid Id { get; set; }
+    public string Title { get; set; }
+    public string Message { get; set; }
+    public Nullable<System.DateTime> PostTime { get; set; }
 }

@@ -7,18 +7,15 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RelayServer.DataContext
-{
-    using System;
-    using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
-    public partial class LogErrorsSet
-    {
-        public int Id { get; set; }
-        public string Computer { get; set; }
-        public Nullable<System.DateTime> DateError { get; set; }
-        public string ExeName { get; set; }
-        public string NameError { get; set; }
-        public string DescrError { get; set; }
-    }
+public partial class LogErrorsSet
+{
+    public int Id { get; set; }
+    public string Computer { get; set; }
+    public Nullable<System.DateTime> DateError { get; set; }
+    public string ExeName { get; set; }
+    public string NameError { get; set; }
+    public string DescrError { get; set; }
 }

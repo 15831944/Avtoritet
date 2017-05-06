@@ -7,18 +7,15 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RelayServer.DataContext
+using System;
+using System.Collections.Generic;
+
+public partial class CommandFile
 {
-    using System;
-    using System.Collections.Generic;
+    public int CommandFileId { get; set; }
+    public Nullable<int> ProviderId { get; set; }
+    public string FileName { get; set; }
+    public string FileContent { get; set; }
 
-    public partial class CommandFile
-    {
-        public int CommandFileId { get; set; }
-        public Nullable<int> ProviderId { get; set; }
-        public string FileName { get; set; }
-        public string FileContent { get; set; }
-
-        public virtual Provider Provider { get; set; }
-    }
+    public virtual Provider Provider { get; set; }
 }

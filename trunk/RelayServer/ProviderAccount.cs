@@ -7,21 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RelayServer.DataContext
+using System;
+using System.Collections.Generic;
+
+public partial class ProviderAccount
 {
-    using System;
-    using System.Collections.Generic;
+    public int ProviderAccountId { get; set; }
+    public string Login { get; set; }
+    public string Password { get; set; }
+    public string Uri { get; set; }
+    public int ProviderId { get; set; }
+    public bool Enable { get; set; }
+    public Nullable<int> Order { get; set; }
 
-    public partial class ProviderAccount
-    {
-        public int ProviderAccountId { get; set; }
-        public string Login { get; set; }
-        public string Password { get; set; }
-        public string Uri { get; set; }
-        public int ProviderId { get; set; }
-        public bool Enable { get; set; }
-        public Nullable<int> Order { get; set; }
-
-        public virtual Provider Provider { get; set; }
-    }
+    public virtual Provider Provider { get; set; }
 }

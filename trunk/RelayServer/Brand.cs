@@ -7,41 +7,38 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RelayServer.DataContext
+using System;
+using System.Collections.Generic;
+
+public partial class Brand
 {
-    using System;
-    using System.Collections.Generic;
-
-    public partial class Brand
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+    public Brand()
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Brand()
-        {
-            this.Provider = new HashSet<Provider>();
-        }
-
-        public int BrandId { get; set; }
-        public string NameAndFolder { get; set; }
-        public string IconPath { get; set; }
-        public string IconPath2 { get; set; }
-        public int GroupBoxId { get; set; }
-        public bool Enable { get; set; }
-        public byte[] IconPathImg { get; set; }
-        public string IconPathImgExt { get; set; }
-        public Nullable<long> IconPathImgSize { get; set; }
-        public byte[] IconPath2Img { get; set; }
-        public string IconPath2ImgExt { get; set; }
-        public Nullable<long> IconPath2ImgSize { get; set; }
-        public Nullable<int> Top { get; set; }
-        public Nullable<int> Left { get; set; }
-        public Nullable<int> Width { get; set; }
-        public Nullable<int> Height { get; set; }
-        public Nullable<int> Order { get; set; }
-        public string ButtonStyle { get; set; }
-        public Nullable<bool> MenuWindow { get; set; }
-
-        public virtual GroupBox GroupBox { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Provider> Provider { get; set; }
+        this.Provider = new HashSet<Provider>();
     }
+
+    public int BrandId { get; set; }
+    public string NameAndFolder { get; set; }
+    public string IconPath { get; set; }
+    public string IconPath2 { get; set; }
+    public int GroupBoxId { get; set; }
+    public bool Enable { get; set; }
+    public byte[] IconPathImg { get; set; }
+    public string IconPathImgExt { get; set; }
+    public Nullable<long> IconPathImgSize { get; set; }
+    public byte[] IconPath2Img { get; set; }
+    public string IconPath2ImgExt { get; set; }
+    public Nullable<long> IconPath2ImgSize { get; set; }
+    public Nullable<int> Top { get; set; }
+    public Nullable<int> Left { get; set; }
+    public Nullable<int> Width { get; set; }
+    public Nullable<int> Height { get; set; }
+    public Nullable<int> Order { get; set; }
+    public string ButtonStyle { get; set; }
+    public Nullable<bool> MenuWindow { get; set; }
+
+    public virtual GroupBox GroupBox { get; set; }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<Provider> Provider { get; set; }
 }

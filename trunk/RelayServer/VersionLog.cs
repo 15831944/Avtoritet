@@ -7,14 +7,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RelayServer.DataContext
-{
-    using System;
-    using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
-    public partial class VersionLog
-    {
-        public int Id { get; set; }
-        public string Value { get; set; }
-    }
+public partial class VersionLog
+{
+    public int Id { get; set; }
+    public string Value { get; set; }
 }

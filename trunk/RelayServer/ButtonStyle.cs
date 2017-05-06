@@ -7,21 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RelayServer.DataContext
-{
-    using System;
-    using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
-    public partial class ButtonStyle
-    {
-        public int ButtonStyleId { get; set; }
-        public Nullable<int> Width { get; set; }
-        public Nullable<int> Height { get; set; }
-        public Nullable<int> BackgroundColor { get; set; }
-        public byte[] BackgroundImage { get; set; }
-        public byte[] Icon { get; set; }
-        public string Font { get; set; }
-        public Nullable<int> FontSize { get; set; }
-        public string FontStyle { get; set; }
-    }
+public partial class ButtonStyle
+{
+    public int ButtonStyleId { get; set; }
+    public Nullable<int> Width { get; set; }
+    public Nullable<int> Height { get; set; }
+    public Nullable<int> BackgroundColor { get; set; }
+    public byte[] BackgroundImage { get; set; }
+    public byte[] Icon { get; set; }
+    public string Font { get; set; }
+    public Nullable<int> FontSize { get; set; }
+    public string FontStyle { get; set; }
 }

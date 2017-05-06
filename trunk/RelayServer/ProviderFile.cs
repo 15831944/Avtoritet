@@ -7,20 +7,17 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RelayServer.DataContext
+using System;
+using System.Collections.Generic;
+
+public partial class ProviderFile
 {
-    using System;
-    using System.Collections.Generic;
+    public int ProviderFileId { get; set; }
+    public Nullable<int> ProviderId { get; set; }
+    public string FileName { get; set; }
+    public string FileExt { get; set; }
+    public Nullable<long> FileSize { get; set; }
+    public byte[] FileContent { get; set; }
 
-    public partial class ProviderFile
-    {
-        public int ProviderFileId { get; set; }
-        public Nullable<int> ProviderId { get; set; }
-        public string FileName { get; set; }
-        public string FileExt { get; set; }
-        public Nullable<long> FileSize { get; set; }
-        public byte[] FileContent { get; set; }
-
-        public virtual Provider Provider { get; set; }
-    }
+    public virtual Provider Provider { get; set; }
 }
