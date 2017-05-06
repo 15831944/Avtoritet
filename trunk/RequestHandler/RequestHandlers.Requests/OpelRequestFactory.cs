@@ -10,7 +10,7 @@ namespace RequestHandlers.Requests
 		{
 			return new HttpRequestMessage
 			{
-				Content = OpelRequestFactory.FormUrlEncodedContent(login, password),
+				Content = OpelRequestFactory.FormUrlEncodedContentForLogin(login, password),
 				Method = HttpMethod.Post,
 				RequestUri = new Uri(CatalogApi.UrlConstants.ChevroletOpelGroupUserLoginDo)
 			};
@@ -26,7 +26,7 @@ namespace RequestHandlers.Requests
 			};
 		}
 
-		private static FormUrlEncodedContent FormUrlEncodedContent(string login, string password)
+		private static FormUrlEncodedContent FormUrlEncodedContentForLogin(string login, string password)
 		{
 			List<KeyValuePair<string, string>> postData = new List<KeyValuePair<string, string>>
 			{

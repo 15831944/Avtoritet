@@ -7,18 +7,15 @@ namespace RequestHandlers.Requests
 {
 	internal static class PartsLink24RequestFactory
 	{
-		private const string Partslink24ComPartslink24UserLoginDo = "https://www.partslink24.com/partslink24/login-ajax!login.action";
-
-		private const string Partslink24ComPartslink24UserLogoutDo = "https://www.partslink24.com/partslink24/user/logout.do";
-
 		public static HttpRequestMessage CreateLoginRequest(string login, string password)
 		{
 			return new HttpRequestMessage
 			{
-				Content = PartsLink24RequestFactory.FormUrlEncodedContent(login, password),
+				Content = PartsLink24RequestFactory.FormUrlEncodedContentForLogin(login, password),
 				Method = HttpMethod.Post,
-				RequestUri = new Uri("https://www.partslink24.com/partslink24/login-ajax!login.action")
-			};
+				RequestUri = new Uri(CatalogApi.UrlConstants.Partslink24ComPartslink24AjaxLoginAction)
+
+            };
 		}
 
 		public static HttpRequestMessage CreateLogoutRequest()
@@ -26,18 +23,15 @@ namespace RequestHandlers.Requests
 			return new HttpRequestMessage
 			{
 				Method = HttpMethod.Get,
-				RequestUri = new Uri("https://www.partslink24.com/partslink24/user/logout.do")
+				RequestUri = new Uri(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo)
 			};
 		}
 
-		private static FormUrlEncodedContent FormUrlEncodedContent(string id_login, string password)
+		private static FormUrlEncodedContent FormUrlEncodedContentForLogin(string id_login, string password)
 		{
-			string[] ar = id_login.Split(new char[]
-			{
-				'/'
-			});
-			string id = ar[0];
-			string login = ar[1];
+			string[] array_auth = id_login.Split(new char[] { '/' });
+			string id = array_auth[0];
+			string login = array_auth[1];
 			ConsoleHelper.Info("Partslink ID: " + id);
 			ConsoleHelper.Info("Partslink Login: " + login);
 			ConsoleHelper.Info("Partslink Password: " + password);

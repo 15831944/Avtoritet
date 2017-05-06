@@ -279,7 +279,7 @@ namespace RelayServer.Processors
 				string content = responseMessage.Result.Content.ReadAsStringAsync().Result;
 				result = (!(content.Contains("maintenance_general") == true)
                     && (int.Parse(RequestProcessor.GetConfig("Partslink")) > 0));
-			}
+            }
 			catch (System.Exception ex)
 			{
 				ErrorLogHelper.AddErrorInLog(string.Format("IsServiceAvailable(uri={0})", serviceUri), ex.Message + "|" + ex.StackTrace);

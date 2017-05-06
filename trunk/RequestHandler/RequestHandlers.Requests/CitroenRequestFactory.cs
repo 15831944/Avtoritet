@@ -6,17 +6,13 @@ namespace RequestHandlers.Requests
 {
 	public class CitroenRequestFactory
 	{
-		private const string CitroenLoginDo = "http://service.citroen.com/do/login";
-
-		private const string CitroenLogoutDo = "http://service.citroen.com/do/logout";
-
 		public static HttpRequestMessage CreateLoginRequest(string login, string password)
 		{
 			return new HttpRequestMessage
 			{
-				Content = CitroenRequestFactory.FormUrlEncodedContent(login, password),
+				Content = CitroenRequestFactory.FormUrlEncodedContentForLogin(login, password),
 				Method = HttpMethod.Post,
-				RequestUri = new Uri("http://service.citroen.com/do/login")
+				RequestUri = new Uri(CatalogApi.UrlConstants.CitroenLoginDo)
 			};
 		}
 
@@ -25,11 +21,11 @@ namespace RequestHandlers.Requests
 			return new HttpRequestMessage
 			{
 				Method = HttpMethod.Get,
-				RequestUri = new Uri("http://service.citroen.com/do/logout")
+				RequestUri = new Uri(CatalogApi.UrlConstants.CitroenLogoutTo)
 			};
 		}
 
-		private static FormUrlEncodedContent FormUrlEncodedContent(string login, string password)
+		private static FormUrlEncodedContent FormUrlEncodedContentForLogin(string login, string password)
 		{
 			List<KeyValuePair<string, string>> postData = new List<KeyValuePair<string, string>>
 			{

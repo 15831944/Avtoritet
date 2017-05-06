@@ -29,9 +29,10 @@ namespace NewLauncher.View
     public partial class BrandLauncherView : Window
     {
         private Brand brand = new Brand();
-        private readonly ObservableCollection<ButtonModel> categories = new ObservableCollection<ButtonModel>();
-        private readonly SystemTime time;
 
+        private readonly ObservableCollection<ButtonModel> categories = new ObservableCollection<ButtonModel>();
+
+        private readonly SystemTime time;
 
         public BrandLauncherView(SystemTime starTime)
         {

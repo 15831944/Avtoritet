@@ -31,8 +31,12 @@ namespace RelayServer.Portals
 			string Password = string.Empty;
 			using (AvtoritetEntities ae = new AvtoritetEntities())
 			{
-				string sql = "SELECT        TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password\r\n                                            FROM dbo.Provider INNER JOIN\r\n                                            dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId\r\n                                            WHERE(dbo.Provider.Uri LIKE N'%opel%') AND(dbo.ProviderAccount.Enable = 1)";
-				ProvAcc provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).FirstOrDefault<ProvAcc>();
+				string sql = string.Format("SELECT TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{0}"
+                    + " FROM dbo.Provider{0}"
+                    + " INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{0}"
+                    + " WHERE(dbo.Provider.Uri LIKE N'%opel%') AND(dbo.ProviderAccount.Enable = 1)"
+                    , "\r\n");
+                ProvAcc provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).FirstOrDefault<ProvAcc>();
 				if (provider != null)
 				{
 					Login = provider.Login;

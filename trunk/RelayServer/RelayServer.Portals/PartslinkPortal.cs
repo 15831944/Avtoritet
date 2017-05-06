@@ -89,12 +89,12 @@ namespace RelayServer.Portals
 							return result;
 						}
 						ConsoleHelper.Error(string.Format("Open session error: {0}", url));
-						this.CloseSession("https://www.partslink24.com/partslink24/user/logout.do");
+						this.CloseSession(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo);
 						PartslinkPortal.partslinkIsBlocked = true;
 					}
 					if (forceSession)
 					{
-						Task<HttpResponseMessage> session2 = reqHandler.GetSessionAsync("https://www.partslink24.com/partslink24/user/login.do", container);
+						Task<HttpResponseMessage> session2 = reqHandler.GetSessionAsync(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLoginDo, container);
 						session2.Wait();
 						HttpResponseMessage responseMessage = session2.Result;
 						ConsoleHelper.Info(string.Format("Url Navigation: {0}", responseMessage.RequestMessage.RequestUri.AbsoluteUri));
@@ -108,7 +108,7 @@ namespace RelayServer.Portals
 								return result;
 							}
 							ConsoleHelper.Error(string.Format("Force session error: {0}", url));
-							this.CloseSession("https://www.partslink24.com/partslink24/user/logout.do");
+							this.CloseSession(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo);
 							PartslinkPortal.partslinkIsBlocked = true;
 						}
 					}
