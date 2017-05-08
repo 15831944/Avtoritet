@@ -13,11 +13,13 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Markup;
 using System.Windows.Media.Imaging;
 
@@ -93,8 +95,12 @@ namespace NewLauncher.View
         {
             try
             {
+                BrandProvider brandProvider = (from item in this.brand.Providers
+                    where item.ProviderId == ((ButtonModel)sender).ProviderId
+                    select item).Cast<BrandProvider>()?.ElementAt(0);
+
                 string url =
-                    ((ButtonModel)sender).DataContext.ToString();
+                    brandProvider.Uri;
 
                 if (url.StartsWith("http") || url.StartsWith("https"))
                 {
@@ -112,13 +118,13 @@ namespace NewLauncher.View
                             uri = new Uri(url);
                             urlSession = string.Format("{0}://{1}", uri.Scheme, uri.Host);
 
-                            NewBrowserLauncherView(((ButtonModel)sender).ProviderId, urlSession, ((ButtonModel)sender).Content);
+                            NewBrowserLauncherView(brandProvider);
                         } else {
                             ErrorLogHelper.AddErrorInLog("::button_onClick () - ...", string.Format("см. файл конфигурации key={0}", appKey));
                             MessageBox.Show(string.Format("Некорректные установки в файле конфигурации, key={0}", appKey));
                         }
                     } else {
-                        NewBrowserLauncherView(((ButtonModel)sender).ProviderId, url, ((ButtonModel)sender).Content);
+                        NewBrowserLauncherView(brandProvider);
                     }
                 }
                 else
@@ -147,14 +153,14 @@ namespace NewLauncher.View
             }
         }
 
-        public event Action<string, string, SystemTime, string, string> EventNewBrowserLauncherView;
+        public event Action<SystemTime, BrandProvider> EventNewBrowserLauncherView;
 
-        private void NewBrowserLauncherView(long providerId, string url, string content)
+        private void NewBrowserLauncherView(BrandProvider brandProvider)
         {
-            string loginFromDB = SettingsFactory.GetLoginFromDB(providerId);
-            string pswFromDB = SettingsFactory.GetPswFromDB(providerId);
+            brandProvider.Login = SettingsFactory.GetLoginFromDB(brandProvider.ProviderId);
+            brandProvider.Password = SettingsFactory.GetPswFromDB(brandProvider.ProviderId);
 
-            EventNewBrowserLauncherView?.Invoke(url, content, this.time, loginFromDB, pswFromDB);
+            EventNewBrowserLauncherView?.Invoke(this.time, brandProvider);
         }
 
         private void OnActivated(object sender, EventArgs eventArgs)
@@ -212,56 +218,61 @@ namespace NewLauncher.View
             MainWindow owner = base.Owner as MainWindow;
             if (owner != null)
             {
-                if ((base.Top < ((owner.Top + owner.Height) + 20.0)) && (base.Top > ((owner.Top + owner.Height) - 20.0)))
-                {
+                if ((base.Top < ((owner.Top + owner.Height) + 20.0))
+                    && (base.Top > ((owner.Top + owner.Height) - 20.0))) {
                     base.Top = owner.Top + owner.Height;
-                    if (!owner.DownFlag)
-                    {
+
+                    if (!owner.DownFlag) {
                         owner.LeftLength = base.Left - owner.Left;
-                    }
+                    } else
+                        ;
+
                     owner.DownFlag = true;
-                }
-                else
-                {
+                } else {
                     owner.DownFlag = false;
                 }
-                if (((base.Top + base.Height) < (owner.Top + 20.0)) && ((base.Top + base.Height) > (owner.Top - 20.0)))
+
+                if (((base.Top + base.Height) < (owner.Top + 20.0))
+                    && ((base.Top + base.Height) > (owner.Top - 20.0)))
                 {
                     base.Top = owner.Top - base.Height;
-                    if (!owner.TopFlag)
-                    {
+
+                    if (!owner.TopFlag) {
                         owner.LeftLength = base.Left - owner.Left;
-                    }
+                    } else
+                        ;
+
                     owner.TopFlag = true;
-                }
-                else
-                {
+                } else {
                     owner.TopFlag = false;
                 }
-                if (((base.Left + base.Width) < (owner.Left + 20.0)) && ((base.Left + base.Width) > (owner.Left - 20.0)))
+
+                if (((base.Left + base.Width) < (owner.Left + 20.0))
+                    && ((base.Left + base.Width) > (owner.Left - 20.0)))
                 {
                     base.Left = owner.Left - base.Width;
-                    if (!owner.LeftFlag)
-                    {
+
+                    if (!owner.LeftFlag) {
                         owner.TopLength = base.Top - owner.Top;
-                    }
+                    } else
+                        ;
+
                     owner.LeftFlag = true;
-                }
-                else
-                {
+                } else {
                     owner.LeftFlag = false;
                 }
+
                 if ((base.Left < ((owner.Left + owner.Width) + 20.0)) && (base.Left > ((owner.Left + owner.Width) - 20.0)))
                 {
                     base.Left = owner.Left + owner.Width;
+
                     if (!owner.RightFlag)
                     {
                         owner.TopLength = base.Top - owner.Top;
                     }
+
                     owner.RightFlag = true;
-                }
-                else
-                {
+                } else {
                     owner.RightFlag = false;
                 }
             }

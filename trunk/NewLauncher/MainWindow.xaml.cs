@@ -9,6 +9,7 @@ using NewLauncher.DataContext;
 using NewLauncher.Entities;
 using NewLauncher.Factory;
 using NewLauncher.Helper;
+using NewLauncher.Interop;
 using NewLauncher.Manager;
 using NewLauncher.ServiceReference;
 using NewLauncher.View;
@@ -42,7 +43,7 @@ namespace NewLauncher
     /// </summary>
     public partial class MainWindow : INotifyPropertyChanged
     {
-        private BrandLauncherView brandLauncher;
+        private BrandLauncherView currentBrandLauncher;
         private static readonly CategoryEventHandler categoryEventHandler = new CategoryEventHandler("launcher");
         public bool DownFlag;
         private static bool HaveNewUpdate = false;
@@ -58,7 +59,8 @@ namespace NewLauncher
         public bool TopFlag;
         public double TopLength;
 
-        List<BrowserLauncherView> _listBrowserLauncherView;
+        Dictionary<int, BrandLauncherView> _dictBrandLauncherView;
+        Dictionary<long, BrowserLauncherView> _dictBrowserLauncherView;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -66,7 +68,10 @@ namespace NewLauncher
         {
             try
             {
-                _listBrowserLauncherView = new List<BrowserLauncherView>();
+                _dictBrandLauncherView = new Dictionary<int, BrandLauncherView>();
+                _dictBrowserLauncherView = new Dictionary<long, BrowserLauncherView>();
+
+                EventNewBrandLauncherView += new Action<SystemTime, CatalogApi.Settings.Brand>(newBrandLauncherView);
 
                 this.InitializeComponent();
                 base.DataContext = this.News;
@@ -147,16 +152,43 @@ namespace NewLauncher
             }), new object[0]);
         }
 
-        private void newBrowserLauncherView(string url, string content, Interop.SystemTime time, string login, string pass)
+        public event Action<SystemTime, Brand> EventNewBrandLauncherView;
+
+        private void newBrandLauncherView(Interop.SystemTime time, Brand brand)
         {
-            _listBrowserLauncherView.Add(new BrowserLauncherView(url, content, time, login, pass));
-            _listBrowserLauncherView[_listBrowserLauncherView.Count - 1].Closing += new CancelEventHandler(closingBrowserLauncherView); 
-            _listBrowserLauncherView[_listBrowserLauncherView.Count - 1].Show();
+            BrandLauncherView view = new BrandLauncherView(this.time) {
+                Top = Application.Current.MainWindow.Top,
+                Left = Application.Current.MainWindow.Left + base.Width,
+                Height = Application.Current.MainWindow.Height,
+                DataContext = brand,
+                Title = brand.NameAndFolder,
+                ShowActivated = false,
+                Owner = this
+            };
+
+            _dictBrandLauncherView.Add(brand.BrandId, view);
+            view.EventNewBrowserLauncherView += new Action<Interop.SystemTime, BrandProvider>(newBrowserLauncherView);
+            view.Closing += new CancelEventHandler(closingViewer<BrandLauncherView>);
+
+            this.currentBrandLauncher = view;
+            this.currentBrandLauncher.Show();
         }
 
-        private void closingBrowserLauncherView (object obj, CancelEventArgs ev)
+        private void newBrowserLauncherView(Interop.SystemTime time, BrandProvider brandProvider)
         {
-            _listBrowserLauncherView.Remove(obj as BrowserLauncherView);
+            _dictBrowserLauncherView.Add(brandProvider.ProviderId, new BrowserLauncherView(brandProvider.Uri, brandProvider.Title, time, brandProvider.Login, brandProvider.Password));
+            _dictBrowserLauncherView[brandProvider.ProviderId].Closing += new CancelEventHandler(closingViewer <BrowserLauncherView>);
+            _dictBrowserLauncherView[brandProvider.ProviderId].Show();
+        }
+
+        private void closingViewer<T>(object obj, CancelEventArgs ev)
+        {
+            if (typeof(T).Equals(typeof(BrowserLauncherView)) == true)
+                _dictBrowserLauncherView.Remove(_dictBrowserLauncherView.FirstOrDefault(x => x.Value == obj).Key);
+            else if (typeof(T).Equals(typeof(BrandLauncherView)) == true)
+                _dictBrandLauncherView.Remove(_dictBrandLauncherView.FirstOrDefault(x => x.Value == obj).Key);
+            else
+                ;
         }
 
         private void button_onClick(Brand brandown)
@@ -176,29 +208,24 @@ namespace NewLauncher
                 {
                     if (brandown.MenuWindow)
                     {
-                        BrandLauncherView view = new BrandLauncherView(this.time)
-                        {
-                            Top = Application.Current.MainWindow.Top,
-                            Left = Application.Current.MainWindow.Left + base.Width,
-                            Height = Application.Current.MainWindow.Height,
-                            DataContext = brandown,
-                            Title = brandown.NameAndFolder,
-                            ShowActivated = false,
-                            Owner = this
-                        };
-                        view.EventNewBrowserLauncherView += new Action<string, string, Interop.SystemTime, string, string> (newBrowserLauncherView);
-                        this.brandLauncher = view;
-                        this.brandLauncher.Show();
+                        if (_dictBrandLauncherView.ContainsKey(brandown.BrandId) == false)
+                            EventNewBrandLauncherView?.Invoke(this.time, brandown);
+                        else
+                            _dictBrandLauncherView[brandown.BrandId].Activate();
                     }
                     else if (brandown.Providers.Count > 0)
                     {
                         string loginFromDB = SettingsFactory.GetLoginFromDB(brandown.Providers[0].ProviderId);
                         string pswFromDB = SettingsFactory.GetPswFromDB(brandown.Providers[0].ProviderId);
                         string title = brandown.Providers[0].Title;
+
                         url = brandown.Providers[0].Uri;
                         if (url.StartsWith("http") || url.StartsWith("https"))
                         {
-                            newBrowserLauncherView(url, title, this.time, loginFromDB, pswFromDB);
+                            if (_dictBrowserLauncherView.ContainsKey(brandown.Providers[0].ProviderId) == false)
+                                newBrowserLauncherView(this.time, brandown.Providers[0]);
+                            else
+                                _dictBrowserLauncherView[brandown.Providers[0].ProviderId].Activate();
                         }
                         else
                         {
@@ -210,7 +237,13 @@ namespace NewLauncher
                                 , ResourceManager.Root
                                 , brandown.NameAndFolder);
 
-                            using (Process process = new Process { StartInfo = { UseShellExecute = false, FileName = url, CreateNoWindow = true, Verb = url } })
+                            using (Process process = new Process {
+                                StartInfo = {
+                                    UseShellExecute = false
+                                    , FileName = url
+                                    , CreateNoWindow = true
+                                    , Verb = url }
+                            })
                             {
                                 process.Start();
                             }
@@ -220,7 +253,7 @@ namespace NewLauncher
             }
             catch (Exception exception)
             {
-                ErrorLogHelper.AddErrorInLog("Button_Click", url + " | " + exception.Message + " | " + exception.StackTrace);
+                ErrorLogHelper.AddErrorInLog("button_onClick", url + " | " + exception.Message + " | " + exception.StackTrace);
                 MessageBox.Show(exception.Message + url + " | " + exception.StackTrace);
             }
 
@@ -587,16 +620,17 @@ namespace NewLauncher
                         || (this.isNormalShutdownMode == true)) {
                         args.Cancel = false;
 
-                        if (this.brandLauncher != null) {
-                            this.brandLauncher.Close();
-                        } else
-                            ;
-
-                        _listBrowserLauncherView.ForEach(view => {
-                            view.Closing -= new CancelEventHandler(closingBrowserLauncherView);
+                        foreach (BrowserLauncherView view in _dictBrowserLauncherView.Values) {
+                            view.Closing -= new CancelEventHandler(closingViewer<BrowserLauncherView>);
                             view.Close();
-                        });
-                        _listBrowserLauncherView.Clear();
+                        }
+                        _dictBrowserLauncherView.Clear();
+
+                        foreach (BrandLauncherView view in _dictBrandLauncherView.Values) {
+                            view.Closing -= new CancelEventHandler(closingViewer<BrandLauncherView>);
+                            view.Close();
+                        }
+                        _dictBrandLauncherView.Clear();
 
                         MainWindow.FreeOccupiedAccount();
                     } else {
@@ -605,8 +639,8 @@ namespace NewLauncher
                         base.WindowState = WindowState.Minimized;
                         base.ShowInTaskbar = true;
 
-                        if (this.brandLauncher != null) {
-                            this.brandLauncher.Visibility = Visibility.Hidden;
+                        if (this.currentBrandLauncher != null) {
+                            this.currentBrandLauncher.Visibility = Visibility.Hidden;
                         } else
                             ;
                     }
@@ -616,20 +650,20 @@ namespace NewLauncher
                 {
                     try
                     {
-                        if ((this.brandLauncher != null)
-                            && ((this.brandLauncher == null)
-                                || (this.brandLauncher.Visibility == Visibility.Hidden))
+                        if ((this.currentBrandLauncher != null)
+                            && ((this.currentBrandLauncher == null)
+                                || (this.currentBrandLauncher.Visibility == Visibility.Hidden))
                             )
                         {
                             try
                             {
-                                this.brandLauncher.Visibility = Visibility.Visible;
+                                this.currentBrandLauncher.Visibility = Visibility.Visible;
                             }
                             catch (Exception)
                             {
                             }
 
-                            MainWindow.ShowWindow(new WindowInteropHelper(this.brandLauncher).Handle, SwRestore);
+                            MainWindow.ShowWindow(new WindowInteropHelper(this.currentBrandLauncher).Handle, SwRestore);
                         }
                     }
                     catch (System.Exception ex2)
@@ -643,26 +677,26 @@ namespace NewLauncher
                 {
                     if (this.DownFlag)
                     {
-                        this.brandLauncher.Top = base.Top + base.Height;
-                        this.brandLauncher.Left = base.Left + this.LeftLength;
+                        this.currentBrandLauncher.Top = base.Top + base.Height;
+                        this.currentBrandLauncher.Left = base.Left + this.LeftLength;
                     }
 
                     if (this.TopFlag)
                     {
-                        this.brandLauncher.Top = base.Top - this.brandLauncher.Height;
-                        this.brandLauncher.Left = base.Left + this.LeftLength;
+                        this.currentBrandLauncher.Top = base.Top - this.currentBrandLauncher.Height;
+                        this.currentBrandLauncher.Left = base.Left + this.LeftLength;
                     }
 
                     if (this.LeftFlag)
                     {
-                        this.brandLauncher.Left = base.Left - this.brandLauncher.Width;
-                        this.brandLauncher.Top = base.Top + this.TopLength;
+                        this.currentBrandLauncher.Left = base.Left - this.currentBrandLauncher.Width;
+                        this.currentBrandLauncher.Top = base.Top + this.TopLength;
                     }
 
                     if (this.RightFlag)
                     {
-                        this.brandLauncher.Left = base.Left + base.Width;
-                        this.brandLauncher.Top = base.Top + this.TopLength;
+                        this.currentBrandLauncher.Left = base.Left + base.Width;
+                        this.currentBrandLauncher.Top = base.Top + this.TopLength;
                     }
                 };
 

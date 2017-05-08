@@ -1259,7 +1259,7 @@ namespace NewLauncher.View
                 || (browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("about:blank") == false))
             {
                 if ((browserExtendedNavigatingEventArgs.Url != null)
-                    && browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("mazdaeur"))
+                    && browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains(CatalogApi.Catalogs.Mazda))
                 {
                     browserExtendedNavigatingEventArgs.Cancel = true;
                 }
@@ -1274,6 +1274,7 @@ namespace NewLauncher.View
                     {
                         base.Close();
                     }
+
                     if ((browserExtendedNavigatingEventArgs.Url != null)
                         && browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains(CatalogApi.UrlConstants.BMW_ETKEntry))
                     {
@@ -1281,7 +1282,7 @@ namespace NewLauncher.View
                         browserExtendedNavigatingEventArgs.Cancel = true;
                     }
                     else if (this.url.Contains(CatalogApi.UrlConstants.BMW_Root))
-                            browserExtendedNavigatingEventArgs.Cancel = true;
+                        browserExtendedNavigatingEventArgs.Cancel = true;
                     else
                     {
                         ExtendedWebBrowser browser = this.WindowManager.New(false);
