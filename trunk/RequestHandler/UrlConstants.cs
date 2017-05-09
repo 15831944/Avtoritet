@@ -12,13 +12,13 @@ namespace CatalogApi
         #endregion
 
         #region Citroen
-        public const string Citroen = "citroen";
+        public const string CitroenRoot = "citroen";
         public const string CitroenLoginDo = "http://service.citroen.com/do/login";
         public const string CitroenLogoutTo = "http://service.citroen.com/do/logout";
         #endregion
 
         #region Peugeot
-        public const string Peugeot = "peugeot";
+        public const string PeugeotRoot = "peugeot";
         public const string PeugeotLoginDo = "http://public.servicebox.peugeot.com/do/login";
         public const string PeugeotLogoutTo = "http://public.servicebox.peugeot.com/do/logout";
         #endregion

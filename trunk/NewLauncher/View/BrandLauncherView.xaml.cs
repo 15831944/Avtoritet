@@ -142,8 +142,8 @@ namespace NewLauncher.View
             catch (Exception exception)
             {
                 ErrorLogHelper.AddErrorInLog("button_onClick () - ...", exception.Message + " | " + exception.StackTrace);
-                MessageBox.Show(exception.Message + " | " + exception.StackTrace);
-                new ReportWindow().ShowReportWindow(exception);
+                MessageBox.Show(string.Format("::button_onClick () - ...{0}Message={1}{0}StackTrace={2}", Environment.NewLine, exception.Message, exception.StackTrace));
+                //new ReportWindow().ShowReportWindow(exception);
             }
         }
 
@@ -165,8 +165,9 @@ namespace NewLauncher.View
             }
             catch (Exception exception)
             {
-                ErrorLogHelper.AddErrorInLog("OnActivated", exception.Message + " | " + exception.StackTrace);
-                new ReportWindow().ShowReportWindow(exception);
+                ErrorLogHelper.AddErrorInLog("::OnActivated () - ...", exception.Message + " | " + exception.StackTrace);
+                MessageBox.Show(string.Format("::OnActivated () - ...{0}Message={1}{0}StackTrace={2}", Environment.NewLine, exception.Message, exception.StackTrace));
+                //new ReportWindow().ShowReportWindow(exception);
             }
         }
 
@@ -179,7 +180,8 @@ namespace NewLauncher.View
             catch (Exception exception)
             {
                 ErrorLogHelper.AddErrorInLog("OnDeactivated", exception.Message + " | " + exception.StackTrace);
-                new ReportWindow().ShowReportWindow(exception);
+                MessageBox.Show(string.Format("::OnDeactivated () - ...{0}Message={1}{0}StackTrace={2}", Environment.NewLine, exception.Message, exception.StackTrace));
+                //new ReportWindow().ShowReportWindow(exception);
             }
         }
 

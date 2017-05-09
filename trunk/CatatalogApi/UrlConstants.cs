@@ -3,16 +3,20 @@ namespace CatalogApi
     public static class UrlConstants
     {
         #region BMW
-        public const string BMW_Root = "bmwgroup";
-        public const string BMW_ETKEntry = "https://www.parts.bmwgroup.com/tetis/starteApplikationAction.do?ENTRY_ID=WebETK_START";
+        public const string BmwGroupRoot = "bmwgroup";
+        public const string BMW_WebETKStart = "https://www.parts.bmwgroup.com/tetis/starteApplikationAction.do?ENTRY_ID=WebETK_START";
+        public const string BMW_Internet = "https://www.parts.bmwgroup.com/tetis/startTetisAction.do?DOMAIN=Internet";
+        public const string BMW_WebETKStartNodeRoot = "https://www.parts.bmwgroup.com/tetis/startNode.do?APP=WebETK&ENTRY_ID=WebETK_START&NODE=ROOT:Favorite:WebETK:WebETK_START";
         #endregion
 
         #region Citroen
+        public const string CitroenRoot = "citroen";
         public const string CitroenLoginDo = "http://service.citroen.com/do/login";
         public const string CitroenLogoutTo = "http://service.citroen.com/do/logout";
         #endregion
 
         #region Peugeot
+        public const string PeugeotRoot = "peugeot";
         public const string PeugeotLoginDo = "http://public.servicebox.peugeot.com/do/login";
         public const string PeugeotLogoutTo = "http://public.servicebox.peugeot.com/do/logout";
         #endregion
@@ -39,5 +43,23 @@ namespace CatalogApi
         private static string[] chevroletopelgroup_userlogoutto_array = { "https://imtportal.gm.com/users/logout.html", "https://gme-infotech.com/users/logout.html" };
         public static string ChevroletOpelGroupUserLogoutTo = chevroletopelgroup_userlogoutto_array[chevroletopelgroup_version];
         #endregion
+
+        #region Cargo bull
+        public const string CargoBullRoot = "cargobull";
+        public static string CargoBullArticleSearch = "https://www.cargobull-serviceportal.de/Applications/ServicePortal/ArticleSearch.aspx";
+        #endregion
+
+        public const string EtkaRoot = "vin-online";
+        public const string FordRoot = "Ford";
+        public const string HyundaiRoot = "wpc.mobis.co.kr";
+        public const string Kia_file_rrot = "globalserviceway";
+        public const string Kia_Http_root = "wpc.mobis.co.kr";
+        public const string MazdaRoot = "mazdaeur";
+        public const string MercedezRoot = "EWA-net";
+        public const string VinOnlineRoot = "vin-online";
+        public const string GigantGroupRoot = "gigant-group";
+        public const string RangerRoot = "inforanger.roadranger";
+        public const string SafAxlesRoot = "saf-axles";
+        public const string SsangYongRoot = "ssangyong";
     }
 }

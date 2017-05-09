@@ -201,7 +201,7 @@ namespace BrowserExtension
                     browserExtendedNavigatingEventArgs.Cancel = true;
                 } else {
                     if ((!(browserExtendedNavigatingEventArgs.Url == null))
-                        && (browserExtendedNavigatingEventArgs.Url.LocalPath.Contains("http://10.0.0.10:351/PQMace/login.fve"))) {
+                        && (browserExtendedNavigatingEventArgs.Url.LocalPath.Contains(CatalogApi.Catalogs.Blanket) == true)) {
                         base.Close();
                     } else
                         ;
@@ -215,7 +215,8 @@ namespace BrowserExtension
                     ExtendedWebBrowser extendedWebBrowser = this.WindowManager.New(false, base.Title);
                     browserExtendedNavigatingEventArgs.AutomationObject = extendedWebBrowser.Application;
                 }
-            }
+            } else
+                ;
         }
         /// <summary>
         /// Проверить наличие содержимого окна (повтор для Геко)
