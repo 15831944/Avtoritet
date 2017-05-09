@@ -28,94 +28,152 @@ namespace RelayServer.Portals
 
 		public override void OpenSession(string url, bool forceSession)
 		{
-            base.OpenSession(url, forceSession);
+            string url_session = string.Empty;
 
-            //Uri uri;
-            string
-                urlSession = string.Empty,
-		        login = string.Empty,
-		        password = string.Empty;
+            //uri = new Uri(url);
+            //urlSession = string.Format("{0}://{1}/", uri.Scheme, uri.Host);
+            url_session = url;
 
-            using (AvtoritetEntities ae = new AvtoritetEntities())
-            {
-                string sql = string.Format(
-                    //"SELECT        TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password\r\n                                            FROM dbo.Provider INNER JOIN\r\n                                            dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId\r\n                                            WHERE(dbo.Provider.Uri LIKE N'%{0}%') AND(dbo.ProviderAccount.Enable = 1)"
-                    //, CatalogApi.UrlConstants.ChevroletOpelGroupRoot)
-                    "SELECT TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{0}{1}"
-                        + "FROM dbo.Provider{0}{1}"
-                        + "INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{0}{1}"
-                        + "WHERE(dbo.Provider.Uri = N'{2}') AND (dbo.ProviderAccount.Enable = 1)"
-                        , "\r\n", "                                            ", url)
-                    ;
+            if (GetValidateSession(url_session, forceSession, ChevroletPortal.CookieContainer) == false) {
+                base.OpenSession(url_session, forceSession);
 
-                ProvAcc provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).FirstOrDefault<ProvAcc>();
-                if (provider != null)
+                string login = string.Empty,
+		            password = string.Empty;
+
+                using (AvtoritetEntities ae = new AvtoritetEntities())
                 {
-                    login = provider.Login;
-                    password = provider.Password;
+                    string sql = string.Format(
+                        //"SELECT        TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password\r\n                                            FROM dbo.Provider INNER JOIN\r\n                                            dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId\r\n                                            WHERE(dbo.Provider.Uri LIKE N'%{0}%') AND(dbo.ProviderAccount.Enable = 1)"
+                        //, CatalogApi.UrlConstants.ChevroletOpelGroupRoot)
+                        "SELECT TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{0}{1}"
+                            + "FROM dbo.Provider{0}{1}"
+                            + "INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{0}{1}"
+                            + "WHERE(dbo.Provider.Uri = N'{2}') AND (dbo.ProviderAccount.Enable = 1)"
+                            , "\r\n", "                                            ", url_session)
+                        ;
+
+                    ProvAcc provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).FirstOrDefault<ProvAcc>();
+                    if (provider != null)
+                    {
+                        login = provider.Login;
+                        password = provider.Password;
+                    }
                 }
-            }
 
-		    //uri = new Uri(url);
-		    //urlSession = string.Format("{0}://{1}/", uri.Scheme, uri.Host);
-		    urlSession = url;
-
-            this.m_requestHandler = RequestHandlerFactory.Create(urlSession, login, password, null);
-			HttpResponseMessage responseMessage = this.GetResponse(urlSession, forceSession, this.m_requestHandler, ChevroletPortal.CookieContainer);
+		        //uri = new Uri(url);
+		        //urlSession = string.Format("{0}://{1}/", uri.Scheme, uri.Host);
+		        url_session = url;
+            
+                this.m_requestHandler = RequestHandlerFactory.Create(url_session, login, password, null);
+            } else
+                ;
+            HttpResponseMessage responseMessage = this.GetResponse(url_session, forceSession, this.m_requestHandler, ChevroletPortal.CookieContainer);
 			if (responseMessage != null)
 			{
 				this.m_requestHandler.GetSessionResultAsync(responseMessage);
 			}
 		}
 
-		public override HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container)
-		{
-            HttpResponseMessage result;
+        public override void CloseSession()
+        {
+            CloseSession(CatalogApi.UrlConstants.ChevroletOpelGroupUserLogoutTo, /*m_requestHandler,*/ CookieContainer);
+        }
 
-			lock (ChevroletPortal.AutorizeLock)
-			{
+        public override void CloseSession(string url)
+        {
+            CloseSession(url, /*m_requestHandler,*/ CookieContainer);
+        }
+
+        public override HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container)
+		{
+            HttpResponseMessage resHttpResponseMessage;
+            string url_session = string.Empty;
+            bool error_session = false;
+
+            url_session = string.Format("{0}/", url);
+
+            lock (ChevroletPortal.AutorizeLock) {
                 ConsoleHelper.Debug("CHEVROLET");
-				if (reqHandler.NeedAuthorization(string.Format("{0}/",url), container))
-				{
-					HttpResponseMessage session = reqHandler.OpenSessionAsync(string.Format("{0}/", url), container); // /users/login.html
-                    ConsoleHelper.Info(string.Format("Open session status: {0}", session.StatusCode));
-					if (!this.SessionHasError(session))
-					{// Success
-						result = session;
-						return result;
-					}
-					ConsoleHelper.Error(string.Format("Open session error: {0}", url));
-				}
-				Task<HttpResponseMessage> session2 = reqHandler.GetSessionAsync(string.Format("{0}/", url), container); // /subscriptions.html
-                session2.Wait();
-				HttpResponseMessage responseMessage = session2.Result;
-				ConsoleHelper.Info(string.Format("Url Navigation: {0}", responseMessage.RequestMessage.RequestUri.AbsoluteUri));
-				HttpResponseMessage forcedSession = reqHandler.OpenSessionAsync(url, container);
-				ConsoleHelper.Info(string.Format("Force session status: {0}", forcedSession.StatusCode));
-				if (!this.SessionHasError(forcedSession))
-				{
-					result = forcedSession;
-				}
-				else
-				{
-					ConsoleHelper.Error(string.Format("Force session error: {0}", url));
-					ConsoleHelper.Info("Session obtained successfully");
-					result = null;
-				}
-			}
-			return result;
-		}
+
+                if (reqHandler.NeedAuthorization(url_session, container) == true) {
+                    resHttpResponseMessage = reqHandler.OpenSessionAsync(url_session, container);
+
+                    error_session = this.SessionHasError(resHttpResponseMessage);
+
+                    if (error_session == false) {
+                        ConsoleHelper.Info(string.Format("Url Navigation to open session: {0}, RequestUri={1}, StatusCode={2}"
+                            , url_session
+                            , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
+                            , resHttpResponseMessage.StatusCode));
+
+                        return resHttpResponseMessage;
+                    } else
+                        ;
+
+                    ConsoleHelper.Error(string.Format("Open session error: url={0}, StatusCode={1}"
+                        , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
+                        , resHttpResponseMessage.StatusCode));
+                } else
+                {
+
+                // без разницы force или не force, но сессию возвращать надо!
+                //if (forceSession == true) {
+                    Task<HttpResponseMessage> session2 = reqHandler.GetSessionAsync(url_session, container);
+                    session2.Wait();
+                    resHttpResponseMessage = session2.Result;
+
+                    error_session = this.SessionHasError(resHttpResponseMessage);
+
+                    if (error_session == false) {
+                        ConsoleHelper.Info(string.Format("Url Navigation to confirmed session: {0}, RequestUri={1}, StatusCode={2}"
+                            , url_session
+                            , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
+                            , resHttpResponseMessage.StatusCode));
+
+                        return resHttpResponseMessage;
+                    } else
+                        ;
+
+                    ConsoleHelper.Warning(string.Format("Confirmed session error: url={0}, RequestUri={1}, StatusCode={2}"
+                        , url_session
+                        , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
+                        , resHttpResponseMessage.StatusCode));
+
+                    CloseSession(CatalogApi.UrlConstants.ChevroletOpelGroupUserLogoutTo);
+
+                    // url для новой-повторной сессии - повторный код (см. выше, при отсутствии авторизации)
+                    resHttpResponseMessage = reqHandler.OpenSessionAsync(url_session, container);
+
+                    error_session = this.SessionHasError(resHttpResponseMessage);
+
+                    if (error_session == false) {
+                        ConsoleHelper.Info(string.Format("Url Navigation to reopen-forced session: {0}, RequestUri={1}, StatusCode={2}"
+                            , url_session
+                            , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
+                            , resHttpResponseMessage.StatusCode));
+
+                        return resHttpResponseMessage;
+                    } else
+                        ;
+
+                    ConsoleHelper.Error(string.Format("Reopen-forced session error: url={0}, StatusCode={1}"
+                        , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
+                        , resHttpResponseMessage.StatusCode));
+                }
+                //else
+                //    ;
+
+                ConsoleHelper.Error("Session obtained faulty");
+            }
+
+            return null;
+        }
 
 		protected override bool SessionHasError(HttpResponseMessage responseMessage)
 		{
 			HttpStatusCode statusCode = responseMessage.StatusCode;
 			return statusCode != HttpStatusCode.OK || responseMessage.RequestMessage.RequestUri.AbsoluteUri.Contains("error403");
 		}
-
-        public override void CloseSession(string url)
-        {
-            BrandPortal.CloseSession(url, m_requestHandler, CookieContainer);
-        }
 
         public override string GetCookies(string url)
         {

@@ -30,40 +30,52 @@ namespace RelayServer.Portals
 
 		public override void OpenSession(string url, bool forceSession)
 		{
-            base.OpenSession(url, forceSession);
+            string url_session = url;
 
-            string login = string.Empty
-			    , password = string.Empty;
+            if (GetValidateSession(url_session, forceSession, PartslinkPortal.CookieContainer) == false) {
+                base.OpenSession(url_session, forceSession);
 
-			using (AvtoritetEntities ae = new AvtoritetEntities())
-			{
-				string sql = string.Format("SELECT dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{1}{0}{0}{0}{0}"
-                    + "FROM dbo.Provider{1}{0}{0}{0}{0}"
-                    + "INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{1}{0}{0}{0}{0}"
-                    + "WHERE(dbo.Provider.Uri LIKE N'%partslink%') AND (dbo.ProviderAccount.Enable = 1)"
-                    , "          "
-                    , "\r\n");
+                string login = string.Empty
+			        , password = string.Empty;
 
-				System.Collections.Generic.List<ProvAcc> provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).ToList<ProvAcc>();
-				if (provider.Count > 0)
-				{
-					System.Random random = new System.Random();
-					int randomValue = (provider.Count > 1) ? random.Next(provider.Count - 1) : 0;
-					login = provider[randomValue].Login;
-					password = provider[randomValue].Password;
-				}
-			}
-			this.m_requestHandler = RequestHandlerFactory.Create(url, login, password, null);
-			HttpResponseMessage responseMessage = this.GetResponse(url, forceSession, this.m_requestHandler, PartslinkPortal.CookieContainer);
-			if (responseMessage != null)
-			{
-				this.m_requestHandler.GetSessionResultAsync(responseMessage);
-			}
+			    using (AvtoritetEntities ae = new AvtoritetEntities())
+			    {
+				    string sql = string.Format("SELECT dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{1}{0}{0}{0}{0}"
+                        + "FROM dbo.Provider{1}{0}{0}{0}{0}"
+                        + "INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{1}{0}{0}{0}{0}"
+                        + "WHERE(dbo.Provider.Uri LIKE N'%partslink%') AND (dbo.ProviderAccount.Enable = 1)"
+                        , "          "
+                        , "\r\n");
+
+				    System.Collections.Generic.List<ProvAcc> provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).ToList<ProvAcc>();
+				    if (provider.Count > 0)
+				    {
+					    System.Random random = new System.Random();
+					    int randomValue = (provider.Count > 1) ? random.Next(provider.Count - 1) : 0;
+					    login = provider[randomValue].Login;
+					    password = provider[randomValue].Password;
+				    }
+			    }
+
+                this.m_requestHandler = RequestHandlerFactory.Create(url_session, login, password, null);
+            } else
+                ;
+
+            HttpResponseMessage responseMessage = this.GetResponse(url_session, forceSession, this.m_requestHandler, PartslinkPortal.CookieContainer);
+            if (responseMessage != null) {
+                this.m_requestHandler.GetSessionResultAsync(responseMessage);
+            } else
+                ;
 		}
 
-		public override void CloseSession(string url)
+        public override void CloseSession()
+        {
+            CloseSession(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo, /*m_requestHandler,*/ CookieContainer);
+        }
+
+        public override void CloseSession(string url)
 		{
-            BrandPortal.CloseSession(url, m_requestHandler, CookieContainer);
+            CloseSession(url, /*m_requestHandler,*/ CookieContainer);
 		}
 
 		public override string GetCookies(string url)
@@ -73,54 +85,108 @@ namespace RelayServer.Portals
 
 		public override HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container)
 		{
-			HttpResponseMessage result;
-			lock (PartslinkPortal.AutorizeLock)
+            HttpResponseMessage resHttpResponseMessage;
+            string url_session = string.Empty;
+            bool error_session = false;
+
+            lock (PartslinkPortal.AutorizeLock)
 			{
-				if (PartslinkPortal.partslinkIsBlocked)
+				if (PartslinkPortal.partslinkIsBlocked == true)
 				{
-					result = null;
+                    resHttpResponseMessage = null;
 				}
 				else
 				{
 					ConsoleHelper.Debug("PARTSLINK");
-					if (reqHandler.NeedAuthorization(url, container))
-					{
-						HttpResponseMessage session = reqHandler.OpenSessionAsync(url, container);
-						ConsoleHelper.Info(string.Format("Open session status: {0}", session.StatusCode));
-						if (!this.SessionHasError(session))
-						{
-							result = session;
-							return result;
-						}
-						ConsoleHelper.Error(string.Format("Open session error: {0}", url));
-						this.CloseSession(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo);
-						PartslinkPortal.partslinkIsBlocked = true;
-					}
-					if (forceSession)
-					{
-						Task<HttpResponseMessage> session2 = reqHandler.GetSessionAsync(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLoginDo, container);
-						session2.Wait();
-						HttpResponseMessage responseMessage = session2.Result;
-						ConsoleHelper.Info(string.Format("Url Navigation: {0}", responseMessage.RequestMessage.RequestUri.AbsoluteUri));
-						if (responseMessage.RequestMessage.RequestUri.AbsoluteUri.Contains("login.do") || reqHandler.NeedAuthorization(url, container))
-						{
-							HttpResponseMessage forcedSession = reqHandler.OpenSessionAsync(url, container);
-							ConsoleHelper.Info(string.Format("Force session status: {0}", forcedSession.StatusCode));
-							if (!this.SessionHasError(forcedSession))
-							{
-								result = forcedSession;
-								return result;
-							}
-							ConsoleHelper.Error(string.Format("Force session error: {0}", url));
-							this.CloseSession(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo);
-							PartslinkPortal.partslinkIsBlocked = true;
-						}
-					}
-					ConsoleHelper.Info("Session obtained successfully");
-					result = null;
+
+                    url_session = url;
+
+                    if (reqHandler.NeedAuthorization(url_session, container) == true) {
+                        resHttpResponseMessage = reqHandler.OpenSessionAsync(url_session, container);
+
+                        error_session = this.SessionHasError(resHttpResponseMessage);
+
+                        if (error_session == false) {
+                            ConsoleHelper.Info(string.Format("Url Navigation to open session: {0}, RequestUri={1}, StatusCode={2}"
+                                , url_session
+                                , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
+                                , resHttpResponseMessage.StatusCode));
+
+                            return resHttpResponseMessage;
+                        } else
+                            ;
+
+                        ConsoleHelper.Error(string.Format("Open session error: url={0}, StatusCode={1}"
+                            , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
+                            , resHttpResponseMessage.StatusCode));
+
+                        this.CloseSession(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo);
+                        PartslinkPortal.partslinkIsBlocked = true;
+                    } else
+                    {
+
+                    // без разницы force или не force, но сессию возвращать надо!
+                    //if (forceSession == true) {
+                        // url для подтверждения сессии
+                        url_session = CatalogApi.UrlConstants.Partslink24ComPartslink24UserLoginDo;
+
+                        Task<HttpResponseMessage> session2 = reqHandler.GetSessionAsync(url_session, container);
+                        session2.Wait();
+                        resHttpResponseMessage = session2.Result;
+
+                        error_session = this.SessionHasError(resHttpResponseMessage);
+
+                        if (error_session == false) {
+                            ConsoleHelper.Info(string.Format("Url Navigation to confirmed session: {0}, RequestUri={1}, StatusCode={2}"
+                                , url_session
+                                , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
+                                , resHttpResponseMessage.StatusCode));
+
+                            return resHttpResponseMessage;
+                        } else
+                            ;
+
+                        ConsoleHelper.Warning(string.Format("Confirmed session error: url={0}, RequestUri={1}, StatusCode={2}"
+                            , url_session
+                            , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
+                            , resHttpResponseMessage.StatusCode));
+
+                        //CloseSession(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo);
+
+                        //// url для новой-повторной сессии - повторный код (см. выше, при отсутствии авторизации)
+                        if (resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri.Contains("login.do")
+                            || (reqHandler.NeedAuthorization(url_session, container) == true)) {
+                            resHttpResponseMessage = reqHandler.OpenSessionAsync(url_session, container);
+
+                            error_session = this.SessionHasError(resHttpResponseMessage);
+
+                            if (error_session == false) {
+                                ConsoleHelper.Info(string.Format("Url Navigation to reopen-forced session: {0}, RequestUri={1}, StatusCode={2}"
+                                    , url_session
+                                    , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
+                                    , resHttpResponseMessage.StatusCode));
+
+                                return resHttpResponseMessage;
+                            } else
+                                ;
+
+                            ConsoleHelper.Error(string.Format("Reopen-forced session error: url={0}, StatusCode={1}"
+                                , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
+                                , resHttpResponseMessage.StatusCode));
+
+                            this.CloseSession(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo);
+                            PartslinkPortal.partslinkIsBlocked = true;
+                        } else
+                            ;
+                    }
+                    //else
+                    //    ;
+
+                    ConsoleHelper.Error("Session obtained faulty");
 				}
 			}
-			return result;
+
+			return null;
 		}
 
 		protected override bool SessionHasError(HttpResponseMessage responseMessage)

@@ -73,7 +73,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerHost.Helpers\ConsoleHelper.cs" />
     <Compile Include="ServerHost.Helpers\ErrorLogHelper.cs" />
     <Compile Include="ServerHost.ServiceReference\FileServerClient.cs" />
     <Compile Include="ServerHost.ServiceReference\IFileServer.cs" />
@@ -87,6 +86,10 @@
     <ProjectReference Include="..\RelayServer\RelayServer.csproj">
       <Project>{7f37ff42-25e8-4a63-bd50-89c740ea0c8b}</Project>
       <Name>RelayServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RequestHandler\RequestHandlers.csproj">
+      <Project>{65D78338-2D4B-4B16-989D-DEFB6D6F6F26}</Project>
+      <Name>RequestHandlers</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

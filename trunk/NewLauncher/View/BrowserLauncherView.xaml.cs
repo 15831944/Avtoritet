@@ -46,13 +46,13 @@ namespace NewLauncher.View
         private bool viewChanged;
         public NewLauncher.Extension.WindowManager WindowManager { get; set; }
 
-        public BrowserLauncherView(string url, string brand, SystemTime startTime, string login, string password)
+        public BrowserLauncherView(SystemTime startTime, string titleBrand, string url, string login, string password)
         {
             try
             {
                 this.InitializeComponent();
                 this.time = startTime;
-                base.Title = brand;
+                base.Title = titleBrand;
                 this.url = url;
                 this.login = login;
                 this.password = password;
@@ -286,8 +286,9 @@ namespace NewLauncher.View
                 #region partslink24
                 if (this.url.Contains(CatalogApi.UrlConstants.Partslink24Root))
                 {
-                    if (this.NeedRefresh(geckoEventArgs.Uri)) {
-                        if (this.RefreshSession(string.Format(".{0}", CatalogApi.UrlConstants.Partslink24Com), geckoEventArgs.Uri.AbsoluteUri)) {
+                    if (this.PartsLink24NeedRefresh(geckoEventArgs.Uri) == true) {
+                        if (this.SetCookiesToPath(string.Format(".{0}.com", CatalogApi.UrlConstants.Partslink24Root)) == true) {
+                            //this.GeckoWeb.Navigate(geckoEventArgs.Uri.AbsoluteUri);
                             this.GeckoWeb.Navigate(this.url);
                         } else {
                             this.Captcha.Text = "Ошибка подключения!";
@@ -298,7 +299,7 @@ namespace NewLauncher.View
                     } else
                         ;
 
-                    if (this.NeedNavigation(geckoEventArgs.Uri)) {
+                    if (this.PartsLink24NeedNavigation(geckoEventArgs.Uri)) {
                         this.GeckoWeb.Navigate(this.url);
                     } else
                         ;
@@ -518,17 +519,24 @@ namespace NewLauncher.View
             #region Peugeot
             if (this.url.Contains(CatalogApi.Catalogs.Peugeot))
             {
-                if (this.GeckoWeb.Url.AbsoluteUri.Contains("docacc"))
-                {
+                if (this.GeckoWeb.Url.AbsoluteUri.Contains("docacc")) {
                     this.GeckoWeb.Navigate("http://public.servicebox.peugeot.com/docpr/");
-                }
-                if ((this.GeckoWeb.Document.Body.InnerHtml.IndexOf("Your session time expired. Please reconnect.") > 0) || this.GeckoWeb.Url.AbsoluteUri.Contains("index.jsp"))
-                {
-                    this.RefreshSession(".peugeot.com", this.url);
-                    this.GeckoWeb.Navigate("http://public.servicebox.peugeot.com/docpr/");
-                }
-                else
-                {
+                } else
+                    ;
+
+                if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("Your session time expired. Please reconnect.") > 0) {
+                    if (this.RefreshSession(string.Format(".{0}.com", CatalogApi.Catalogs.Peugeot)) == true) {
+                        this.GeckoWeb.Navigate(this.url);
+                    } else
+                        ;
+                } else if (this.GeckoWeb.Url.AbsoluteUri.Contains("index.jsp") == true) {
+                    if (this.SetCookiesToPath(string.Format(".{0}.com", CatalogApi.Catalogs.Peugeot)) == true) {
+                        this.GeckoWeb.Navigate(this.url);
+                    } else
+                        ;
+                } else if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("A technical problem occurred. Please retry to connect later.") > 0) {
+                    this.DelayForNextNavigation(this.GeckoHost, 0x3e8, 0x7d0);
+                } else {
                     if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("A technical problem occurred. Please retry to connect later.") > 0)
                     {
                         this.DelayForNextNavigation(this.GeckoHost, 0x3e8, 0x7d0);
@@ -568,16 +576,22 @@ namespace NewLauncher.View
             #region Citroen
             if (this.url.Contains(CatalogApi.Catalogs.Citroen))
             {
-                if (this.GeckoWeb.Url.AbsoluteUri.Contains("docacc"))
-                {
+                if (this.GeckoWeb.Url.AbsoluteUri.Contains("docacc")) {
                     this.GeckoWeb.Navigate("http://service.citroen.com/docpr/");
-                }
+                } else
+                    ;
 
-                if ((this.GeckoWeb.Document.Body.InnerHtml.IndexOf("Your session time expired. Please reconnect.") > 0)
-                    || this.GeckoWeb.Url.AbsoluteUri.Contains("index.jsp"))
+                if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("Your session time expired. Please reconnect.") > 0)
                 {
-                    this.RefreshSession(".citroen.com", this.url);
-                    this.GeckoWeb.Navigate("http://service.citroen.com/docpr/");
+                    if (this.RefreshSession(string.Format(".{0}.com", CatalogApi.Catalogs.Citroen)) == true) {
+                        this.GeckoWeb.Navigate(this.url);
+                    } else
+                        ;
+                } else if (this.GeckoWeb.Url.AbsoluteUri.Contains("index.jsp") == true) {
+                    if (this.SetCookiesToPath(string.Format(".{0}.com", CatalogApi.Catalogs.Citroen)) == true) {
+                        this.GeckoWeb.Navigate(this.url);
+                    } else
+                        ;
                 } else if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("A technical problem occurred. Please retry to connect later.") > 0)
                 {
                     this.DelayForNextNavigation(this.GeckoHost, 0x3e8, 0x7d0);
@@ -1312,12 +1326,12 @@ namespace NewLauncher.View
             return ((cookies != null) && (cookies.Count > 0));
         }
 
-        private bool NeedNavigation(Uri uri)
+        private bool PartsLink24NeedNavigation(Uri uri)
         {
             return uri.AbsoluteUri.Contains("brandMenu.do");
         }
 
-        private bool NeedRefresh(Uri uri)
+        private bool PartsLink24NeedRefresh(Uri uri)
         {
             return uri.AbsoluteUri.Contains("login.do");
         }
@@ -1342,7 +1356,7 @@ namespace NewLauncher.View
                 this.IeHost.Visibility = this.GeckoHost.Visibility = Visibility.Collapsed;
 
                 #region Ford
-                if (this.url.Contains("Ford"))
+                if (this.url.Contains(CatalogApi.Catalogs.Ford) == true)
                 {
                     flag = true;
                     this.IeWeb.Navigate(this.url);
@@ -1350,33 +1364,33 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Mazda
-                if (this.url.Contains("mazdaeur"))
+                if (this.url.Contains(CatalogApi.Catalogs.Mazda) == true)
                 {
                     flag = true;
                     this.IeWeb.Navigate(this.url);
                 }
                 #endregion
 
-                #region
-                if (this.url.Contains("peugeot"))
+                #region Peugeot
+                if (this.url.Contains(CatalogApi.Catalogs.Peugeot) == true)
                 {
                     flag = true;
-                    this.OpenSession(".peugeot.com", false);
+                    this.OpenSession(false/*, string.Format(".{0}.com", CatalogApi.Catalogs.Peugeot)*/);
                     this.GeckoWeb.Navigate(this.url);
                 }
                 #endregion
 
                 #region Citroen
-                if (this.url.Contains(CatalogApi.Catalogs.Citroen))
+                if (this.url.Contains(CatalogApi.Catalogs.Citroen) ==  true)
                 {
                     flag = true;
-                    this.OpenSession(".citroen.com", false);
+                    this.OpenSession(false/*, string.Format(".{0}.com", CatalogApi.Catalogs.Citroen)*/);
                     this.GeckoWeb.Navigate(this.url);
                 }
                 #endregion
 
                 #region MOBIS
-                if (this.url.Contains("wpc.mobis.co.kr"))
+                if (this.url.Contains("wpc.mobis.co.kr") == true)
                 {
                     flag = true;
                     this.GeckoWeb.Navigate(this.url);
@@ -1392,13 +1406,13 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Partslink24
-                if (this.url.Contains(CatalogApi.UrlConstants.Partslink24Root))
+                if (this.url.Contains(CatalogApi.UrlConstants.Partslink24Root) == true)
                 {
                     flag = true;
                     InteropHelper.SetSystemTime(ref this.time);
                     if (RequestHelper.Client.IsServiceAvailable(CatalogApi.UrlConstants.Partslink24Com))
                     {
-                        this.OpenSession(string.Format(".{0}.com", CatalogApi.UrlConstants.Partslink24Root), false);
+                        this.OpenSession(false/*, string.Format(".{0}.com", CatalogApi.UrlConstants.Partslink24Root)*/);
                         this.GeckoWeb.Navigate(string.Format("{0}/", CatalogApi.UrlConstants.Partslink24Com));
                     }
                     else
@@ -1414,7 +1428,7 @@ namespace NewLauncher.View
                 {
                     flag = true;
 
-                    this.OpenSession(url, false);
+                    this.OpenSession(false);
                     this.IeWeb.Navigate(string.Format("{0}/users/login.html", url)); // /users/login.html
                 }
                 #endregion
@@ -1618,12 +1632,12 @@ namespace NewLauncher.View
             }
         }
 
-        private void OpenSession(string host, bool force = false)
+        private void OpenSession(bool force = false, string host_cookies = "")
         {
-            string host_cookies = string.Empty;
             string session_cookies = string.Empty;
 
             RequestHelper.Client.OpenSession(this.url, force);
+
             session_cookies = RequestHelper.Client.GetCookies(this.url);
             List<System.Net.Cookie> cookies = JsonConvert.DeserializeObject<List<System.Net.Cookie>>(session_cookies);
             if ((cookies != null)
@@ -1631,9 +1645,9 @@ namespace NewLauncher.View
             {
                 this.ClearCookies();
 
-                if (host.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true) {
+                if (this.url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true) {
                 //??? только для Chevrolet-Opel Group
-                    host_cookies = url;
+                    host_cookies = this.url;
 
                     //InternetClearCookie();
 
@@ -1648,22 +1662,22 @@ namespace NewLauncher.View
                             , success == true ? "Ok" : "ERROR"));
                     }
                 } else {
-                    host_cookies =
-                        //host
-                        string.Format("{0}://{1}/", new Uri(this.url).Scheme, new Uri(this.url).Host)
-                        //"http://service.citroen.com"
-                        //"http://service.citroen.com/do/login"
+                    if (host_cookies.Equals(string.Empty) == true)
+                        host_cookies =
+                            string.Format("{0}://{1}/", new Uri(this.url).Scheme, new Uri(this.url).Host)
+                            ;
+                    else
                         ;
 
                     this.InsertCookies(host_cookies, cookies);
 
                     foreach (System.Net.Cookie cookie in cookies)
                         MainWindow.Logging(string.Format(@"::OpenSession () - InsertCookies (host={0}, cookie-name={1}, cookie-value={2}) - ..."
-                            , host_cookies, cookie.Name, cookie.Value));                    
+                            , host_cookies, cookie.Name, cookie.Value));
                 }
             } else
                 ErrorLogHelper.AddErrorInLog(
-                    string.Format("::OpenSession (host={0}, host_cookies={1})", host, host_cookies)
+                    string.Format("::OpenSession (host={0}, host_cookies={1})", this.url, host_cookies)
                     , string.Format("cookies: {0}", cookies == null ? "null" : "count = 0")
                 );
         }
@@ -1678,18 +1692,33 @@ namespace NewLauncher.View
             return outerHtml.Contains("headerLogo");
         }
 
-        private bool RefreshSession(string cookieHost, string geckoUrl)
+        private bool RefreshSession(string cookieHost)
         {
-            RequestHelper.Client.OpenSession(this.url, true);
+            this.OpenSession();
+
             List<System.Net.Cookie> cookies = this.GetCookies(this.url);
-            if (!this.IsValidCookies(cookies))
-            {
+            if (!this.IsValidCookies(cookies)) {
                 return false;
-            }
+            } else
+                ;
+
             this.ClearCookies();
             this.InsertCookies(cookieHost, cookies);
-            this.GeckoWeb.Navigate(geckoUrl);
-            this.GeckoHost.Visibility = Visibility.Visible;
+
+            return true;
+        }
+
+        private bool SetCookiesToPath(string cookieHost)
+        {
+            List<System.Net.Cookie> cookies = this.GetCookies(this.url);
+            if (!this.IsValidCookies(cookies)) {
+                return false;
+            } else
+                ;
+
+            this.ClearCookies();
+            this.InsertCookies(cookieHost, cookies);
+
             return true;
         }
     }

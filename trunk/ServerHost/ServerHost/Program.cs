@@ -1,4 +1,5 @@
 using RelayServer.Processors;
+using RequestHandlers.Helpers;
 using ServerHost.Helpers;
 using ServerHost.ServiceReference;
 using System;
@@ -12,8 +13,6 @@ namespace ServerHost
 {
 	public static class Program
 	{
-		private static readonly RequestProcessorClient RpClient = new RequestProcessorClient();
-
 		[STAThread]
 		private static void Main()
 		{
@@ -71,17 +70,8 @@ namespace ServerHost
 							else
 							{
                                 if (running == 2) {
-                                    ConsoleHelper.Trace(string.Format("Session State = {0}", Program.RpClient.State));
-
-                                    ////??? почему только партслинк24.ком
-                                    ////if (Program.RpClient.State.ToString().Contains("Clos") == false)
-                                    //if ((Program.RpClient.State == CommunicationState.Opened)
-                                    //    || (Program.RpClient.State == CommunicationState.Opening)
-                                    //    //|| (Program.RpClient.State == CommunicationState.Created)
-                                    //    )
-                                    //    Program.RpClient.CloseSession(CatalogApi.); // Partslink24ComPartslink24UserLogoutTo
-                                    //else {
-                                    //}
+                                    // TODO: требуется закрыть все сессии
+                                    RelayServer.Portals.BrandPortal.Close();
 
                                     Program.StopHost(proxyHost);
                                     Program.StopHost(storageHost);

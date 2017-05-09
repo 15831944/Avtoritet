@@ -9,7 +9,9 @@ namespace RelayServer.Interfaces
 	{
 		void OpenSession(string url, bool forceSession);
 
-		void CloseSession(string url);
+        void CloseSession();
+
+        void CloseSession(string url);
 
 		string GetCookies(string url);
 

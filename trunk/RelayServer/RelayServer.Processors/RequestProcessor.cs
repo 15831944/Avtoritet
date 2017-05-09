@@ -140,7 +140,7 @@ namespace RelayServer.Processors
             }
 			catch (System.Exception ex)
 			{
-				ErrorLogHelper.AddErrorInLog("OpenSession()", ex.Message + "|" + ex.StackTrace);
+				ErrorLogHelper.AddErrorInLog(string.Format("OpenSession(url={0}, force={1})", url, forceSession), ex.Message + "|" + ex.StackTrace);
 				ConsoleHelper.Error(string.Format("{0} || {1} || {2}", ex.Message, ex.StackTrace, ex.Data));
 			}
 		}

@@ -176,9 +176,22 @@ namespace NewLauncher
 
         private void newBrowserLauncherView(Interop.SystemTime time, BrandProvider brandProvider)
         {
-            _dictBrowserLauncherView.Add(brandProvider.ProviderId, new BrowserLauncherView(brandProvider.Uri, brandProvider.Title, time, brandProvider.Login, brandProvider.Password));
-            _dictBrowserLauncherView[brandProvider.ProviderId].Closing += new CancelEventHandler(closingViewer <BrowserLauncherView>);
-            _dictBrowserLauncherView[brandProvider.ProviderId].Show();
+            Uri uri;
+            string urlSession = string.Empty;
+
+            uri = new Uri(brandProvider.Uri);
+            urlSession = string.Format("{0}://{1}", uri.Scheme, uri.Host);
+
+            if (_dictBrowserLauncherView.ContainsKey(brandProvider.ProviderId) == false) {
+                _dictBrowserLauncherView.Add(brandProvider.ProviderId, new BrowserLauncherView(time
+                    , brandProvider.Title
+                    , brandProvider.Uri
+                    , brandProvider.Login
+                    , brandProvider.Password));
+                _dictBrowserLauncherView[brandProvider.ProviderId].Closing += new CancelEventHandler(closingViewer<BrowserLauncherView>);
+                _dictBrowserLauncherView[brandProvider.ProviderId].Show();
+            } else
+                _dictBrowserLauncherView[brandProvider.ProviderId].Activate();
         }
 
         private void closingViewer<T>(object obj, CancelEventArgs ev)
@@ -189,6 +202,11 @@ namespace NewLauncher
                 _dictBrandLauncherView.Remove(_dictBrandLauncherView.FirstOrDefault(x => x.Value == obj).Key);
             else
                 ;
+        }
+
+        public static bool IsUrlAsHttp(string url) {
+            return (url.StartsWith("http") == true)
+                || (url.StartsWith("https") == true);
         }
 
         private void button_onClick(Brand brandown)
@@ -215,21 +233,15 @@ namespace NewLauncher
                     }
                     else if (brandown.Providers.Count > 0)
                     {
-                        string loginFromDB = SettingsFactory.GetLoginFromDB(brandown.Providers[0].ProviderId);
-                        string pswFromDB = SettingsFactory.GetPswFromDB(brandown.Providers[0].ProviderId);
-                        string title = brandown.Providers[0].Title;
-
                         url = brandown.Providers[0].Uri;
-                        if (url.StartsWith("http") || url.StartsWith("https"))
+                        if (IsUrlAsHttp(url) == true)
                         {
                             if (_dictBrowserLauncherView.ContainsKey(brandown.Providers[0].ProviderId) == false)
                                 newBrowserLauncherView(this.time, brandown.Providers[0]);
                             else
                                 _dictBrowserLauncherView[brandown.Providers[0].ProviderId].Activate();
-                        }
-                        else
-                        {
-                            url = (url.StartsWith("http") || url.StartsWith("https"))
+                        } else {
+                            url = IsUrlAsHttp(url) == true
                                 ? url
                                     : Path.Combine(ResourceManager.Root, brandown.NameAndFolder, url);
 

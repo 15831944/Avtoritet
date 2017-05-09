@@ -55,19 +55,19 @@ namespace NewLauncher.View
 
         private static ButtonModel CreateLaunchButton(Brand brand, BrandProvider provider)
         {
-            string uri = (provider.Uri.StartsWith("http") || provider.Uri.StartsWith("https")) ? provider.Uri : Path.Combine(ResourceManager.Root, brand.NameAndFolder, provider.Uri);
+            string uri = MainWindow.IsUrlAsHttp(provider.Uri) == true
+                ? provider.Uri
+                    : Path.Combine(ResourceManager.Root, brand.NameAndFolder, provider.Uri);
             try
             {
                 if (
-                    (
-                        ((provider.Uri.StartsWith("http") == false)
-                            && (provider.Uri.StartsWith("https") == false)
-                        )
-                    && (
-                            (provider.Uri.IndexOf(@"\") >= 0) & (provider.Uri.ToLower().IndexOf(".exe") >= 0)
+                    ((MainWindow.IsUrlAsHttp(provider.Uri) == false)
+                        && (
+                            (provider.Uri.IndexOf(@"\") >= 0)
+                            & (provider.Uri.ToLower().IndexOf(".exe") >= 0)
                         )
                     )
-                    && File.Exists(provider.Uri)) {
+                    && File.Exists(provider.Uri) == true) {
                     uri = provider.Uri;
                 } else
                     ;
@@ -112,12 +112,6 @@ namespace NewLauncher.View
                             StartSeparateProcess(url);
                         else if (ConfigurationManager.AppSettings[appKey] == MODE_BROWSE.Common.ToString()) {
                         // вариант №2 (как у всех остальных Brand)
-                            Uri uri;
-                            string urlSession = string.Empty;
-
-                            uri = new Uri(url);
-                            urlSession = string.Format("{0}://{1}", uri.Scheme, uri.Host);
-
                             NewBrowserLauncherView(brandProvider);
                         } else {
                             ErrorLogHelper.AddErrorInLog("::button_onClick () - ...", string.Format("см. файл конфигурации key={0}", appKey));
