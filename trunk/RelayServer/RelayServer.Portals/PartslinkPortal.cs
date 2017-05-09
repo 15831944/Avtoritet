@@ -33,8 +33,6 @@ namespace RelayServer.Portals
             string url_session = url;
 
             if (GetValidateSession(url_session, forceSession, PartslinkPortal.CookieContainer) == false) {
-                base.OpenSession(url_session, forceSession);
-
                 string login = string.Empty
 			        , password = string.Empty;
 
@@ -68,14 +66,14 @@ namespace RelayServer.Portals
                 ;
 		}
 
-        public override void CloseSession()
-        {
-            CloseSession(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo, /*m_requestHandler,*/ CookieContainer);
-        }
+        //public override void CloseSession()
+        //{
+        //    CloseSession(/*CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo, m_requestHandler,*/ CookieContainer);
+        //}
 
         public override void CloseSession(string url)
 		{
-            CloseSession(url, /*m_requestHandler,*/ CookieContainer);
+            CloseSession(/*url, m_requestHandler,*/ CookieContainer);
 		}
 
 		public override string GetCookies(string url)
@@ -111,6 +109,8 @@ namespace RelayServer.Portals
                                 , url_session
                                 , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                                 , resHttpResponseMessage.StatusCode));
+
+                            base.OpenSession(url_session, forceSession);
 
                             return resHttpResponseMessage;
                         } else
@@ -151,7 +151,7 @@ namespace RelayServer.Portals
                             , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                             , resHttpResponseMessage.StatusCode));
 
-                        //CloseSession(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo);
+                        CloseSession(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo);
 
                         //// url для новой-повторной сессии - повторный код (см. выше, при отсутствии авторизации)
                         if (resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri.Contains("login.do")
@@ -165,6 +165,8 @@ namespace RelayServer.Portals
                                     , url_session
                                     , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                                     , resHttpResponseMessage.StatusCode));
+
+                                base.OpenSession(url_session, forceSession);
 
                                 return resHttpResponseMessage;
                             } else

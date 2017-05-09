@@ -13,7 +13,10 @@ namespace ServerHost
 {
 	public static class Program
 	{
-		[STAThread]
+        // TODO: требуется закрыть все сессии
+        //private static readonly RequestProcessorClient RpClient = new RequestProcessorClient();
+
+        [STAThread]
 		private static void Main()
 		{
             int running = 0;
@@ -75,7 +78,6 @@ namespace ServerHost
 
                                     Program.StopHost(proxyHost);
                                     Program.StopHost(storageHost);
-                                    //ConsoleHelper.Warning("Proxy session was stopped. Now can close console window...");
                                 } else
                                     ;
                             }

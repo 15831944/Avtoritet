@@ -241,6 +241,10 @@ namespace NewLauncher.View
             try
             {
                 GeckoElement element3;
+                GeckoHtmlElement element;
+                GeckoHtmlElement[] elementArray;
+                IEnumerable<GeckoElement> enumerable;
+
                 this.Captcha.Text = "Загрузка...";
                 this.Message.Text = "Пожалуйста, ждите...";
 
@@ -441,49 +445,145 @@ namespace NewLauncher.View
                 }
                 #endregion
 
-                if (this.url.Contains("saf-axles"))
-                {
-                    this.DelayForNextNavigation(this.GeckoHost, 300, 500);
+                #region Peugeot
+                if (this.url.Contains(CatalogApi.Catalogs.Peugeot)) {
+                    if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("Your session time expired. Please reconnect.") > 0) {
+                        if (this.RefreshSession(string.Format(".{0}.com", CatalogApi.Catalogs.Peugeot)) == true) {
+                            this.GeckoWeb.Navigate(this.url);
+                        } else
+                            ;
+                    } else /*if (this.GeckoWeb.Url.AbsoluteUri.Contains("index.jsp") == true) {
+                    if (this.SetCookiesToPath(string.Format(".{0}.com", CatalogApi.Catalogs.Peugeot)) == true) {
+                        this.GeckoWeb.Navigate(this.url);
+                    } else
+                        ;
+                } else*/ if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("A technical problem occurred. Please retry to connect later.") > 0) {
+                        this.DelayForNextNavigation(this.GeckoHost, 0x3e8, 0x7d0);
+                    } else {
+                        if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("A technical problem occurred. Please retry to connect later.") > 0) {
+                            this.DelayForNextNavigation(this.GeckoHost, 0x3e8, 0x7d0);
+                            return;
+                        }
+                        element = this.GeckoWeb.Document.GetElementsByTagName("span").First<GeckoHtmlElement>(x => x.Id == "libelleflag");
+                        if (!((element == null) || element.OuterHtml.Contains("русский"))) {
+                            this.GeckoWeb.Navigate("javascript:validChoixLangue('ru_RU')");
+                        } else {
+                            elementArray = (from x in this.GeckoWeb.Document.GetElementsByTagName("ul")
+                                            where x.Id.Contains("menu")
+                                            select x).ToArray<GeckoHtmlElement>();
+                            if (elementArray.Length > 0) {
+                                enumerable = elementArray[0].GetElementsByTagName("li").Skip<GeckoElement>(3);
+                                foreach (GeckoElement element2 in enumerable) {
+                                    element2.SetAttribute("style", "display:none");
+                                }
+                            }
+                            FilterContent(this.GeckoWeb.Document, "a", "bandeau_panier");
+                            foreach (GeckoHtmlElement element4 in from x in this.GeckoWeb.Document.GetElementsByTagName("div")
+                                                                  where (((x.Id.Contains("tools") || x.Id.Contains("aide")) || (x.Id.Contains("contact") || x.Id.Contains("param"))) || (x.Id.Contains("promos") || x.Id.Contains("contenu"))) || x.Id.Contains("ip")
+                                                                  select x) {
+                                element4.Style.SetPropertyValue("display", "none");
+                            }
+                            this.DelayForNextNavigation(this.GeckoHost, 0x3e8, 0x7d0);
+                        }
+                    }
                 }
-                if (this.url.Contains("inforanger.roadranger"))
-                {
+                #endregion
+
+                #region Citroen
+                if (this.url.Contains(CatalogApi.Catalogs.Citroen)) {
+                    if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("Your session time expired. Please reconnect.") > 0) {
+                        if (this.RefreshSession(string.Format(".{0}.com", CatalogApi.Catalogs.Citroen)) == true) {
+                            this.GeckoWeb.Navigate(this.url);
+                        } else
+                            ;
+                    } else /*if (this.GeckoWeb.Url.AbsoluteUri.Contains("index.jsp") == true) {
+                    if (this.SetCookiesToPath(string.Format(".{0}.com", CatalogApi.Catalogs.Citroen)) == true) {
+                        this.GeckoWeb.Navigate(this.url);
+                    } else
+                        ;
+                } else*/ if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("A technical problem occurred. Please retry to connect later.") > 0) {
+                        this.DelayForNextNavigation(this.GeckoHost, 0x3e8, 0x7d0);
+                    } else {
+                        element = this.GeckoWeb.Document.GetElementsByTagName("span").First<GeckoHtmlElement>(x => x.Id == "libelleflag");
+                        if (!((element == null) || element.OuterHtml.Contains("русский"))) {
+                            this.GeckoWeb.Navigate("javascript:validChoixLangue('ru_RU')");
+                        } else {
+                            elementArray = (from x in this.GeckoWeb.Document.GetElementsByTagName("ul")
+                                            where x.Id.Contains("menu")
+                                            select x).ToArray<GeckoHtmlElement>();
+                            if (elementArray.Length > 0) {
+                                enumerable = elementArray[0].GetElementsByTagName("li").Skip<GeckoElement>(3);
+                                foreach (GeckoElement element2 in enumerable) {
+                                    element2.SetAttribute("style", "display:none");
+                                }
+                            }
+
+                            FilterContent(this.GeckoWeb.Document, "a", "bandeau_panier");
+                            foreach (GeckoHtmlElement element4 in from x in this.GeckoWeb.Document.GetElementsByTagName("div")
+                                                                  where (((x.Id.Contains("tools") || x.Id.Contains("aide")) || (x.Id.Contains("contact") || x.Id.Contains("param"))) || (x.Id.Contains("promos") || x.Id.Contains("contenu"))) || x.Id.Contains("ip")
+                                                                  select x) {
+                                element4.Style.SetPropertyValue("display", "none");
+                            }
+
+                            this.DelayForNextNavigation(this.GeckoHost, 0x3e8, 0x7d0);
+                        }
+                    }
+                }
+                #endregion
+
+                #region Saf-axles
+                if (this.url.Contains(string.Format("{0}", CatalogApi.Catalogs.SafAxles)) == true) {
+                    this.DelayForNextNavigation(this.GeckoHost, 300, 500);
+                } else
+                    ;
+                #endregion
+
+                #region Inforanger.Roadrenger
+                if (this.url.Contains(string.Format("{0}", CatalogApi.Catalogs.Ranger)) == true) {
                     FilterContent(this.GeckoWeb.Document, "td", "nav_top");
                     this.DelayForNextNavigation(this.GeckoHost, 300, 500);
-                }
-                if (this.url.Contains("gigant-group.com"))
-                {
+                } else
+                    ;
+                #endregion
+
+                #region Gigant-group
+                if (this.url.Contains(string.Format("{0}.com", CatalogApi.Catalogs.GigantGroup)) == true) {
                     this.DelayForNextNavigation(this.GeckoHost, 300, 500);
-                }
+                } else
+                    ;
+                #endregion
 
                 #region ssangyong
                 if (this.url.Contains("ssangyong"))
                 {
                     GeckoElement element11 = this.GeckoWeb.Document.GetElementById("login");
-                    if (element11 != null)
-                    {
+                    if (element11 != null) {
                         element11.SetAttribute("value", this.login);
-                    }
+                    } else
+                        ;
+
                     GeckoElement element12 = this.GeckoWeb.Document.GetElementById("pass");
-                    if (element12 != null)
-                    {
+                    if (element12 != null) {
                         element12.SetAttribute("value", this.password);
-                    }
+                    } else
+                        ;
+
                     element3 = this.GeckoWeb.Document.GetElementById("loginOrRegistration");
                     if (element3 != null)
                     {
                         new GeckoInputElement(element3.DomObject).Click();
-                    }
-                    else
-                    {
+                    } else {
                         FilterContent(this.GeckoWeb.Document, "div", "news");
                         FilterContent(this.GeckoWeb.Document, "div", "footer");
                         FilterContent(this.GeckoWeb.Document, "li", "link_bug");
                         FilterContent(this.GeckoWeb.Document, "li", "exit");
                         FilterContent(this.GeckoWeb.Document, "li", "empty");
-                        if (this.GeckoWeb.Document.Body.OuterHtml.Contains("Купить"))
-                        {
+
+                        if (this.GeckoWeb.Document.Body.OuterHtml.Contains("Купить")) {
                             this.GeckoWeb.Document.Body.InnerHtml = this.GeckoWeb.Document.Body.InnerHtml.Replace("Купить", string.Empty);
-                        }
+                        } else
+                            ;
+
                         this.DelayForNextNavigation(this.GeckoHost, 300, 500);
                     }
                 }
@@ -516,119 +616,7 @@ namespace NewLauncher.View
             GeckoHtmlElement[] elementArray;
             IEnumerable<GeckoElement> enumerable;
 
-            #region Peugeot
-            if (this.url.Contains(CatalogApi.Catalogs.Peugeot))
-            {
-                if (this.GeckoWeb.Url.AbsoluteUri.Contains("docacc")) {
-                    this.GeckoWeb.Navigate("http://public.servicebox.peugeot.com/docpr/");
-                } else
-                    ;
-
-                if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("Your session time expired. Please reconnect.") > 0) {
-                    if (this.RefreshSession(string.Format(".{0}.com", CatalogApi.Catalogs.Peugeot)) == true) {
-                        this.GeckoWeb.Navigate(this.url);
-                    } else
-                        ;
-                } else if (this.GeckoWeb.Url.AbsoluteUri.Contains("index.jsp") == true) {
-                    if (this.SetCookiesToPath(string.Format(".{0}.com", CatalogApi.Catalogs.Peugeot)) == true) {
-                        this.GeckoWeb.Navigate(this.url);
-                    } else
-                        ;
-                } else if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("A technical problem occurred. Please retry to connect later.") > 0) {
-                    this.DelayForNextNavigation(this.GeckoHost, 0x3e8, 0x7d0);
-                } else {
-                    if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("A technical problem occurred. Please retry to connect later.") > 0)
-                    {
-                        this.DelayForNextNavigation(this.GeckoHost, 0x3e8, 0x7d0);
-                        return;
-                    }
-                    element = this.GeckoWeb.Document.GetElementsByTagName("span").First<GeckoHtmlElement>(x => x.Id == "libelleflag");
-                    if (!((element == null) || element.OuterHtml.Contains("русский")))
-                    {
-                        this.GeckoWeb.Navigate("javascript:validChoixLangue('ru_RU')");
-                    }
-                    else
-                    {
-                        elementArray = (from x in this.GeckoWeb.Document.GetElementsByTagName("ul")
-                                        where x.Id.Contains("menu")
-                                        select x).ToArray<GeckoHtmlElement>();
-                        if (elementArray.Length > 0)
-                        {
-                            enumerable = elementArray[0].GetElementsByTagName("li").Skip<GeckoElement>(3);
-                            foreach (GeckoElement element2 in enumerable)
-                            {
-                                element2.SetAttribute("style", "display:none");
-                            }
-                        }
-                        FilterContent(this.GeckoWeb.Document, "a", "bandeau_panier");
-                        foreach (GeckoHtmlElement element3 in from x in this.GeckoWeb.Document.GetElementsByTagName("div")
-                                                              where (((x.Id.Contains("tools") || x.Id.Contains("aide")) || (x.Id.Contains("contact") || x.Id.Contains("param"))) || (x.Id.Contains("promos") || x.Id.Contains("contenu"))) || x.Id.Contains("ip")
-                                                              select x)
-                        {
-                            element3.Style.SetPropertyValue("display", "none");
-                        }
-                        this.DelayForNextNavigation(this.GeckoHost, 0x3e8, 0x7d0);
-                    }
-                }
-            }
-            #endregion
-
-            #region Citroen
-            if (this.url.Contains(CatalogApi.Catalogs.Citroen))
-            {
-                if (this.GeckoWeb.Url.AbsoluteUri.Contains("docacc")) {
-                    this.GeckoWeb.Navigate("http://service.citroen.com/docpr/");
-                } else
-                    ;
-
-                if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("Your session time expired. Please reconnect.") > 0)
-                {
-                    if (this.RefreshSession(string.Format(".{0}.com", CatalogApi.Catalogs.Citroen)) == true) {
-                        this.GeckoWeb.Navigate(this.url);
-                    } else
-                        ;
-                } else if (this.GeckoWeb.Url.AbsoluteUri.Contains("index.jsp") == true) {
-                    if (this.SetCookiesToPath(string.Format(".{0}.com", CatalogApi.Catalogs.Citroen)) == true) {
-                        this.GeckoWeb.Navigate(this.url);
-                    } else
-                        ;
-                } else if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("A technical problem occurred. Please retry to connect later.") > 0)
-                {
-                    this.DelayForNextNavigation(this.GeckoHost, 0x3e8, 0x7d0);
-                } else
-                {
-                    element = this.GeckoWeb.Document.GetElementsByTagName("span").First<GeckoHtmlElement>(x => x.Id == "libelleflag");
-                    if (!((element == null) || element.OuterHtml.Contains("русский")))
-                    {
-                        this.GeckoWeb.Navigate("javascript:validChoixLangue('ru_RU')");
-                    }
-                    else
-                    {
-                        elementArray = (from x in this.GeckoWeb.Document.GetElementsByTagName("ul")
-                                        where x.Id.Contains("menu")
-                                        select x).ToArray<GeckoHtmlElement>();
-                        if (elementArray.Length > 0)
-                        {
-                            enumerable = elementArray[0].GetElementsByTagName("li").Skip<GeckoElement>(3);
-                            foreach (GeckoElement element2 in enumerable)
-                            {
-                                element2.SetAttribute("style", "display:none");
-                            }
-                        }
-
-                        FilterContent(this.GeckoWeb.Document, "a", "bandeau_panier");
-                        foreach (GeckoHtmlElement element3 in from x in this.GeckoWeb.Document.GetElementsByTagName("div")
-                                                              where (((x.Id.Contains("tools") || x.Id.Contains("aide")) || (x.Id.Contains("contact") || x.Id.Contains("param"))) || (x.Id.Contains("promos") || x.Id.Contains("contenu"))) || x.Id.Contains("ip")
-                                                              select x)
-                        {
-                            element3.Style.SetPropertyValue("display", "none");
-                        }
-
-                        this.DelayForNextNavigation(this.GeckoHost, 0x3e8, 0x7d0);
-                    }
-                }
-            }
-            #endregion
+            
         }
 
         private void GeckoWebOnFrameNavigating(object sender, GeckoNavigatingEventArgs geckoNavigatingEventArgs)
@@ -652,7 +640,7 @@ namespace NewLauncher.View
                 , geckoNavigatingEventArgs.Uri.AbsoluteUri));
 #endif
 
-            if (this.url.Contains(CatalogApi.Catalogs.Etka)
+            if ((this.url.Contains(CatalogApi.Catalogs.Etka) == true)
                 && (geckoNavigatingEventArgs.Uri.AbsoluteUri.Contains(string.Format("{0}.ru/shop", CatalogApi.Catalogs.Etka)) == true))
             {
                 geckoNavigatingEventArgs.Cancel = true;
@@ -668,25 +656,26 @@ namespace NewLauncher.View
             try
             {
                 System.Windows.Forms.ContextMenu contextMenu = geckoContextMenuEventArgs.ContextMenu.GetContextMenu();
-                if (contextMenu != null)
-                {
+                if (contextMenu != null) {
                     foreach (System.Windows.Forms.MenuItem menuItem2 in from System.Windows.Forms.MenuItem menuItem in contextMenu.MenuItems
                                                                         where menuItem != null
-                                                                        select menuItem)
-                    {
+                                                                        select menuItem) {
                         menuItem2.Enabled = false;
                         menuItem2.Visible = false;
                     }
+
                     contextMenu.MenuItems.Add(new System.Windows.Forms.MenuItem("Копировать", (o, args) =>//delegate(object o, System.EventArgs args)
                     {
                         this.GeckoWeb.CopySelection();
                     }));
+
                     contextMenu.MenuItems.Add(new System.Windows.Forms.MenuItem("Вставить", (o, args) => //delegate(object o, System.EventArgs args)
                     {
 
                         this.GeckoWeb.Paste();
                     }));
-                }
+                } else
+                    ;
             }
             catch (Exception exception)
             {
@@ -1375,7 +1364,7 @@ namespace NewLauncher.View
                 if (this.url.Contains(CatalogApi.Catalogs.Peugeot) == true)
                 {
                     flag = true;
-                    this.OpenSession(false/*, string.Format(".{0}.com", CatalogApi.Catalogs.Peugeot)*/);
+                    this.OpenSession(false, string.Format(".{0}.com", CatalogApi.Catalogs.Peugeot));
                     this.GeckoWeb.Navigate(this.url);
                 }
                 #endregion
@@ -1384,7 +1373,7 @@ namespace NewLauncher.View
                 if (this.url.Contains(CatalogApi.Catalogs.Citroen) ==  true)
                 {
                     flag = true;
-                    this.OpenSession(false/*, string.Format(".{0}.com", CatalogApi.Catalogs.Citroen)*/);
+                    this.OpenSession(false, string.Format(".{0}.com", CatalogApi.Catalogs.Citroen));
                     this.GeckoWeb.Navigate(this.url);
                 }
                 #endregion

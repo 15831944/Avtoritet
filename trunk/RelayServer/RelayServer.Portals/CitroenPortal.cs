@@ -28,8 +28,6 @@ namespace RelayServer.Portals
 		public override void OpenSession(string url, bool forceSession)
 		{
             if (GetValidateSession(url, forceSession, CitroenPortal.CookieContainer) == false) {
-                base.OpenSession(url, forceSession);
-
                 string login = string.Empty
 			        , password = string.Empty;
 
@@ -57,14 +55,14 @@ namespace RelayServer.Portals
 			}
 		}
 
-        public override void CloseSession()
-        {
-            CloseSession(CatalogApi.UrlConstants.CitroenLogoutTo, /*m_requestHandler,*/ CookieContainer);
-        }
+        //public override void CloseSession()
+        //{
+        //    CloseSession(/*CatalogApi.UrlConstants.CitroenLogoutTo, m_requestHandler,*/ CookieContainer);
+        //}
 
         public override void CloseSession(string url)
 		{
-            CloseSession(url, /*m_requestHandler,*/ CookieContainer);
+            CloseSession(/*url, m_requestHandler,*/ CookieContainer);
 		}
 
 		public override string GetCookies(string url)
@@ -94,6 +92,8 @@ namespace RelayServer.Portals
                             , url_session
                             , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                             , resHttpResponseMessage.StatusCode));
+
+                        base.OpenSession(url, forceSession);
 
                         return resHttpResponseMessage;
                     } else
@@ -149,6 +149,8 @@ namespace RelayServer.Portals
                             , url_session
                             , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                             , resHttpResponseMessage.StatusCode));
+
+                        base.OpenSession(url, forceSession);
 
                         return resHttpResponseMessage;
                     } else

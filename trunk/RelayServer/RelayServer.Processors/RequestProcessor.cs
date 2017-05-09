@@ -119,11 +119,11 @@ namespace RelayServer.Processors
 		{
 			try
 			{
-				if (url.Contains("citroen"))
+				if (url.Contains(CatalogApi.UrlConstants.Citroen) == true)
 				{
 					RequestProcessor.CitroenPortal.OpenSession(url, forceSession);
 				}
-				else if (url.Contains("peugeot"))
+				else if (url.Contains(CatalogApi.UrlConstants.Peugeot) == true)
 				{
 					RequestProcessor.PeugeotPortal.OpenSession(url, forceSession);
 				}
@@ -134,6 +134,7 @@ namespace RelayServer.Processors
 				else if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
 				{
                     RequestProcessor.ChevroletPortal.OpenSession(url, forceSession);
+                    // RequestProcessor.OpelPortal.OpenSession(url, forceSession);
                 } else
 				    throw new System.Exception(string.Format("RequestProccessor::OpenSession(Url={0}) Error..."
                         , url));
@@ -149,11 +150,11 @@ namespace RelayServer.Processors
 		{
 			try
 			{
-				if (url.Contains("citroen"))
+				if (url.Contains(CatalogApi.UrlConstants.Citroen) == true)
 				{
 					RequestProcessor.CitroenPortal.CloseSession(url);
 				}
-				else if (url.Contains("peugeot"))
+				else if (url.Contains(CatalogApi.UrlConstants.Peugeot) == true)
 				{
 					RequestProcessor.PeugeotPortal.CloseSession(url);
 				}
@@ -190,11 +191,11 @@ namespace RelayServer.Processors
 
             try
 			{
-				if (url.Contains("citroen"))
+				if (url.Contains(CatalogApi.UrlConstants.Citroen) == true)
 				{
 					result = RequestProcessor.CitroenPortal.GetCookies(url);
 				}
-				else if (url.Contains("peugeot"))
+				else if (url.Contains(CatalogApi.UrlConstants.Peugeot) == true)
 				{
 					result = RequestProcessor.PeugeotPortal.GetCookies(url);
 				}

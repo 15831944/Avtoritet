@@ -36,7 +36,7 @@ namespace RequestHandlers.Handlers
 
         protected override HttpRequestMessage createLogoutRequest()
         {
-            throw new NotImplementedException();
+            return PartsLink24RequestFactory.CreateLogoutRequest();
         }
     }
 }

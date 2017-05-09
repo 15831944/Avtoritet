@@ -12,11 +12,13 @@ namespace CatalogApi
         #endregion
 
         #region Citroen
+        public const string Citroen = "citroen";
         public const string CitroenLoginDo = "http://service.citroen.com/do/login";
         public const string CitroenLogoutTo = "http://service.citroen.com/do/logout";
         #endregion
 
         #region Peugeot
+        public const string Peugeot = "peugeot";
         public const string PeugeotLoginDo = "http://public.servicebox.peugeot.com/do/login";
         public const string PeugeotLogoutTo = "http://public.servicebox.peugeot.com/do/logout";
         #endregion
@@ -29,7 +31,11 @@ namespace CatalogApi
         public const string Partslink24ComPartslink24UserLoginDo = "https://www.partslink24.com/partslink24/user/login.do";
         public const string Partslink24ComPartslink24BrandMenuDo = "https://www.partslink24.com/partslink24/user/brandMenu.do";
         public const string Partslink24ComPartslink24AjaxLoginAction = "https://www.partslink24.com/partslink24/login-ajax!login.action";
-        public const string FormRequest = "org.apache.struts.taglib.html.TOKEN=0ee9d4e3a624fd1989c11c00449c9394&" + "loginAction=formLogin&accountLogin=ru-735778&userLogin=admin&password=Hugoboss5500";
+        public const string FormRequest = "org.apache.struts.taglib.html.TOKEN=0ee9d4e3a624fd1989c11c00449c9394"
+            + "&" + "loginAction=formLogin"
+            + "&" + "accountLogin=ru-735778"
+            + "&" + "userLogin=admin"
+            + "&" + "password=Hugoboss5500";
         #endregion
 
         #region chevrolet/opel

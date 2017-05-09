@@ -30,5 +30,8 @@
         public const string VinOnline = "vin-online";
         public const string Volvo = "http://10.0.60.1/Vida/";
         public const string VolvoImpact = "http://10.0.5.4:9907/impact3/application";
+        public const string GigantGroup = "gigant-group";
+        public const string Ranger = "inforanger.roadranger";
+        public const string SafAxles = "saf-axles";
     }
 }

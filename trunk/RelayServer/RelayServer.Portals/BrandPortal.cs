@@ -41,48 +41,55 @@ namespace RelayServer.Portals
                 ;
         }
 
-        protected void CloseSession(string url, /*IRequestHandler reqHandler,*/ CookieContainer cookieContainer)
+        protected void CloseSession(/*string url,*/ /*IRequestHandler reqHandler,*/ CookieContainer cookieContainer)
 		{
-            bool error_close = false;
+            int result_close = 1; // по умолчанию - ничего не делаем
 
             try {
 			    if (m_requestHandler != null)
 			    {
                     m_requestHandler.Close(cookieContainer).Wait();
+
+                    result_close = 0;
 			    }
 			    else
 			    {
-				    IRequestHandler request = RequestHandlerFactory.Create(url, string.Empty, string.Empty, null);
-				    if (request != null)
-				    {
-					    request.Close(cookieContainer).Wait();
-				    }
+                    //result_close = 1;
+
+				    //IRequestHandler request = RequestHandlerFactory.Create(url, string.Empty, string.Empty, null);
+        //            if (request != null) {
+        //                request.Close(cookieContainer).Wait();
+        //            } else
+        //                ;
 			    }
             } catch (Exception e) {
-                error_close = true;
+                result_close = -1;
 
                 string error_message = string.Empty;
 
-                error_message = string.Format("BrandPortal::CloseSession (url={0}, cookies.Count={1})", url, cookieContainer.Count);
+                error_message = string.Format("BrandPortal::CloseSession (Portal={0}, cookies.Count={1})", this.GetType().FullName, cookieContainer.Count);
                 ErrorLogHelper.AddErrorInLog(error_message
                     , string.Format("{0} | {1}" , e.Message, e.StackTrace));
 
                 ConsoleHelper.Warning(error_message);
             }
             finally {
+                ConsoleHelper.Warning(string.Format("Session [Portal={0}, result={1}] was closed"
+                    , this.GetType().FullName //url
+                    , result_close == -1 ? "Error" : result_close == 0 ? "Success" : result_close == 1 ? "Passed" : "Unknown"));
+
                 _session.Remove(this);
             }
-
-			ConsoleHelper.Warning(string.Format("Session [url={0}, error={1}] was closed"
-                , url
-                , error_close));
 		}
 
         public static void Close ()
         {
             if (!(_session == null)) {
                 if (_session.Count > 0)
-                    while (_session.Count > 0) { _session[0].CloseSession(); }
+                    while (_session.Count > 0) {
+                        // url сформируется автоматически методом HttpRequestMessage RequestHandlers.Handlers.XXXHandler::createLogoutRequest
+                        _session[0].CloseSession(string.Empty);
+                    }
                 else
                     ConsoleHelper.Warning(string.Format("BrandPortal::Close () - все сессии закрыты ранее..."));
             } else
@@ -124,7 +131,7 @@ namespace RelayServer.Portals
 
         protected abstract bool SessionHasError(HttpResponseMessage responseMessage);
 
-        public abstract void CloseSession();
+        //public abstract void CloseSession();
 
         public abstract void CloseSession(string url);
 
