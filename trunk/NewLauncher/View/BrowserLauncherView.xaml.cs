@@ -588,10 +588,12 @@ namespace NewLauncher.View
                 } else if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("A technical problem occurred. Please retry to connect later.") > 0) {
                     this.DelayForNextNavigation(this.GeckoHost, 1000, 2000);
                 } else {
-                    if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("A technical problem occurred. Please retry to connect later.") > 0) {
-                        this.DelayForNextNavigation(this.GeckoHost, 1000, 2000);
-                        return;
-                    }
+                    //if (this.GeckoWeb.Document.Body.InnerHtml.IndexOf("A technical problem occurred. Please retry to connect later.") > 0) {
+                    //    this.DelayForNextNavigation(this.GeckoHost, 1000, 2000);
+                    //    return;
+                    //} else
+                    //    ;
+
                     element = this.GeckoWeb.Document.GetElementsByTagName("span").First<GeckoHtmlElement>(x => x.Id == "libelleflag");
                     if (!((element == null) || element.OuterHtml.Contains("русский"))) {
                         this.GeckoWeb.Navigate("javascript:validChoixLangue('ru_RU')");
