@@ -260,7 +260,7 @@ namespace BrowserExtension
                             if (CatalogApi.Autocomplit.TypeCredentials(this.InternetExplorer.Document
                                 , htmlElement
                                 , "logon", "avtoritetepc", "password", "Hugoboss5070") == true) {
-                                this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
+                                this.DelayForNextNavigation(this.IeHost, 1000, 2000);
 
                                 break;
                             }
@@ -274,7 +274,7 @@ namespace BrowserExtension
                         this.InternetExplorer.Navigate(webBrowserDocumentCompletedEventArgs.Url.ToString()
                             .Replace("/index.html", "/subscriptions.html"));
 
-                        this.DelayForNextNavigation(this.IeHost, 0x3e8, 0x7d0);
+                        this.DelayForNextNavigation(this.IeHost, 1000, 2000);
                     } else
                         ;
                 }

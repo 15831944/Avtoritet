@@ -80,7 +80,11 @@ namespace RelayServer.Portals
 			{
 				ConsoleHelper.Debug("CITROEN");
 
-                url_session = url;
+                url_session =
+                    // "http://service.citroen.com/"
+                     url
+                    //"http://service.citroen.com/docpr/"
+                    ;
 
                 if (reqHandler.NeedAuthorization(url_session, container) == true) {
                     resHttpResponseMessage = reqHandler.OpenSessionAsync(url_session, container);
@@ -110,8 +114,8 @@ namespace RelayServer.Portals
                     // url для подтверждения сессии
                     url_session =
                         // "http://service.citroen.com/"
-                        // url
-                        "http://service.citroen.com/docpr/"
+                         url
+                        // "http://service.citroen.com/docpr/"
                         ;
 
                     Task<HttpResponseMessage> session2 = reqHandler.GetSessionAsync(url_session, container);

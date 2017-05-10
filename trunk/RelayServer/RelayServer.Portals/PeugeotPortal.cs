@@ -105,7 +105,8 @@ namespace RelayServer.Portals
                 //if (forceSession == true) {
                     // url для подтверждения сессии
                     url_session =
-                         "http://public.servicebox.peugeot.com/docpr/"
+                        // "http://public.servicebox.peugeot.com/docpr/"
+                        url
                         ;
 
                     Task<HttpResponseMessage> session2 = reqHandler.GetSessionAsync(url_session, container);

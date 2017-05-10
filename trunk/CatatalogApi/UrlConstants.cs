@@ -52,7 +52,7 @@ namespace CatalogApi
         public const string EtkaRoot = "vin-online";
         public const string FordRoot = "Ford";
         public const string HyundaiRoot = "wpc.mobis.co.kr";
-        public const string Kia_file_rrot = "globalserviceway";
+        public const string Kia_file_root = "globalserviceway";
         public const string Kia_Http_root = "wpc.mobis.co.kr";
         public const string MazdaRoot = "mazdaeur";
         public const string MercedezRoot = "EWA-net";
