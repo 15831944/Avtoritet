@@ -59,13 +59,17 @@ namespace BrowserExtension
                     , string.Concat(Enumerable.Repeat("*---", 16))
                     , DateTime.UtcNow));
 
-                Task.Factory.StartNew(delegate
+                CancellationToken taskToken = new CancellationToken(false);
+
+                Task<int> taskStart = Task.Factory.StartNew(delegate
                 {
                     //string fileNameSession = "Session_ChevroletOpelGroup.txt";
                     string[] commandLineArgs = Environment.GetCommandLineArgs();
                     string fileNameSession;
                     string cookies = string.Empty;
                     if ((commandLineArgs.Length > 2)
+                        && ((commandLineArgs[1].StartsWith("http") == true)
+                            || (commandLineArgs[1].StartsWith("https") == true))
                         && (commandLineArgs[1].Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true)
                         && ((string.IsNullOrWhiteSpace(commandLineArgs[2])) == false)) {
                         base.Dispatcher.BeginInvoke(new Action(delegate
@@ -90,53 +94,65 @@ namespace BrowserExtension
                             Logging(String.Format(
                                 "Browser::ctor () - read local session settings(file={0}) - not exists..."
                                 , fileNameSession));
-                    } else
-                        ;
 
-                    if (string.IsNullOrEmpty(cookies) == false) {
-                        Logging(String.Format("Browser::ctor (cookies={0}) - cookies not empty..."
-                            , cookies));
+                        if (string.IsNullOrEmpty(cookies) == false) {
+                            Logging(String.Format("Browser::ctor (cookies={0}) - cookies not empty..."
+                                , cookies));
 
-                        string urlSetCookie = string.Format("{0}/", commandLineArgs[1]) // /
-                            , urlNavigateDoLogin = string.Format("{0}/users/login.html", commandLineArgs[1]); // /users/login.html
+                            string urlSetCookie = string.Format("{0}/", commandLineArgs[1]) // /
+                                , urlNavigateDoLogin = string.Format("{0}/users/login.html", commandLineArgs[1]); // /users/login.html
 
-                        Logging(String.Format("Url to SetCookie (Url={0}) - ..."
-                            , urlSetCookie));
+                            Logging(String.Format("Url to SetCookie (Url={0}) - ..."
+                                , urlSetCookie));
 
-                        Logging(String.Format("Url to navigate do login (Url={0}) - ..."
-                            , urlNavigateDoLogin));
+                            Logging(String.Format("Url to navigate do login (Url={0}) - ..."
+                                , urlNavigateDoLogin));
 
-                        List<Cookie> list;
-                        try {
-                            list = JsonConvert.DeserializeObject<List<Cookie>>(cookies);
+                            List<Cookie> list;
+                            try {
+                                list = JsonConvert.DeserializeObject<List<Cookie>>(cookies);
 
-                            Logging(String.Format("Cookies DeserializeObject ... (Length={0})", list.Count));
+                                Logging(String.Format("Cookies DeserializeObject ... (Length={0})", list.Count));
   
-                            foreach (Cookie c in list) {
-                                Logging(String.Format("Browser::ctor () - InternetSetCookie to={0}, key={1}, value={2}..."
-                                    , urlSetCookie
-                                    , c.Name
-                                    , c.Value));
+                                foreach (Cookie c in list) {
+                                    Logging(String.Format("Browser::ctor () - InternetSetCookie to={0}, key={1}, value={2}..."
+                                        , urlSetCookie
+                                        , c.Name
+                                        , c.Value));
 
-                                if (MainWindow.InternetSetCookie(urlSetCookie
-                                    , c.Name,
-                                    c.Value) == false)
-                                    Logging(string.Format("::InternetSetCookie () - ошибка..."));
-                                else
-                                    ;
+                                    if (MainWindow.InternetSetCookie(urlSetCookie
+                                        , c.Name,
+                                        c.Value) == false)
+                                        Logging(string.Format("::InternetSetCookie () - ошибка..."));
+                                    else
+                                        ;
+                                }
+                            } catch (Exception ex)
+                            {
+                                Logging(ex);
                             }
-                        } catch (Exception ex)
-                        {
-                            Logging(ex);
-                        }
 
-                        Logging(String.Format("Browser to Navigate (Url={0}) - ..."
-                            , urlNavigateDoLogin));
+                            Logging(String.Format("Browser to Navigate (Url={0}) - ..."
+                                , urlNavigateDoLogin));
 
+                            base.Dispatcher.BeginInvoke(new Action(delegate
+                            {
+                                this.InternetExplorer.Navigate(urlNavigateDoLogin);
+                            }), new object[0]);
+
+                            return 0;
+                        } else 
+                            return -1;
+                    } else if ((commandLineArgs.Length > 1)
+                        && ((commandLineArgs[1].StartsWith("http") == true)
+                            || (commandLineArgs[1].StartsWith("https") == true))
+                        && (new Uri(commandLineArgs[1]).IsAbsoluteUri == true)) {
                         base.Dispatcher.BeginInvoke(new Action(delegate
                         {
-                            this.InternetExplorer.Navigate(urlNavigateDoLogin);
+                            this.InternetExplorer.Navigate(commandLineArgs[1]);
                         }), new object[0]);
+
+                        return 1;
                     } else {
                         System.Windows.MessageBox.Show(string.Format("Error opening catalog. Please report to administrator.{0}"
                                 + "Кол-во аргументов: {1}{0}"
@@ -144,10 +160,18 @@ namespace BrowserExtension
                                 + "2-ой аргумент={3}{0}"
                             , Environment.NewLine
                             , commandLineArgs.Length
-                            , commandLineArgs.Length > 1 ? commandLineArgs[1] : "отсутсвует"
-                            , commandLineArgs.Length > 2 ? commandLineArgs[2] : "отсутсвует"));
+                            , commandLineArgs.Length > 1 ? commandLineArgs[1] : "отсутствует"
+                            , commandLineArgs.Length > 2 ? commandLineArgs[2] : "отсутствует"));
+
+                        return -1;
                     }
-                });
+                }, taskToken);
+
+                taskStart.Wait(taskToken);
+                if (taskStart.Result < 0)
+                    Close();
+                else
+                    ;
             } catch (Exception ex) {
                 Logging(ex);
             }
@@ -293,7 +317,7 @@ namespace BrowserExtension
                         ;
                 }
                 else
-                    ;
+                    this.DelayForNextNavigation(this.IeHost, 3000, 4000);
             } catch (Exception ex) {
                 Logging(ex);
             }
