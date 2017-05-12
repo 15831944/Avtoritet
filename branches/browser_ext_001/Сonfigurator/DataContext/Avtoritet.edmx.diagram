@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="f28adf54b8974add91a1df09d31f6a61" Name="Diagram1">
+        <EntityTypeShape EntityType="AvtoritetModel.Links" Width="1.5" PointX="0.75" PointY="5.75" />
+        <EntityTypeShape EntityType="AvtoritetModel.NewsLog" Width="1.5" PointX="2.75" PointY="6.75" />
+        <EntityTypeShape EntityType="AvtoritetModel.VersionLog" Width="1.5" PointX="4.75" PointY="6.75" />
+        <EntityTypeShape EntityType="AvtoritetModel.Brand" Width="1.5" PointX="12.25" PointY="2.75" />
+        <EntityTypeShape EntityType="AvtoritetModel.ButtonStyle" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="AvtoritetModel.CommandFile" Width="1.5" PointX="16.75" PointY="4.5" />
+        <EntityTypeShape EntityType="AvtoritetModel.Group" Width="1.5" PointX="7.75" PointY="4" />
+        <EntityTypeShape EntityType="AvtoritetModel.GroupBox" Width="1.5" PointX="10" PointY="3.25" />
+        <EntityTypeShape EntityType="AvtoritetModel.Provider" Width="1.5" PointX="14.5" PointY="3.25" />
+        <EntityTypeShape EntityType="AvtoritetModel.ProviderAccount" Width="1.5" PointX="16.75" PointY="1.25" />
+        <AssociationConnector Association="AvtoritetModel.FK_Brand_GroupBox" />
+        <AssociationConnector Association="AvtoritetModel.FK_Provider_Brand" />
+        <AssociationConnector Association="AvtoritetModel.FK_CommandFile_Provider1" />
+        <AssociationConnector Association="AvtoritetModel.FK_GroupBox_Group" />
+        <AssociationConnector Association="AvtoritetModel.FK_ProviderAccount_Provider" />
+        <EntityTypeShape EntityType="AvtoritetModel.ProviderFile" Width="1.5" PointX="16.75" PointY="8.125" />
+        <AssociationConnector Association="AvtoritetModel.FK_ProviderFile_Provider" />
+        <EntityTypeShape EntityType="AvtoritetModel.SettingUpdate" Width="1.5" PointX="3.375" PointY="0.75" />
+        </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,46 @@
+﻿@model List<Сonfigurator.DataContext.Brand>
+
+@{
+    ViewBag.Title = "Бренды";
+    Layout = "/Views/Shared/_Layout.cshtml";
+
+}
+
+<h2>@ViewBag.Title</h2>
+
+@Html.Raw(ViewBag.BradCrumb)
+
+<table border="1">
+    <tr>
+        <td>Наименование и папка</td>
+        <td>IconPath</td>
+        <td>IconPath2</td>
+        <td>Доступно</td>
+        <td>Коорд.y</td>
+        <td>Коорд.x</td>
+        <td>Ширина</td>
+        <td>Высота</td>
+        <td>Порядок</td>
+        <td>Окно меню</td>
+        <td>Провайдеры</td>
+        <td></td>
+    </tr>
+    @foreach (var brand in Model)
+    {
+        <tr>
+            <td>@Html.ActionLink(brand.NameAndFolder, "Edit", new { brandId = brand.BrandId, GroupBoxId = brand.GroupBoxId })</td>
+            <td>@brand.IconPath</td>
+            <td>@brand.IconPath2</td>
+            <td>@Html.CheckBox("Enable", brand.Enable)</td>
+            <td>@brand.Top</td>
+            <td>@brand.Left</td>
+            <td>@brand.Width</td>
+            <td>@brand.Height</td>
+            <td>@brand.Order</td>
+            <td>@Html.CheckBox("MenuWindow", brand.MenuWindow)</td>
+            <td>@Html.ActionLink("Провайдеры", "Index", "Provider", new { BrandId = brand.BrandId }, null)
+            <td>@Html.ActionLink("Удалить", "Delete","Brand", new { Id = brand.BrandId, GroupBoxId = ViewBag.GroupBoxId},null)
+</tr>
+    }
+</table>
+@Html.ActionLink("Создать бренд", "Edit",new {GroupBoxId=ViewBag.GroupBoxId})

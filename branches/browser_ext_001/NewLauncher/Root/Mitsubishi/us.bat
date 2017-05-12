@@ -1,0 +1,2 @@
+cd C:\MMC\ASA\M50\PROG1
+.\ASA.exe M50

@@ -1,0 +1,49 @@
+﻿@model Сonfigurator.DataContext.Provider
+
+@{
+    ViewBag.Title = "Создание/Редактирование провайдера";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+<table>
+    @using (Html.BeginForm("Edit", "Provider", FormMethod.Post,new {enctype="multipart/form-data"}))
+    {
+        @Html.Hidden("ProviderId", Model.ProviderId)
+        @Html.Hidden("BrandId", Model.BrandId)
+        <tr>
+            <td>Наименование</td>
+            <td>@Html.TextBoxFor(t => t.Title)</td>
+        </tr>
+        <tr>
+            <td>Uri</td>
+            <td>@Html.TextBoxFor(t => t.Uri)</td>
+        </tr>
+        <tr>
+            <td>Командный файл</td>
+            <td>@Html.TextAreaFor(t => t.commandcontent)</td>
+        </tr>
+        <tr>
+            <td>Иконка</td>
+            <td><img src="@Url.Action("ProviderImage",new {id=Model.ProviderId})"></td>
+        </tr>
+        <tr>
+            <td>Иконка</td>
+            <td><input type="file" id="upload_file" name="upload_file" value="Обзор"/></td>
+        </tr>
+        <tr>
+            <td>Доступно</td>
+            <td>@Html.CheckBoxFor(t => t.Enable)</td>
+        </tr>
+        <tr>
+            <td>Порядковый номер</td>
+            <td>@Html.TextBoxFor(t=>t.Order)</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button type="submit">Сохранить</button>
+                @Html.ActionLink("Обратно в список", "Index", "Provider", new { BrandId = ViewBag.BrandId },null)
+            </td>
+        </tr>
+    }
+</table>

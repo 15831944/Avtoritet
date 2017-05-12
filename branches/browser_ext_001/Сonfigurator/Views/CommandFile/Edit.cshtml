@@ -1,0 +1,29 @@
+﻿@model Сonfigurator.DataContext.CommandFile
+
+@{
+    ViewBag.Title = "Редактирование командного файла";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+<table>
+    @using (Html.BeginForm("Edit", "CommandFile", FormMethod.Post))
+    {
+        @Html.Hidden("ProviderId", Model.ProviderId)
+        @Html.Hidden("CommandFileId", Model.CommandFileId)
+        <tr>
+            <td>Наименование файла</td>
+            <td>@Html.TextBoxFor(t => t.FileName)</td>
+        </tr>
+        <tr>
+            <td>top</td>
+            <td>@Html.TextAreaFor(t => t.FileContent, new {@cols = 40, @rows = 20})</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button type="submit">Сохранить</button>
+                @Html.ActionLink("Обратно в список", "Index", "CommandFile", new {ViewBag.ProviderId}, null)
+            </td>
+        </tr>
+    }
+</table>

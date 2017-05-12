@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="AvtoritetModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Links">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Url" Type="nvarchar" MaxLength="1000" />
+        </EntityType>
+        <EntityType Name="NewsLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="1000" />
+          <Property Name="Message" Type="nvarchar(max)" />
+          <Property Name="PostTime" Type="datetime" />
+        </EntityType>
+        <EntityType Name="SettingUpdate">
+          <Key>
+            <PropertyRef Name="SettingUpdateId" />
+          </Key>
+          <Property Name="SettingUpdateId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Update" Type="bit" Nullable="false" />
+          <Property Name="SettingVersion" Type="int" />
+        </EntityType>
+        <EntityType Name="VersionLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Value" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityContainer Name="AvtoritetModelStoreContainer">
+          <EntitySet Name="Links" EntityType="Self.Links" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NewsLog" EntityType="Self.NewsLog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SettingUpdate" EntityType="Self.SettingUpdate" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VersionLog" EntityType="Self.VersionLog" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="AvtoritetModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Link">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Url" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="NewsLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PostTime" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="VersionLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Value" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityContainer Name="AvtoritetEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Link" EntityType="AvtoritetModel.Link" />
+          <EntitySet Name="NewsLog" EntityType="Self.NewsLog" />
+          <EntitySet Name="VersionLog" EntityType="Self.VersionLog" />
+          <EntitySet Name="SettingUpdate" EntityType="AvtoritetModel.SettingUpdate" />
+        </EntityContainer>
+        <EntityType Name="SettingUpdate">
+          <Key>
+            <PropertyRef Name="SettingUpdateId" />
+          </Key>
+          <Property Name="SettingUpdateId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Update" Type="Boolean" Nullable="false" />
+          <Property Name="SettingVersion" Type="Int32" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="AvtoritetModelStoreContainer" CdmEntityContainer="AvtoritetEntities">
+          <EntitySetMapping Name="Link">
+            <EntityTypeMapping TypeName="AvtoritetModel.Link">
+              <MappingFragment StoreEntitySet="Links">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Url" ColumnName="Url" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NewsLog">
+            <EntityTypeMapping TypeName="AvtoritetModel.NewsLog">
+              <MappingFragment StoreEntitySet="NewsLog">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="PostTime" ColumnName="PostTime" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VersionLog">
+            <EntityTypeMapping TypeName="AvtoritetModel.VersionLog">
+              <MappingFragment StoreEntitySet="VersionLog">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SettingUpdate">
+            <EntityTypeMapping TypeName="AvtoritetModel.SettingUpdate">
+              <MappingFragment StoreEntitySet="SettingUpdate">
+                <ScalarProperty Name="SettingVersion" ColumnName="SettingVersion" />
+                <ScalarProperty Name="Update" ColumnName="Update" />
+                <ScalarProperty Name="SettingUpdateId" ColumnName="SettingUpdateId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

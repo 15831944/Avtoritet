@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="SqlLink">
+  <DataContextMoniker Name="/SqlLinkDataContext" />
+  <nestedChildShapes>
+    <classShape Id="38eba357-929a-4da2-a003-7d45fc78c3f0" absoluteBounds="0.5, 0.5, 2, 1.0961531575520833">
+      <DataClassMoniker Name="/SqlLinkDataContext/VersionLog" />
+      <nestedChildShapes>
+        <elementListCompartment Id="f36f2bc4-d2b0-4a08-886f-a05e1dfe0424" absoluteBounds="0.51500000000000012, 0.96, 1.9700000000000002, 0.53615315755208326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="5480fcbe-ebad-4b8d-a3c4-d14deae35afd" absoluteBounds="0.5, 2, 2, 1.424847819010417">
+      <DataClassMoniker Name="/SqlLinkDataContext/NewsLog" />
+      <nestedChildShapes>
+        <elementListCompartment Id="176d78a2-acfb-4325-a5fb-d161764d91a9" absoluteBounds="0.51500000000000012, 2.46, 1.9700000000000002, 0.86484781901041663" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="76cad44c-1506-4e36-81e0-5d5de7c4ef34" absoluteBounds="4, 0.875, 2, 1.0961531575520833">
+      <DataClassMoniker Name="/SqlLinkDataContext/Link" />
+      <nestedChildShapes>
+        <elementListCompartment Id="594ae35c-3f63-49f5-b4cc-b25ff45df3c2" absoluteBounds="4.015, 1.335, 1.9700000000000002, 0.53615315755208326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

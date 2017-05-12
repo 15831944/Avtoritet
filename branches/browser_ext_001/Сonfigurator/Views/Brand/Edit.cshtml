@@ -1,0 +1,78 @@
+﻿@model Сonfigurator.DataContext.Brand
+
+@{
+    ViewBag.Title = "Создание/Редактирование бренда";
+    Layout = "/Views/Shared/_Layout.cshtml";
+
+}
+
+<h2>@ViewBag.Title</h2>
+<table>
+    @using (Html.BeginForm("Edit", "Brand", FormMethod.Post,new {enctype="multipart/form-data"}))
+    {
+        @Html.Hidden("BrandId", Model.BrandId)
+        @Html.Hidden("GroupBoxId", Model.GroupBoxId)
+        <tr>
+            <td>Наименование и папка</td>
+            <td>@Html.TextBoxFor(t => t.NameAndFolder)</td>
+        </tr>
+        <tr>
+            <td>Иконка</td>
+            <td><img src="@Url.Action("BrandImage", new {id = Model.BrandId})"></td>
+        </tr>
+        <tr>
+            <td>Иконка</td>
+            <td><input type="file" id="upload" name="upload" value="Обзор" /></td>
+        </tr>
+        <tr>
+            <td>Иконка 2</td>
+            <td><img src="@Url.Action("BrandImage2", new {id = Model.BrandId})"></td>
+        </tr>
+        <tr>
+            <td>Иконка2</td>
+            <td><input type="file" id="upload2" name="upload2" value="Обзор" /></td>
+        </tr>
+        <tr>
+            <td>Доступно</td>
+            <td>@Html.CheckBoxFor(t => t.Enable)</td>
+        </tr>
+        <tr>
+            <td>top</td>
+            <td>@Html.TextBoxFor(t => t.Top)</td>
+        </tr>
+        <tr>
+            <td>left</td>
+            <td>@Html.TextBoxFor(t => t.Left)</td>
+        </tr>
+        <tr>
+            <td>Ширина</td>
+            <td>@Html.TextBoxFor(t => t.Width)</td>
+        </tr>
+        <tr>
+            <td>Высота</td>
+            <td>@Html.TextBoxFor(t => t.Height)</td>
+        </tr>
+
+        <tr>
+            <td>Порядок</td>
+            <td>@Html.TextBoxFor(t => t.Order)</td>
+        </tr>
+        <tr>
+            <td>Окно меню</td>
+            <td>@Html.CheckBoxFor(t => t.MenuWindow)</td>
+        </tr>
+        <tr>
+            <td>Стиль кнопки</td>
+            @{
+                var styleList = ViewBag.StyleList as IEnumerable<SelectListItem>;
+            }
+            <td>@Html.DropDownList("ButtonStyle", styleList)</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button type="submit">Сохранить</button>
+                @Html.ActionLink("Обратно в список", "Index", "Brand",new {GroupBoxId=ViewBag.GroupBoxId },null)
+            </td>
+        </tr>
+    }
+</table>
