@@ -46,15 +46,9 @@ namespace RequestHandlers.Handlers
                 bExpires = (cookies[0].Expires - DateTime.MinValue).TotalSeconds > 0;
 
                 if (bExpires == true)
-                    if ((secRemaind = (int)(DateTime.Now - cookies[0].Expires).TotalSeconds) > 0)
-                        bRes = true;
-                    else
-                        ;
-                else if ((secRemaind = (int)(DateTime.Now - cookies[0].TimeStamp).TotalSeconds) >
-                    //int.Parse(ConfigurationManager.AppSettings["MaxSecReopenSession"])
-                    MAX_SEC_REOPEN_SESSION
-                    )
-                    bRes = true;
+                    bRes = (secRemaind = (int)(DateTime.Now - cookies[0].Expires).TotalSeconds) > 0;
+                else if (MAX_SEC_REOPEN_SESSION > 0)
+                    bRes = (secRemaind = (MAX_SEC_REOPEN_SESSION - (int)(DateTime.Now - cookies[0].TimeStamp).TotalSeconds)) > 0;
                 else
                     ;
             } else
