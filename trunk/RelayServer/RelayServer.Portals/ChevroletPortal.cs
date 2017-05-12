@@ -29,43 +29,45 @@ namespace RelayServer.Portals
 		public override void OpenSession(string url, bool forceSession)
 		{
             string url_session = string.Empty;
+            int validateSession = -1;
 
             //uri = new Uri(url);
             //urlSession = string.Format("{0}://{1}/", uri.Scheme, uri.Host);
             url_session = url;
 
-            if (GetValidateSession(url_session, forceSession, ChevroletPortal.CookieContainer) == false) {
+            if (!((validateSession = GetValidateSession(url_session, forceSession, ChevroletPortal.CookieContainer)) == 0)) {
                 string login = string.Empty,
 		            password = string.Empty;
 
-                using (AvtoritetEntities ae = new AvtoritetEntities())
-                {
-                    string sql = string.Format(
-                        //"SELECT        TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password\r\n                                            FROM dbo.Provider INNER JOIN\r\n                                            dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId\r\n                                            WHERE(dbo.Provider.Uri LIKE N'%{0}%') AND(dbo.ProviderAccount.Enable = 1)"
-                        //, CatalogApi.UrlConstants.ChevroletOpelGroupRoot)
-                        "SELECT TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{0}{1}"
-                            + "FROM dbo.Provider{0}{1}"
-                            + "INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{0}{1}"
-                            + "WHERE(dbo.Provider.Uri = N'{2}') AND (dbo.ProviderAccount.Enable = 1)"
-                            , "\r\n", "                                            ", url_session)
-                        ;
+                if (validateSession == -1) {
+                    using (AvtoritetEntities ae = new AvtoritetEntities()) {
+                        string sql = string.Format(
+                            //"SELECT        TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password\r\n                                            FROM dbo.Provider INNER JOIN\r\n                                            dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId\r\n                                            WHERE(dbo.Provider.Uri LIKE N'%{0}%') AND(dbo.ProviderAccount.Enable = 1)"
+                            //, CatalogApi.UrlConstants.ChevroletOpelGroupRoot)
+                            "SELECT TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{0}{1}"
+                                + "FROM dbo.Provider{0}{1}"
+                                + "INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{0}{1}"
+                                + "WHERE(dbo.Provider.Uri = N'{2}') AND (dbo.ProviderAccount.Enable = 1)"
+                                , "\r\n", "                                            ", url_session)
+                            ;
 
-                    ProvAcc provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).FirstOrDefault<ProvAcc>();
-                    if (provider != null)
-                    {
-                        login = provider.Login;
-                        password = provider.Password;
+                        ProvAcc provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).FirstOrDefault<ProvAcc>();
+                        if (provider != null) {
+                            login = provider.Login;
+                            password = provider.Password;
+                        }
                     }
-                }
 
-		        //uri = new Uri(url);
-		        //urlSession = string.Format("{0}://{1}/", uri.Scheme, uri.Host);
-		        url_session = url;
-            
-                this.m_requestHandler = RequestHandlerFactory.Create(url_session, login, password, null);
+                    //uri = new Uri(url);
+                    //urlSession = string.Format("{0}://{1}/", uri.Scheme, uri.Host);
+                    url_session = url;
+
+                    this.m_requestHandler = RequestHandlerFactory.Create(url_session, login, password, null);
+                } else
+                    ;
             } else
                 ;
-            HttpResponseMessage responseMessage = this.GetResponse(url_session, forceSession, this.m_requestHandler, ChevroletPortal.CookieContainer);
+            HttpResponseMessage responseMessage = this.GetResponse(url_session, validateSession, this.m_requestHandler, ChevroletPortal.CookieContainer);
 			if (responseMessage != null)
 			{
 				this.m_requestHandler.GetSessionResultAsync(responseMessage);
@@ -77,12 +79,12 @@ namespace RelayServer.Portals
         //    CloseSession(/*CatalogApi.UrlConstants.ChevroletOpelGroupUserLogoutTo, m_requestHandler,*/ CookieContainer);
         //}
 
-        public override void CloseSession(string url)
+        public override void CloseSession()
         {
             CloseSession(/*url, m_requestHandler,*/ CookieContainer);
         }
 
-        public override HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container)
+        public override HttpResponseMessage GetResponse(string url, int validateSession, IRequestHandler reqHandler, CookieContainer container)
 		{
             HttpResponseMessage resHttpResponseMessage;
             string url_session = string.Empty;
@@ -93,7 +95,12 @@ namespace RelayServer.Portals
             lock (ChevroletPortal.AutorizeLock) {
                 ConsoleHelper.Debug("CHEVROLET");
 
-                if (reqHandler.NeedAuthorization(url_session, container) == true) {
+                if (validateSession == 1)
+                    CloseSession();
+                else
+                    ;
+
+                if (!(validateSession == 0)) {
                     resHttpResponseMessage = reqHandler.OpenSessionAsync(url_session, container);
 
                     error_session = this.SessionHasError(resHttpResponseMessage);
@@ -104,7 +111,7 @@ namespace RelayServer.Portals
                             , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                             , resHttpResponseMessage.StatusCode));
 
-                        base.OpenSession(url_session, forceSession);
+                        base.OpenSession(url_session, validateSession == 1);
 
                         return resHttpResponseMessage;
                     } else
@@ -139,7 +146,7 @@ namespace RelayServer.Portals
                         , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                         , resHttpResponseMessage.StatusCode));
 
-                    CloseSession(CatalogApi.UrlConstants.ChevroletOpelGroupUserLogoutTo);
+                    CloseSession();
 
                     // url для новой-повторной сессии - повторный код (см. выше, при отсутствии авторизации)
                     resHttpResponseMessage = reqHandler.OpenSessionAsync(url_session, container);
@@ -152,7 +159,7 @@ namespace RelayServer.Portals
                             , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                             , resHttpResponseMessage.StatusCode));
 
-                        base.OpenSession(url_session, forceSession);
+                        base.OpenSession(url_session, false);
 
                         return resHttpResponseMessage;
                     } else

@@ -2,6 +2,7 @@ using RequestHandlers.Helpers;
 using RequestHandlers.Requests;
 using System;
 using System.Collections;
+using System.Configuration;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -29,13 +30,41 @@ namespace RequestHandlers.Handlers
             return this.NeedAuthorization(url, cookieContainer);
         }
 
+        private int MAX_SEC_REOPEN_SESSION = int.Parse(ConfigurationManager.AppSettings["MaxSecReopenSession"]); // 1 час
+
         public virtual bool NeedAuthorization(string url, CookieContainer cookieContainer)
         {
+            bool bRes = false;
+
+            bool bExpires = false;
+            int secRemaind = -1;
+
             CookieCollection cookies = cookieContainer.GetCookies(new Uri(url));
             if (cookies.Count > 0) {
                 PrintCookies(cookies);
-            }
-            return cookies.Count == 0;
+
+                bExpires = (cookies[0].Expires - DateTime.MinValue).TotalSeconds > 0;
+
+                if (bExpires == true)
+                    if ((secRemaind = (int)(DateTime.Now - cookies[0].Expires).TotalSeconds) > 0)
+                        bRes = true;
+                    else
+                        ;
+                else if ((secRemaind = (int)(DateTime.Now - cookies[0].TimeStamp).TotalSeconds) >
+                    //int.Parse(ConfigurationManager.AppSettings["MaxSecReopenSession"])
+                    MAX_SEC_REOPEN_SESSION
+                    )
+                    bRes = true;
+                else
+                    ;
+            } else
+                ;
+
+            ConsoleHelper.Info(string.Format("::NeedAuthorization (url={0}) - рез-т={1} [Expires={2}, остаток={3} сек]..."
+                , url, bRes
+                , bExpires, secRemaind));
+
+            return bRes;
         }
 
         public async Task Close(CookieContainer cookieContainer)

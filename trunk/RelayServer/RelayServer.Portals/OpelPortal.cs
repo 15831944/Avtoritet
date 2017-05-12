@@ -28,32 +28,34 @@ namespace RelayServer.Portals
 		public override void OpenSession(string url, bool forceSession)
 		{
             string url_session = url;
+            int validateSession = -1;
 
-            if (GetValidateSession(url_session, forceSession, OpelPortal.CookieContainer) == false) {
+            if (!((validateSession = GetValidateSession(url_session, forceSession, OpelPortal.CookieContainer)) == 0)) {
                 string login = string.Empty
 			        , password = string.Empty;
 
-			    using (AvtoritetEntities ae = new AvtoritetEntities())
-			    {
-				    string sql = string.Format("SELECT TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{0}"
-                        + " FROM dbo.Provider{0}"
-                        + " INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{0}"
-                        + " WHERE(dbo.Provider.Uri LIKE N'%opel%') AND(dbo.ProviderAccount.Enable = 1)"
-                        , "\r\n");
+                if (validateSession < 0) {
+                    using (AvtoritetEntities ae = new AvtoritetEntities()) {
+                        string sql = string.Format("SELECT TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{0}"
+                            + " FROM dbo.Provider{0}"
+                            + " INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{0}"
+                            + " WHERE(dbo.Provider.Uri LIKE N'%opel%') AND(dbo.ProviderAccount.Enable = 1)"
+                            , "\r\n");
 
-                    ProvAcc provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).FirstOrDefault<ProvAcc>();
-				    if (provider != null)
-				    {
-					    login = provider.Login;
-					    password = provider.Password;
-				    }
-			    }
+                        ProvAcc provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).FirstOrDefault<ProvAcc>();
+                        if (provider != null) {
+                            login = provider.Login;
+                            password = provider.Password;
+                        }
+                    }
 
-                this.m_requestHandler = RequestHandlerFactory.Create(url_session, login, password, null);
+                    this.m_requestHandler = RequestHandlerFactory.Create(url_session, login, password, null);
+                } else
+                    ;
             } else
                 ;
 
-            HttpResponseMessage responseMessage = this.GetResponse(url_session, forceSession, this.m_requestHandler, OpelPortal.CookieContainer);
+            HttpResponseMessage responseMessage = this.GetResponse(url_session, validateSession, this.m_requestHandler, OpelPortal.CookieContainer);
 			if (responseMessage != null)
 			{
 				this.m_requestHandler.GetSessionResultAsync(responseMessage);
@@ -65,7 +67,7 @@ namespace RelayServer.Portals
         //    CloseSession(/*CatalogApi.UrlConstants.ChevroletOpelGroupUserLogoutTo, m_requestHandler,*/ CookieContainer);
         //}
 
-        public override void CloseSession(string url)
+        public override void CloseSession()
 		{
             CloseSession(/*url, m_requestHandler,*/ CookieContainer);
 		}
@@ -75,7 +77,7 @@ namespace RelayServer.Portals
             return BrandPortal.GetCookies(url, CookieContainer, true);
 		}
 
-		public override HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container)
+		public override HttpResponseMessage GetResponse(string url, int validateSession, IRequestHandler reqHandler, CookieContainer container)
 		{
             HttpResponseMessage resHttpResponseMessage;
             string url_session = string.Empty;
@@ -86,7 +88,12 @@ namespace RelayServer.Portals
             lock (OpelPortal.AutorizeLock) {
                 ConsoleHelper.Debug("OPEL");
 
-                if (reqHandler.NeedAuthorization(url_session, container) == true) {
+                if (validateSession == 1)
+                    CloseSession();
+                else
+                    ;
+
+                if (!(validateSession == 0)) {
                     resHttpResponseMessage = reqHandler.OpenSessionAsync(url_session, container);
 
                     error_session = this.SessionHasError(resHttpResponseMessage);
@@ -97,7 +104,7 @@ namespace RelayServer.Portals
                             , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                             , resHttpResponseMessage.StatusCode));
 
-                        base.OpenSession(url_session, forceSession);
+                        base.OpenSession(url_session, validateSession == 1);
 
                         return resHttpResponseMessage;
                     } else
@@ -145,7 +152,7 @@ namespace RelayServer.Portals
                             , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                             , resHttpResponseMessage.StatusCode));
 
-                        base.OpenSession(url_session, forceSession);
+                        base.OpenSession(url_session, false);
 
                         return resHttpResponseMessage;
                     } else

@@ -31,35 +31,37 @@ namespace RelayServer.Portals
 		public override void OpenSession(string url, bool forceSession)
 		{
             string url_session = url;
+            int validateSession = -1;
 
-            if (GetValidateSession(url_session, forceSession, PartslinkPortal.CookieContainer) == false) {
+            if (!((validateSession = GetValidateSession(url_session, forceSession, PartslinkPortal.CookieContainer)) == 0)) {
                 string login = string.Empty
 			        , password = string.Empty;
 
-			    using (AvtoritetEntities ae = new AvtoritetEntities())
-			    {
-				    string sql = string.Format("SELECT dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{1}{0}{0}{0}{0}"
-                        + "FROM dbo.Provider{1}{0}{0}{0}{0}"
-                        + "INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{1}{0}{0}{0}{0}"
-                        + "WHERE(dbo.Provider.Uri LIKE N'%partslink%') AND (dbo.ProviderAccount.Enable = 1)"
-                        , "          "
-                        , "\r\n");
+                if (validateSession < 0) {
+                    using (AvtoritetEntities ae = new AvtoritetEntities()) {
+                        string sql = string.Format("SELECT dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{1}{0}{0}{0}{0}"
+                            + "FROM dbo.Provider{1}{0}{0}{0}{0}"
+                            + "INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{1}{0}{0}{0}{0}"
+                            + "WHERE(dbo.Provider.Uri LIKE N'%partslink%') AND (dbo.ProviderAccount.Enable = 1)"
+                            , "          "
+                            , "\r\n");
 
-				    System.Collections.Generic.List<ProvAcc> provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).ToList<ProvAcc>();
-				    if (provider.Count > 0)
-				    {
-					    System.Random random = new System.Random();
-					    int randomValue = (provider.Count > 1) ? random.Next(provider.Count - 1) : 0;
-					    login = provider[randomValue].Login;
-					    password = provider[randomValue].Password;
-				    }
-			    }
+                        System.Collections.Generic.List<ProvAcc> provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).ToList<ProvAcc>();
+                        if (provider.Count > 0) {
+                            System.Random random = new System.Random();
+                            int randomValue = (provider.Count > 1) ? random.Next(provider.Count - 1) : 0;
+                            login = provider[randomValue].Login;
+                            password = provider[randomValue].Password;
+                        }
+                    }
 
-                this.m_requestHandler = RequestHandlerFactory.Create(url_session, login, password, null);
+                    this.m_requestHandler = RequestHandlerFactory.Create(url_session, login, password, null);
+                } else
+                    ;
             } else
                 ;
 
-            HttpResponseMessage responseMessage = this.GetResponse(url_session, forceSession, this.m_requestHandler, PartslinkPortal.CookieContainer);
+            HttpResponseMessage responseMessage = this.GetResponse(url_session, validateSession, this.m_requestHandler, PartslinkPortal.CookieContainer);
             if (responseMessage != null) {
                 this.m_requestHandler.GetSessionResultAsync(responseMessage);
             } else
@@ -71,7 +73,7 @@ namespace RelayServer.Portals
         //    CloseSession(/*CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo, m_requestHandler,*/ CookieContainer);
         //}
 
-        public override void CloseSession(string url)
+        public override void CloseSession()
 		{
             CloseSession(/*url, m_requestHandler,*/ CookieContainer);
 		}
@@ -81,7 +83,7 @@ namespace RelayServer.Portals
             return BrandPortal.GetCookies(url, CookieContainer, false);
 		}
 
-		public override HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container)
+		public override HttpResponseMessage GetResponse(string url, int validateSession, IRequestHandler reqHandler, CookieContainer container)
 		{
             HttpResponseMessage resHttpResponseMessage;
             string url_session = string.Empty;
@@ -99,7 +101,12 @@ namespace RelayServer.Portals
 
                     url_session = url;
 
-                    if (reqHandler.NeedAuthorization(url_session, container) == true) {
+                    if (validateSession == 1)
+                        CloseSession();
+                    else
+                        ;
+
+                    if (!(validateSession == 0)) {
                         resHttpResponseMessage = reqHandler.OpenSessionAsync(url_session, container);
 
                         error_session = this.SessionHasError(resHttpResponseMessage);
@@ -110,7 +117,7 @@ namespace RelayServer.Portals
                                 , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                                 , resHttpResponseMessage.StatusCode));
 
-                            base.OpenSession(url_session, forceSession);
+                            base.OpenSession(url_session, validateSession == 1);
 
                             return resHttpResponseMessage;
                         } else
@@ -151,11 +158,12 @@ namespace RelayServer.Portals
                             , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                             , resHttpResponseMessage.StatusCode));
 
-                        CloseSession(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo);
+                        CloseSession();
 
                         //// url для новой-повторной сессии - повторный код (см. выше, при отсутствии авторизации)
-                        if (resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri.Contains("login.do")
-                            || (reqHandler.NeedAuthorization(url_session, container) == true)) {
+                        if ((resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri.Contains("login.do") == true)
+                            //|| (reqHandler.NeedAuthorization(url_session, container) == true)
+                            ) {
                             resHttpResponseMessage = reqHandler.OpenSessionAsync(url_session, container);
 
                             error_session = this.SessionHasError(resHttpResponseMessage);
@@ -166,7 +174,7 @@ namespace RelayServer.Portals
                                     , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                                     , resHttpResponseMessage.StatusCode));
 
-                                base.OpenSession(url_session, forceSession);
+                                base.OpenSession(url_session, false);
 
                                 return resHttpResponseMessage;
                             } else

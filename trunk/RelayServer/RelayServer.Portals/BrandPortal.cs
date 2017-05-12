@@ -88,7 +88,7 @@ namespace RelayServer.Portals
                 if (_session.Count > 0)
                     while (_session.Count > 0) {
                         // url сформируется автоматически методом HttpRequestMessage RequestHandlers.Handlers.XXXHandler::createLogoutRequest
-                        _session[0].CloseSession(string.Empty);
+                        (_session[0] as BrandPortal).CloseSession();
                     }
                 else
                     ConsoleHelper.Warning(string.Format("BrandPortal::Close () - все сессии закрыты ранее..."));
@@ -107,33 +107,40 @@ namespace RelayServer.Portals
                 ;
 
 			ConsoleHelper.Debug(String.Format("Cookies obtained successfully: {0}"
-                , strRes.Length > 0 ? strRes : "отсутствует"));
+                , strRes.Length > 0 ? string.Format("кол-во={0}", cookieContainer.Count) : "отсутствует"));
 
 			return strRes;
 		}
 
-        protected bool GetValidateSession(string url, bool forceSession, CookieContainer cookies)
+        protected int GetValidateSession(string url, bool forceSession, CookieContainer cookies)
         {
-            bool bRes = false;
+            int iRes = 0;
 
-            bRes = (!(m_requestHandler == null))
-                && ((!(cookies == null))
-                    && (cookies.Count > 1))
-                && (m_requestHandler.SessionHasEnded(url, cookies) == false);
+            if ((!(m_requestHandler == null))
+                && (!(cookies == null))
+                && (cookies.Count > 1))
+                iRes = m_requestHandler.SessionHasEnded(url, cookies) == true ? 1 : 0;
+            else
+                iRes = -1;
 
             ConsoleHelper.Info(String.Format("BrandPortal::GetValidateSession: uri={0}, force={1}, validate={2}"
-                , url, forceSession, bRes));
+                , url, forceSession, iRes == -1 ? "не создана" : iRes == 1 ? "завершена" : "в работе"));
 
-            return bRes;
+            return iRes;
         }
 
-        public abstract HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container);
+        public abstract HttpResponseMessage GetResponse(string url, int validateSession, IRequestHandler reqHandler, CookieContainer container);
 
         protected abstract bool SessionHasError(HttpResponseMessage responseMessage);
 
         //public abstract void CloseSession();
 
-        public abstract void CloseSession(string url);
+        public virtual void CloseSession(string url)
+        {
+            throw new NotImplementedException();
+        }
+
+        public abstract void CloseSession();
 
         public abstract string GetCookies(string url);
     }

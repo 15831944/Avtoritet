@@ -16,6 +16,6 @@ namespace RelayServer.Interfaces
 
 		string GetCookies(string url);
 
-		HttpResponseMessage GetResponse(string url, bool forceSession, IRequestHandler reqHandler, CookieContainer container);
+		HttpResponseMessage GetResponse(string url, int validateSession, IRequestHandler reqHandler, CookieContainer container);
 	}
 }
