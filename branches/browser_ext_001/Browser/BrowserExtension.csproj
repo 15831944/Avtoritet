@@ -61,6 +61,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -80,6 +82,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helper\InteropHelper.cs" />
+    <Compile Include="Helper\RequestHelper.cs" />
+    <Compile Include="Interop\SystemTime.cs" />
+    <Compile Include="Manager\AccountManager.cs" />
+    <Compile Include="ServiceReference\AccountModel.cs" />
+    <Compile Include="ServiceReference\IRequestProcessor.cs" />
+    <Compile Include="ServiceReference\IRequestProcessorChannel.cs" />
+    <Compile Include="ServiceReference\RequestProcessorClient.cs" />
     <Page Include="BrowserExtensionMainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -110,6 +120,7 @@
     <Compile Include="Extensions\WindowManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helper\CommandArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -127,6 +138,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

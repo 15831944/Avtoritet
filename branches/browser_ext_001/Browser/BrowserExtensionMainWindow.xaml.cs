@@ -24,7 +24,12 @@ using System.Windows.Shapes;
 using BrowserExtension.Extensions;
 using Newtonsoft.Json;
 
+using BrowserExtension.Helper;
+
 using CatalogApi;
+using BrowserExtension.Manager;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 
 namespace BrowserExtension
 {
@@ -34,6 +39,10 @@ namespace BrowserExtension
     public partial class MainWindow
     {
         private readonly WindowManager windowManager;
+
+        private string url;
+
+        Interop.SystemTime time;
 
         public WindowManager WindowManager
         {
@@ -48,133 +57,182 @@ namespace BrowserExtension
 
         public MainWindow()
         {
+            Task<int> taskStart = null;
+            CancellationToken taskToken = new CancellationToken(false);
+
             try {
-                this.InitializeComponent();
-                this.StartNewEventSession();
+                if (CommandArgs.This.IsValidate == true) {
+                    Closing += MainWindow_Closing;
 
-                //Logging("Browser::ctor () - new WindowManager() - ???...");
-                this.windowManager = new WindowManager();
-                Logging(string.Format("{1}{0}Browser::ctor () - new WindowManager([DateTime={2}]) - processing.."
-                    , Environment.NewLine
-                    , string.Concat(Enumerable.Repeat("*---", 16))
-                    , DateTime.UtcNow));
+                    this.InitializeComponent();
+                    this.StartNewEventSession();
 
-                CancellationToken taskToken = new CancellationToken(false);
+                    //Logging("Browser::ctor () - new WindowManager() - ???...");
+                    this.windowManager = new WindowManager();
+                    Logging(string.Format("{1}{0}Browser::ctor () - new WindowManager([DateTime={2}]) - processing.."
+                        , Environment.NewLine
+                        , string.Concat(Enumerable.Repeat("*---", 16))
+                        , DateTime.UtcNow));
 
-                Task<int> taskStart = Task.Factory.StartNew(delegate
-                {
-                    //string fileNameSession = "Session_ChevroletOpelGroup.txt";
-                    string[] commandLineArgs = Environment.GetCommandLineArgs();
-                    string fileNameSession;
-                    string cookies = string.Empty;
-                    if ((commandLineArgs.Length > 2)
-                        && ((commandLineArgs[1].StartsWith("http") == true)
-                            || (commandLineArgs[1].StartsWith("https") == true))
-                        && (commandLineArgs[1].Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true)
-                        && ((string.IsNullOrWhiteSpace(commandLineArgs[2])) == false)) {
-                        base.Dispatcher.BeginInvoke(new Action(delegate
-                        {
-                            base.Title = "***Chevrolet-Opel Dealer Online***";
-                        }), new object[0]);
-
-                        fileNameSession = commandLineArgs[2];
-                        Logging(String.Format("Browser::ctor () - read local session settings(file={0}) - ???..."
-                            , fileNameSession));
-                        if (File.Exists(fileNameSession) == true) {
-                            using (FileStream fileStream =
-                                new FileStream(fileNameSession, FileMode.Open, FileAccess.Read)) {
-                                using (StreamReader streamReader = new StreamReader(fileStream)) {
-                                    cookies = streamReader.ReadToEnd();
-                                }
-                            }
-                            Logging(String.Format(
-                                "Browser::ctor () - read local session settings(file={0}) - success..."
-                                , fileNameSession));
-                        } else
-                            Logging(String.Format(
-                                "Browser::ctor () - read local session settings(file={0}) - not exists..."
-                                , fileNameSession));
-
-                        if (string.IsNullOrEmpty(cookies) == false) {
-                            Logging(String.Format("Browser::ctor (cookies={0}) - cookies not empty..."
-                                , cookies));
-
-                            string urlSetCookie = string.Format("{0}/", commandLineArgs[1]) // /
-                                , urlNavigateDoLogin = string.Format("{0}/users/login.html", commandLineArgs[1]); // /users/login.html
-
-                            Logging(String.Format("Url to SetCookie (Url={0}) - ..."
-                                , urlSetCookie));
-
-                            Logging(String.Format("Url to navigate do login (Url={0}) - ..."
-                                , urlNavigateDoLogin));
-
-                            List<Cookie> list;
-                            try {
-                                list = JsonConvert.DeserializeObject<List<Cookie>>(cookies);
-
-                                Logging(String.Format("Cookies DeserializeObject ... (Length={0})", list.Count));
-  
-                                foreach (Cookie c in list) {
-                                    Logging(String.Format("Browser::ctor () - InternetSetCookie to={0}, key={1}, value={2}..."
-                                        , urlSetCookie
-                                        , c.Name
-                                        , c.Value));
-
-                                    if (MainWindow.InternetSetCookie(urlSetCookie
-                                        , c.Name,
-                                        c.Value) == false)
-                                        Logging(string.Format("::InternetSetCookie () - ошибка..."));
-                                    else
-                                        ;
-                                }
-                            } catch (Exception ex)
-                            {
-                                Logging(ex);
-                            }
-
-                            Logging(String.Format("Browser to Navigate (Url={0}) - ..."
-                                , urlNavigateDoLogin));
-
+                    taskStart = Task.Factory.StartNew(delegate
+                    {
+                        string cookies = string.Empty;
+                        if ((CommandArgs.This.IsUrlValidate == true)
+                            && (CommandArgs.This.Url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true)
+                            && (!(CommandArgs.This.Mode == CommandArgs.MODE.primary))) {
+                        // режимы: proxy, slave
                             base.Dispatcher.BeginInvoke(new Action(delegate
                             {
-                                this.InternetExplorer.Navigate(urlNavigateDoLogin);
+                                base.Title = "***Chevrolet-Opel Dealer Online***";
                             }), new object[0]);
 
-                            return 0;
-                        } else 
+                            if (CommandArgs.This.Mode == CommandArgs.MODE.proxy) {
+                                // режим proxy
+                                if (RequestHelper.Client == null) {
+                                    RequestHelper.Client = new ServiceReference.RequestProcessorClient();
+                                } else
+                                    ;
+
+                                InteropHelper.GetSystemTime(ref this.time);
+
+                                RemoteCertificateValidationCallback delegateCertificateValidationAlwaysTrust = (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) => { return true; };
+                                ServicePointManager.ServerCertificateValidationCallback +=
+                                    delegateCertificateValidationAlwaysTrust;
+
+                                Logging(string.Format("::InitializeSettings() - успех..."));
+
+                                RequestHelper.Client.LogConnection(string.Format(@"{0}\{1}", Environment.MachineName, "Browser")
+                                    , FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
+
+                                 AccountManager.Account = RequestHelper.Client.GetUnoccupiedAccount();
+
+                                cookies = OpenSession(CommandArgs.This.Url);
+                            } else if ((CommandArgs.This.Mode == CommandArgs.MODE.slave)
+                                && (CommandArgs.This.ContainsKey(CommandArgs.KEYS.session) == true)
+                                && (string.IsNullOrWhiteSpace(CommandArgs.This[CommandArgs.KEYS.session]) == false)) {
+                            // режим slave
+                                Logging(String.Format("Browser::ctor () - read local session settings(file={0}) - ???..."
+                                    , CommandArgs.This[CommandArgs.KEYS.session]));
+                                if (File.Exists(CommandArgs.This[CommandArgs.KEYS.session]) == true) {
+                                    using (FileStream fileStream =
+                                        new FileStream(CommandArgs.This[CommandArgs.KEYS.session], FileMode.Open, FileAccess.Read)) {
+                                        using (StreamReader streamReader = new StreamReader(fileStream)) {
+                                            cookies = streamReader.ReadToEnd();
+                                        }
+                                    }
+                                    Logging(String.Format(
+                                        "Browser::ctor () - read local session settings(file={0}) - success..."
+                                        , CommandArgs.This[CommandArgs.KEYS.session]));
+                                } else
+                                    Logging(String.Format(
+                                        "Browser::ctor () - read local session settings(file={0}) - not exists..."
+                                        , CommandArgs.This[CommandArgs.KEYS.session]));
+                            } else
+                                ;
+
+                            if (string.IsNullOrEmpty(cookies) == false) {
+                                Logging(String.Format("Browser::ctor (cookies={0}) - cookies not empty..."
+                                    , cookies));
+
+                                string urlSetCookie = string.Format("{0}/", CommandArgs.This.Url) // /
+                                    , urlNavigateDoLogin = string.Format("{0}/users/login.html", CommandArgs.This.Url); // /users/login.html
+
+                                Logging(String.Format("Url to SetCookie (Url={0}) - ..."
+                                    , urlSetCookie));
+
+                                Logging(String.Format("Url to navigate do login (Url={0}) - ..."
+                                    , urlNavigateDoLogin));
+
+                                List<Cookie> list;
+                                try {
+                                    list = JsonConvert.DeserializeObject<List<Cookie>>(cookies);
+
+                                    Logging(String.Format("Cookies DeserializeObject ... (Length={0})", list.Count));
+
+                                    foreach (Cookie c in list) {
+                                        Logging(String.Format("Browser::ctor () - InternetSetCookie to={0}, key={1}, value={2}..."
+                                            , urlSetCookie
+                                            , c.Name
+                                            , c.Value));
+
+                                        if (MainWindow.InternetSetCookie(urlSetCookie
+                                            , c.Name,
+                                            c.Value) == false)
+                                            Logging(string.Format("::InternetSetCookie () - ошибка..."));
+                                        else
+                                            ;
+                                    }
+                                } catch (Exception ex) {
+                                    Logging(ex);
+                                }
+
+                                Logging(String.Format("Browser to Navigate (Url={0}) - ..."
+                                    , urlNavigateDoLogin));
+
+                                base.Dispatcher.BeginInvoke(new Action(delegate
+                                {
+                                    this.InternetExplorer.Navigate(urlNavigateDoLogin);
+                                }), new object[0]);
+
+                                return 0;
+                            } else
+                                return -1;
+                        } else if ((CommandArgs.This.IsUrlValidate == true)
+                            && (new Uri(CommandArgs.This.Url).IsAbsoluteUri == true)) {
+                        // режим primary
+                            base.Dispatcher.BeginInvoke(new Action(delegate
+                            {
+                                this.InternetExplorer.Navigate(CommandArgs.This.Url);
+                            }), new object[0]);
+
+                            return 1;
+                        } else {
+                            System.Windows.MessageBox.Show(string.Format("Error opening catalog. Please report to administrator.{0}"
+                                    + "Кол-во аргументов: {1}{0}"
+                                    + "обязательный аргумент {2}={3}{0}"
+                                    + "обязательный аргумент {4}={5}{0}"
+                                    + "необязательный аргумент {6}={7}{0}"
+                                , Environment.NewLine
+                                , CommandArgs.This.Count
+                                , CommandArgs.KEYS.mode, CommandArgs.This[CommandArgs.KEYS.mode]
+                                , CommandArgs.KEYS.url, CommandArgs.This[CommandArgs.KEYS.url]
+                                , CommandArgs.KEYS.session, CommandArgs.This.ContainsKey(CommandArgs.KEYS.session) == true
+                                    ? CommandArgs.This[CommandArgs.KEYS.session] : "отсутствует"));
+
                             return -1;
-                    } else if ((commandLineArgs.Length > 1)
-                        && ((commandLineArgs[1].StartsWith("http") == true)
-                            || (commandLineArgs[1].StartsWith("https") == true))
-                        && (new Uri(commandLineArgs[1]).IsAbsoluteUri == true)) {
-                        base.Dispatcher.BeginInvoke(new Action(delegate
-                        {
-                            this.InternetExplorer.Navigate(commandLineArgs[1]);
-                        }), new object[0]);
+                        }
+                    }, taskToken);
 
-                        return 1;
-                    } else {
-                        System.Windows.MessageBox.Show(string.Format("Error opening catalog. Please report to administrator.{0}"
-                                + "Кол-во аргументов: {1}{0}"
-                                + "1-ый аргумент={2}{0}"
-                                + "2-ой аргумент={3}{0}"
-                            , Environment.NewLine
-                            , commandLineArgs.Length
-                            , commandLineArgs.Length > 1 ? commandLineArgs[1] : "отсутствует"
-                            , commandLineArgs.Length > 2 ? commandLineArgs[2] : "отсутствует"));
+                    taskStart.Wait(taskToken);
+                    if (taskStart.Result < 0)
+                        base.Close();
+                    else
+                        ;
+                } else {
+                    System.Windows.MessageBox.Show(string.Format("Error opening catalog. Please report to administrator.{0}"
+                            + "Кол-во аргументов: {1}{0}"
+                            + "обязательный аргумент {2}={3}{0}"
+                            + "обязательный аргумент {4}={5}{0}"
+                            + "необязательный аргумент {6}={7}{0}"
+                        , Environment.NewLine
+                        , CommandArgs.This.Count
+                        , CommandArgs.KEYS.mode, CommandArgs.This.ContainsKey(CommandArgs.KEYS.mode) == true
+                            ? CommandArgs.This[CommandArgs.KEYS.mode] : "отсутствует"
+                        , CommandArgs.KEYS.url, CommandArgs.This.ContainsKey(CommandArgs.KEYS.url) == true
+                            ? CommandArgs.This[CommandArgs.KEYS.url] : "отсутствует"
+                        , CommandArgs.KEYS.session, CommandArgs.This.ContainsKey(CommandArgs.KEYS.session) == true
+                            ? CommandArgs.This[CommandArgs.KEYS.session] : "отсутствует"));
 
-                        return -1;
-                    }
-                }, taskToken);
-
-                taskStart.Wait(taskToken);
-                if (taskStart.Result < 0)
-                    Close();
-                else
-                    ;
+                    base.Close();
+                }
             } catch (Exception ex) {
                 Logging(ex);
             }
+
+            if (taskStart?.Status == TaskStatus.Faulted)
+                Close();
+            else
+                ;
         }
 
         private void StartNewEventSession()
@@ -188,6 +246,13 @@ namespace BrowserExtension
             this.InternetExplorer.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(this.InternetExplorerOnDocumentCompleted);
 
             //Logging(string.Format("Browser::StartNewEventSession (Title={0}) - ...", this.Title));
+        }
+
+        private void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            FreeOccupiedAccount();
+
+            Logging(string.Format("Browser::MainWindow_Closing () - .."));
         }
 
         private void InternetExplorerOnQuit(object sender, EventArgs eventArgs)
@@ -206,7 +271,7 @@ namespace BrowserExtension
             if ((webBrowserNavigatingEventArgs.Url.AbsoluteUri.Contains("spongepc.xw.gm.com/CStoneEPC"))
                     && (webBrowserNavigatingEventArgs.Url.AbsoluteUri.Contains("/logout?silent"))) {
                 if (IsDocumentValidate == true)
-                    Close();
+                    base.Close();
                 else
                     ;
             } else
@@ -336,6 +401,26 @@ namespace BrowserExtension
                     System.Windows.MessageBox.Show(string.Format("[{0}] {1} / {2}", DateTime.Now, ex.Message, ex.StackTrace));
                 }
             }).Start();
+        }
+
+        private string OpenSession(string url/*, bool force = false, string host_cookies = ""*/)
+        {
+            RequestHelper.Client.OpenSession(url, false);
+
+            return RequestHelper.Client.GetCookies(url);
+        }
+
+        private static void FreeOccupiedAccount()
+        {
+            try {
+                if (!((AccountManager.Account == null)
+                    || (string.IsNullOrEmpty(AccountManager.Account.Name) == true))) {
+                    RequestHelper.Client.FreeOccupiedAccount(AccountManager.Account.Name);
+                } else
+                    ;
+            } catch (Exception e) {
+                Logging(e);
+            }
         }
 
         public static void Logging(Exception e)

@@ -294,7 +294,7 @@ namespace NewLauncher.View
             //List<System.Net.Cookie> listCookies = JsonConvert.DeserializeObject<List<System.Net.Cookie>>(cookies);
             // куки передаем через командную строку
             if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot)) {
-                using (stream = new FileStream("Session_ChevroletOpelGroup.txt", FileMode.Create, FileAccess.Write)) {
+                using (stream = new FileStream(fileNameSession, FileMode.Create, FileAccess.Write)) {
                     using (writer = new StreamWriter(stream)) {
                         writer.Write(cookies);
                     }
@@ -305,7 +305,10 @@ namespace NewLauncher.View
                 StartInfo =
                     {
                         FileName = fileNameBrowser
-                        , Arguments = string.Join(" ", new string[] { url, fileNameSession })
+                        , Arguments = string.Join(" ", new string[] {
+                            string.Format("mode={0}", "slave")
+                            , string.Format("url={0}", url)
+                            , string.Format("session={0}", fileNameSession) })
                         , CreateNoWindow = true
                         , UseShellExecute = false
                     }
