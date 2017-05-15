@@ -30,6 +30,7 @@ using CatalogApi;
 using BrowserExtension.Manager;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Configuration;
 
 namespace BrowserExtension
 {
@@ -225,8 +226,10 @@ namespace BrowserExtension
 
                     base.Close();
                 }
+            } catch (System.Threading.Tasks.TaskCanceledException ex) {
+                Logging(ex, true);
             } catch (Exception ex) {
-                Logging(ex);
+                Logging(ex, true);
             }
 
             if (taskStart?.Status == TaskStatus.Faulted)
@@ -423,26 +426,38 @@ namespace BrowserExtension
             }
         }
 
-        public static void Logging(Exception e)
+        public static void Logging(Exception e, bool innerEx = false)
         {
-            Logging(string.Format("{0} / {1}"
-                    , e.Message
-                    , e.StackTrace
+            Logging(string.Format("{0} / {1} | внутр.сообщ.={2} | внутр.стек={3}"
+                , e.Message
+                , e.StackTrace
+                , innerEx == true ? e.InnerException.Message : "не требуется"
+                , innerEx == true ? e.InnerException.StackTrace : "не требуется"
             ));
         }
 
         public static void Logging(string mes)
         {
-            var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
-            FileInfo appFileInfo = new FileInfo(location.AbsolutePath);
+            try {
+                var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
 
-            using (FileStream fileStream = new FileStream(string.Format("{0}.log", System.IO.Path.GetFileNameWithoutExtension(appFileInfo.FullName)), FileMode.Append, FileAccess.Write)) {
-                using (StreamWriter streamWriter = new StreamWriter(fileStream)) {
-                    streamWriter.WriteLine(string.Format("[{1:o}]{0}{2}"
-                        , Environment.NewLine
-                        , DateTime.Now
-                        , mes));
-                }
+                if (bool.Parse(ConfigurationManager.AppSettings[@"LogDebugToCurrentDirectory"]) == true) {
+                    FileInfo appFileInfo = new FileInfo(location.AbsolutePath);
+
+                    using (FileStream fileStream = new FileStream(string.Format("{0}.log"
+                            , System.IO.Path.GetFileNameWithoutExtension(appFileInfo.FullName))
+                                , FileMode.Append
+                                , FileAccess.Write)) {
+                        using (StreamWriter streamWriter = new StreamWriter(fileStream)) {
+                            streamWriter.WriteLine(string.Format("[{1:o}]{0}{2}"
+                                , Environment.NewLine
+                                , DateTime.Now
+                                , mes));
+                        }
+                    }
+                } else
+                    ;
+            } catch {
             }
         }
     }

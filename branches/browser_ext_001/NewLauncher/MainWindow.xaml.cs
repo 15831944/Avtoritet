@@ -756,16 +756,26 @@ namespace NewLauncher
 
         public static void Logging(string mes)
         {
-            var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
-            FileInfo appFileInfo = new FileInfo(location.AbsolutePath);
+            try {
+                var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
 
-            using (FileStream fileStream = new FileStream(string.Format("{0}.log", Path.GetFileNameWithoutExtension(appFileInfo.FullName)), FileMode.Append, FileAccess.Write)) {
-                using (StreamWriter streamWriter = new StreamWriter(fileStream)) {
-                    streamWriter.WriteLine(string.Format("[{1:o}]{0}{2}"
-                        , Environment.NewLine
-                        , DateTime.Now
-                        , mes));
-                }
+                if (bool.Parse(ConfigurationManager.AppSettings[@"LogDebugToCurrentDirectory"]) == true) {
+                    FileInfo appFileInfo = new FileInfo(location.AbsolutePath);
+
+                    using (FileStream fileStream = new FileStream(string.Format("{0}.log"
+                            , System.IO.Path.GetFileNameWithoutExtension(appFileInfo.FullName))
+                                , FileMode.Append
+                                , FileAccess.Write)) {
+                        using (StreamWriter streamWriter = new StreamWriter(fileStream)) {
+                            streamWriter.WriteLine(string.Format("[{1:o}]{0}{2}"
+                                , Environment.NewLine
+                                , DateTime.Now
+                                , mes));
+                        }
+                    }
+                } else
+                    ;
+            } catch {
             }
         }
     }
