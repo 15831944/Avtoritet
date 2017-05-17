@@ -1677,7 +1677,7 @@ namespace NewLauncher.View
                 }
             } else
                 ErrorLogHelper.AddErrorInLog(
-                    string.Format("::OpenSession (host={0}, host_cookies={1})", this._url, host_cookies)
+                    string.Format("::OpenSession (host={0}, providerId={1}, host_cookies={2})", this._url, this._providerId, host_cookies)
                     , string.Format("cookies: {0}", cookies == null ? "null" : "count = 0")
                 );
         }
