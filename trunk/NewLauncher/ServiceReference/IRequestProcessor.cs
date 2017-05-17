@@ -22,7 +22,7 @@
         [OperationContract(Action="http://tempuri.org/IRequestProcessor/LogConnection", ReplyAction="http://tempuri.org/IRequestProcessor/LogConnectionResponse")]
         void LogConnection(string machineName, string launcherVersion);
         [OperationContract(Action="http://tempuri.org/IRequestProcessor/OpenSession", ReplyAction="http://tempuri.org/IRequestProcessor/OpenSessionResponse")]
-        void OpenSession(string url, bool forceSession);
+        void OpenSession(string url, long providerId, bool forceSession);
     }
 }
 

@@ -25,7 +25,7 @@ namespace RelayServer.Portals
 			CitroenPortal.CookieContainer = new CookieContainer();
 		}
 
-		public override void OpenSession(string url, bool forceSession)
+		public override void OpenSession(string url, long providerId, bool forceSession)
 		{
             int validateSession = -1;
 
@@ -35,11 +35,14 @@ namespace RelayServer.Portals
 
                 if (validateSession < 0) {
                     using (AvtoritetEntities ae = new AvtoritetEntities()) {
-                        string sql = string.Format("SELECT TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{0}"
-                            + " FROM dbo.Provider{0}"
-                            + " INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{0}"
-                            + " WHERE(dbo.Provider.Uri LIKE N'%citroen%') AND(dbo.ProviderAccount.Enable = 1)"
-                            , "\r\n");
+                        string sql =
+                            //string.Format("SELECT TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{0}"
+                            //    + " FROM dbo.Provider{0}"
+                            //    + " INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{0}"
+                            //    + " WHERE(dbo.Provider.Uri LIKE N'%citroen%') AND(dbo.ProviderAccount.Enable = 1)"
+                            //    , "\r\n")
+                            GetQueryCreditionals(providerId)
+                                ;
 
                         ProvAcc provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).FirstOrDefault<ProvAcc>();
                         login = provider.Login;
@@ -52,7 +55,7 @@ namespace RelayServer.Portals
             } else
                 ;
 
-			HttpResponseMessage responseMessage = this.GetResponse(url, validateSession, this.m_requestHandler, CitroenPortal.CookieContainer);
+			HttpResponseMessage responseMessage = this.GetResponse(url, providerId, validateSession, this.m_requestHandler, CitroenPortal.CookieContainer);
 			if (responseMessage != null)
 			{
 				this.m_requestHandler.GetSessionResultAsync(responseMessage);
@@ -74,7 +77,7 @@ namespace RelayServer.Portals
             return BrandPortal.GetCookies(url, CookieContainer, false);
 		}
 
-		public override HttpResponseMessage GetResponse(string url, int validateSession, IRequestHandler reqHandler, CookieContainer container)
+		public override HttpResponseMessage GetResponse(string url, long providerId, int validateSession, IRequestHandler reqHandler, CookieContainer container)
 		{
             HttpResponseMessage resHttpResponseMessage;
             string url_session = string.Empty;
@@ -106,7 +109,7 @@ namespace RelayServer.Portals
                             , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                             , resHttpResponseMessage.StatusCode));
 
-                        base.OpenSession(url, validateSession == 1);
+                        base.OpenSession(url, providerId, validateSession == 1);
 
                         return resHttpResponseMessage;
                     } else
@@ -163,7 +166,7 @@ namespace RelayServer.Portals
                             , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                             , resHttpResponseMessage.StatusCode));
 
-                        base.OpenSession(url, false);
+                        base.OpenSession(url, providerId, false);
 
                         return resHttpResponseMessage;
                     } else

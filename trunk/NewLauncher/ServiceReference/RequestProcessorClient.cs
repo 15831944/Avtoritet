@@ -64,9 +64,9 @@
             base.Channel.LogConnection(machineName, launcherVersion);
         }
 
-        public void OpenSession(string url, bool forceSession)
+        public void OpenSession(string url, long providerId, bool forceSession)
         {
-            base.Channel.OpenSession(url, forceSession);
+            base.Channel.OpenSession(url, providerId, forceSession);
         }
     }
 }

@@ -186,6 +186,7 @@ namespace NewLauncher
                 _dictBrowserLauncherView.Add(brandProvider.ProviderId, new BrowserLauncherView(time
                     , brandProvider.Title
                     , brandProvider.Uri
+                    , brandProvider.ProviderId
                     , brandProvider.Login
                     , brandProvider.Password));
                 _dictBrowserLauncherView[brandProvider.ProviderId].Closing += new CancelEventHandler(closingViewer<BrowserLauncherView>);
@@ -207,6 +208,21 @@ namespace NewLauncher
         public static bool IsUrlAsHttp(string url) {
             return (url.StartsWith("http") == true)
                 || (url.StartsWith("https") == true);
+        }
+
+        public static string GetPathBrandToProcess (string url, string brandNameAndFolder)
+        {
+            return IsUrlAsHttp(url) == true
+                ? url
+                    : string.IsNullOrWhiteSpace(url) == true ?
+                        url //??? ошибка пустой путь
+                            : /* string str6 = */
+                                //Path.Combine(ResourceManager.Root, brandown.NameAndFolder, url)
+                                Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+                                    , ResourceManager.Root
+                                    , brandNameAndFolder
+                                    , url)
+                                ;
         }
 
         private void button_onClick(Brand brandown)
@@ -241,13 +257,7 @@ namespace NewLauncher
                             else
                                 _dictBrowserLauncherView[brandown.Providers[0].ProviderId].Activate();
                         } else {
-                            url = IsUrlAsHttp(url) == true
-                                ? url
-                                    : Path.Combine(ResourceManager.Root, brandown.NameAndFolder, url);
-
-                            string str6 = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
-                                , ResourceManager.Root
-                                , brandown.NameAndFolder);
+                            url = GetPathBrandToProcess(url, brandown.NameAndFolder);
 
                             using (Process process = new Process {
                                 StartInfo = {
@@ -490,7 +500,8 @@ namespace NewLauncher
                         int num = int.Parse(System.IO.File.ReadAllText("settingver.txt"));
                         int? nullable2 = settingVersion;
                         int num2 = num;
-                        if ((nullable2.GetValueOrDefault() > num2) && nullable2.HasValue) {
+                        if ((nullable2.GetValueOrDefault() > num2)
+                            && (nullable2.HasValue == true)) {
                             launcherSettings = new SettingsFactory(categoryEventHandler).DownloadSettings(true, true);
                             System.IO.File.WriteAllText("settingver.txt", settingVersion.ToString());
                             HaveNewUpdate = true;
@@ -756,16 +767,26 @@ namespace NewLauncher
 
         public static void Logging(string mes)
         {
-            var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
-            FileInfo appFileInfo = new FileInfo(location.AbsolutePath);
+            try {
+                var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
 
-            using (FileStream fileStream = new FileStream(string.Format("{0}.log", Path.GetFileNameWithoutExtension(appFileInfo.FullName)), FileMode.Append, FileAccess.Write)) {
-                using (StreamWriter streamWriter = new StreamWriter(fileStream)) {
-                    streamWriter.WriteLine(string.Format("[{1:o}]{0}{2}"
-                        , Environment.NewLine
-                        , DateTime.Now
-                        , mes));
-                }
+                if (bool.Parse(ConfigurationManager.AppSettings[@"LogDebugToCurrentDirectory"]) == true) {
+                    FileInfo appFileInfo = new FileInfo(location.AbsolutePath);
+
+                    using (FileStream fileStream = new FileStream(string.Format("{0}.log"
+                            , System.IO.Path.GetFileNameWithoutExtension(appFileInfo.FullName))
+                                , FileMode.Append
+                                , FileAccess.Write)) {
+                        using (StreamWriter streamWriter = new StreamWriter(fileStream)) {
+                            streamWriter.WriteLine(string.Format("[{1:o}]{0}{2}"
+                                , Environment.NewLine
+                                , DateTime.Now
+                                , mes));
+                        }
+                    }
+                } else
+                    ;
+            } catch {
             }
         }
     }

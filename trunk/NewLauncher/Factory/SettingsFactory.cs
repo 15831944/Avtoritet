@@ -2,6 +2,7 @@
 {
     using CatalogApi.Exceptions;
     using CatalogApi.Settings;
+    using Helper;
     using NewLauncher.DataContext;
     using System;
     using System.Collections.Generic;
@@ -32,6 +33,8 @@
 
         private void CreateRootDirectory(string root, LauncherSettings settings)
         {
+            string path = string.Empty;
+
             foreach (GroupSet set in settings.Groups)
             {
                 foreach (CatalogApi.Settings.GroupBox box in set.GroupBoxs)
@@ -40,7 +43,8 @@
                     {
                         try
                         {
-                            string path = Path.Combine(root, brand.NameAndFolder);
+                            path = Path.Combine(root, brand.NameAndFolder);
+
                             if (!Directory.Exists(path))
                             {
                                 Directory.CreateDirectory(path);
@@ -68,8 +72,13 @@
                                 }
                             }
                         }
-                        catch
+                        catch (Exception e)
                         {
+                            ErrorLogHelper.AddErrorInLog(string.Format("::CreateRootDirectory (root={0}, brand.Id={1}, brand.NameAndFolder={2}, path={3}) - ..."
+                                    , root
+                                    , brand.BrandId, brand.NameAndFolder
+                                    , path)
+                                , string.Format("{0} | {1}", e.Message, e.StackTrace));
                         }
                     }
                 }
@@ -78,20 +87,27 @@
 
         public LauncherSettings DownloadSettings(bool force, bool FullLoad = true)
         {
-            string path = "launcherDBSettings.dat";
+            string nameFileDbSerialize = "launcherDBSettings.dat";
             LauncherSettings graph = new LauncherSettings();
-            if (force && File.Exists(path))
-            {
-                File.Delete(path);
-            }
-            if (File.Exists(path))
-            {
-                Stream stream = File.OpenRead(path);
+            // режим "force" принажатии кнопки брэнда
+            if ((force == true)
+                && (File.Exists(nameFileDbSerialize) == true)) {
+                File.Delete(nameFileDbSerialize);
+            } else
+                ;
+
+            if (File.Exists(nameFileDbSerialize) == true) {
+            // для режима forse=false - прочитать и вернуть копию БД
+                Stream stream = File.OpenRead(nameFileDbSerialize);
                 BinaryFormatter formatter = new BinaryFormatter();
-                graph = (LauncherSettings) formatter.Deserialize(stream);
+                graph = (LauncherSettings)formatter.Deserialize(stream);
                 stream.Close();
+
                 return graph;
-            }
+            } else
+                ;
+
+            #region чтение БД, заполнение объектов значениями
             using (AvtoritetEntities entities = new AvtoritetEntities())
             {
                 List<NewLauncher.DataContext.Brand> list = (from r in entities.Brand
@@ -229,17 +245,25 @@
                     graph.Groups.Add(item);
                 }
             }
-            if (File.Exists(path))
-            {
-                File.Delete(path);
-            }
-            Stream serializationStream = File.Create(path);
+            #endregion
+
+            if (File.Exists(nameFileDbSerialize) == true) {
+            //??? никогда не выполняется
+            // , если forse=true файл будет удален
+            // , если forse=false произодет возврат значения и выход из функции
+                File.Delete(nameFileDbSerialize);
+            } else
+                ;
+
+            Stream serializationStream = File.Create(nameFileDbSerialize);
             new BinaryFormatter().Serialize(serializationStream, graph);
             serializationStream.Close();
-            if (force)
-            {
+
+            if (force == true) {
                 this.ExtractResourcesToFolder(graph);
-            }
+            } else
+                ;
+
             return graph;
         }
 
@@ -252,15 +276,21 @@
                 {
                     ClearRootDirectory(root);
                 }
-                catch
+                catch (Exception e)
                 {
+                    ErrorLogHelper.AddErrorInLog(string.Format("::ExtractResourcesToFolder (step=clearRootDirectory) - root={0}..."
+                            , root)
+                        , string.Format("{0} | {1}", e.Message, e.StackTrace));
                 }
                 try
                 {
                     this.CreateRootDirectory(root, settings);
                 }
-                catch
+                catch (Exception e)
                 {
+                    ErrorLogHelper.AddErrorInLog(string.Format("::ExtractResourcesToFolder (step=createRootDirectory) - root={0}..."
+                            , root)
+                        , string.Format("{0} | {1}", e.Message, e.StackTrace));
                 }
             }
             catch
