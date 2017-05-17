@@ -115,25 +115,25 @@ namespace RelayServer.Processors
 			return result;
 		}
 
-		public void OpenSession(string url, bool forceSession)
+		public void OpenSession(string url, long providerId, bool forceSession)
 		{
 			try
 			{
 				if (url.Contains(CatalogApi.UrlConstants.CitroenRoot) == true)
 				{
-					RequestProcessor.CitroenPortal.OpenSession(url, forceSession);
+					RequestProcessor.CitroenPortal.OpenSession(url, providerId, forceSession);
 				}
 				else if (url.Contains(CatalogApi.UrlConstants.PeugeotRoot) == true)
 				{
-					RequestProcessor.PeugeotPortal.OpenSession(url, forceSession);
+					RequestProcessor.PeugeotPortal.OpenSession(url, providerId, forceSession);
 				}
 				else if (url.Contains(CatalogApi.UrlConstants.Partslink24Root))
 				{
-					RequestProcessor.PartslinkPortal.OpenSession(url, forceSession);
+					RequestProcessor.PartslinkPortal.OpenSession(url, providerId, forceSession);
 				}
 				else if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
 				{
-                    RequestProcessor.ChevroletPortal.OpenSession(url, forceSession);
+                    RequestProcessor.ChevroletPortal.OpenSession(url, providerId, forceSession);
                     // RequestProcessor.OpelPortal.OpenSession(url, forceSession);
                 } else
 				    throw new System.Exception(string.Format("RequestProccessor::OpenSession(Url={0}) Error..."

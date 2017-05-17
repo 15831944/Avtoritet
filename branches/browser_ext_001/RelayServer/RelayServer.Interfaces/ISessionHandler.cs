@@ -7,7 +7,7 @@ namespace RelayServer.Interfaces
 {
 	public interface ISessionHandler
 	{
-		void OpenSession(string url, bool forceSession);
+		void OpenSession(string url, long providerId, bool forceSession);
 
         // KhryapinAN 09.05.2017
         //void CloseSession();
@@ -16,6 +16,6 @@ namespace RelayServer.Interfaces
 
 		string GetCookies(string url);
 
-		HttpResponseMessage GetResponse(string url, int validateSession, IRequestHandler reqHandler, CookieContainer container);
+		HttpResponseMessage GetResponse(string url, long providerId, int validateSession, IRequestHandler reqHandler, CookieContainer container);
 	}
 }

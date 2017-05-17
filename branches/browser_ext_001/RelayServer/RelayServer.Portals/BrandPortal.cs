@@ -25,10 +25,21 @@ namespace RelayServer.Portals
 		{
 		}
 
-        public virtual void OpenSession(string url, bool forceSession)
+        protected static string GetQueryCreditionals (long providerId)
         {
-            ConsoleHelper.Info(String.Format("BrandPortal::OpenSession: uri={0}, force={1}"
-                , url, forceSession));
+            return string.Format("SELECT TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{0}"
+                + " FROM dbo.Provider{0}"
+                + " INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{0}"
+                    + " AND dbo.Provider.ProviderId = {1}{0}"
+                + " WHERE dbo.ProviderAccount.Enable = 1"
+                , "\r\n"
+                , providerId);
+        }
+
+        public virtual void OpenSession(string url, long providerId, bool forceSession)
+        {
+            ConsoleHelper.Info(String.Format("BrandPortal::OpenSession: uri={0}, providerId={1}, force={2}"
+                , url, providerId, forceSession));
 
             if (_session == null)
                 _session = new List<ISessionHandler>();
@@ -129,7 +140,7 @@ namespace RelayServer.Portals
             return iRes;
         }
 
-        public abstract HttpResponseMessage GetResponse(string url, int validateSession, IRequestHandler reqHandler, CookieContainer container);
+        public abstract HttpResponseMessage GetResponse(string url, long providerId, int validateSession, IRequestHandler reqHandler, CookieContainer container);
 
         protected abstract bool SessionHasError(HttpResponseMessage responseMessage);
 

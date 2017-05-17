@@ -107,7 +107,7 @@ namespace BrowserExtension
 
                                  AccountManager.Account = RequestHelper.Client.GetUnoccupiedAccount();
 
-                                cookies = OpenSession(CommandArgs.This.Url);
+                                cookies = OpenSession(CommandArgs.This.Url, CommandArgs.This.ProviderId);
                             } else if ((CommandArgs.This.Mode == CommandArgs.MODE.slave)
                                 && (CommandArgs.This.ContainsKey(CommandArgs.KEYS.session) == true)
                                 && (string.IsNullOrWhiteSpace(CommandArgs.This[CommandArgs.KEYS.session]) == false)) {
@@ -406,9 +406,9 @@ namespace BrowserExtension
             }).Start();
         }
 
-        private string OpenSession(string url/*, bool force = false, string host_cookies = ""*/)
+        private string OpenSession(string url/*, bool force = false, string host_cookies = ""*/, long providerId)
         {
-            RequestHelper.Client.OpenSession(url, false);
+            RequestHelper.Client.OpenSession(url, providerId, false);
 
             return RequestHelper.Client.GetCookies(url);
         }

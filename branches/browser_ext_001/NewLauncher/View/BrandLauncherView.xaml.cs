@@ -93,13 +93,16 @@ namespace NewLauncher.View
 
         private void button_onClick(object sender, RoutedEventArgs e)
         {
+            BrandProvider brandProvider = null;
+            string url = string.Empty;
+
             try
             {
-                BrandProvider brandProvider = (from item in this.brand.Providers
+                brandProvider = (from item in this.brand.Providers
                     where item.ProviderId == ((ButtonModel)sender).ProviderId
                     select item).Cast<BrandProvider>()?.ElementAt(0);
 
-                string url =
+                url =
                     brandProvider.Uri;
 
                 if (url.StartsWith("http") || url.StartsWith("https"))
@@ -109,7 +112,7 @@ namespace NewLauncher.View
 
                         if (ConfigurationManager.AppSettings[appKey] == MODE_BROWSE.Separate.ToString())
                         // вариант №1(отдельный броаузер)
-                            StartSeparateProcess(url);
+                            StartSeparateProcess(url, brandProvider.ProviderId);
                         else if (ConfigurationManager.AppSettings[appKey] == MODE_BROWSE.Common.ToString()) {
                         // вариант №2 (как у всех остальных Brand)
                             NewBrowserLauncherView(brandProvider);
@@ -123,9 +126,7 @@ namespace NewLauncher.View
                 }
                 else
                 {
-                    string str6 = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
-                        , ResourceManager.Root
-                        , this.brand.NameAndFolder);
+                    url = MainWindow.GetPathBrandToProcess(url, brand.NameAndFolder);
 
                     using (Process process = new Process {
                         StartInfo = {
@@ -141,8 +142,14 @@ namespace NewLauncher.View
             }
             catch (Exception exception)
             {
-                ErrorLogHelper.AddErrorInLog("button_onClick () - ...", exception.Message + " | " + exception.StackTrace);
-                MessageBox.Show(string.Format("::button_onClick () - ...{0}Message={1}{0}StackTrace={2}", Environment.NewLine, exception.Message, exception.StackTrace));
+                MessageBox.Show(string.Format("::button_onClick (url={1}, Commands={2}) - ...{0}Message={3}{0}StackTrace={4}"
+                    , Environment.NewLine
+                    , url, brandProvider == null ? "null" : brandProvider.Commands
+                    , exception.Message, exception.StackTrace));
+                ErrorLogHelper.AddErrorInLog(string.Format("::button_onClick (url={0}, Commands={1}) - ..."
+                        , url, brandProvider == null ? "null" : brandProvider.Commands)
+                    , string.Format("{0} | {1}", exception.Message, exception.StackTrace));
+                
                 //new ReportWindow().ShowReportWindow(exception);
             }
         }
@@ -282,14 +289,14 @@ namespace NewLauncher.View
             base.LocationChanged += new EventHandler(this.OnLocationChanged);
         }
 
-        private static void StartSeparateProcess(string url)
+        private static void StartSeparateProcess(string url, long providerId)
         {
             string fileNameBrowser = "BrowserExtension.exe"
                 , fileNameSession = "Session_ChevroletOpelGroup.txt";
 
             FileStream stream;
             StreamWriter writer;
-            RequestHelper.Client.OpenSession(url, true);
+            RequestHelper.Client.OpenSession(url, providerId, true);
             string cookies = RequestHelper.Client.GetCookies(url);
             //List<System.Net.Cookie> listCookies = JsonConvert.DeserializeObject<List<System.Net.Cookie>>(cookies);
             // куки передаем через командную строку

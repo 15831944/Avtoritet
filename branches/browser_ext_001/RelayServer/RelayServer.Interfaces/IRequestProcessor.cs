@@ -8,7 +8,7 @@ namespace RelayServer.Interfaces
 	public interface IRequestProcessor
 	{
 		[OperationContract]
-		void OpenSession(string url, bool forceSession);
+		void OpenSession(string url, long providerId, bool forceSession);
 
 		[OperationContract]
 		void CloseSession(string url);

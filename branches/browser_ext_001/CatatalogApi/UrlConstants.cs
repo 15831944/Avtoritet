@@ -22,6 +22,7 @@ namespace CatalogApi
         #endregion
 
         #region partslink24.com
+        public const string PartslinkRoot = "partslink";
         public const string Partslink24Root = "partslink24";
         public const string Partslink24Com = "https://www.partslink24.com";
         public const string Partslink24ComPartslink24UserLogoutTo = "https://www.partslink24.com/partslink24/user/logout.do";

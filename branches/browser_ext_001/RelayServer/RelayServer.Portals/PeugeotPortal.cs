@@ -25,7 +25,7 @@ namespace RelayServer.Portals
             PeugeotPortal.CookieContainer = new CookieContainer();
         }
 
-		public override void OpenSession(string url, bool forceSession)
+		public override void OpenSession(string url, long providerId, bool forceSession)
 		{
             string url_session = url;
             int validateSession = -1;
@@ -36,11 +36,14 @@ namespace RelayServer.Portals
 
                 if (validateSession < 0) {
                     using (AvtoritetEntities ae = new AvtoritetEntities()) {
-                        string sql = string.Format("SELECT TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{0}"
-                            + " FROM dbo.Provider{0}"
-                            + " INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{0}"
-                            + " WHERE(dbo.Provider.Uri LIKE N'%peugeot%') AND(dbo.ProviderAccount.Enable = 1)"
-                            , "\r\n");
+                        string sql =
+                            //string.Format("SELECT TOP (1) dbo.ProviderAccount.Login, dbo.ProviderAccount.Password{0}"
+                            //    + " FROM dbo.Provider{0}"
+                            //    + " INNER JOIN dbo.ProviderAccount ON dbo.Provider.ProviderId = dbo.ProviderAccount.ProviderId{0}"
+                            //    + " WHERE(dbo.Provider.Uri LIKE N'%peugeot%') AND(dbo.ProviderAccount.Enable = 1)"
+                            //    , "\r\n")
+                            GetQueryCreditionals(providerId)
+                            ;
 
                         ProvAcc provider = ae.Database.SqlQuery<ProvAcc>(sql, new object[0]).FirstOrDefault<ProvAcc>();
                         login = provider.Login;
@@ -53,7 +56,7 @@ namespace RelayServer.Portals
             } else
                 ;
 
-            HttpResponseMessage responseMessage = this.GetResponse(url_session, validateSession, this.m_requestHandler, PeugeotPortal.CookieContainer);
+            HttpResponseMessage responseMessage = this.GetResponse(url_session, providerId, validateSession, this.m_requestHandler, PeugeotPortal.CookieContainer);
             if (responseMessage != null) {
                 this.m_requestHandler.GetSessionResultAsync(responseMessage);
             } else
@@ -70,7 +73,7 @@ namespace RelayServer.Portals
             CloseSession(/*url, m_requestHandler,*/ CookieContainer);
         }
 
-        public override HttpResponseMessage GetResponse(string url, int validateSession, IRequestHandler reqHandler, CookieContainer container)
+        public override HttpResponseMessage GetResponse(string url, long providerId, int validateSession, IRequestHandler reqHandler, CookieContainer container)
 		{
             HttpResponseMessage resHttpResponseMessage;
             string url_session = string.Empty;
@@ -97,7 +100,7 @@ namespace RelayServer.Portals
                             , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                             , resHttpResponseMessage.StatusCode));
 
-                        base.OpenSession(url_session, validateSession == 1);
+                        base.OpenSession(url_session, providerId, validateSession == 1);
 
                         return resHttpResponseMessage;
                     } else
@@ -153,7 +156,7 @@ namespace RelayServer.Portals
                             , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                             , resHttpResponseMessage.StatusCode));
 
-                        base.OpenSession(url_session, false);
+                        base.OpenSession(url_session, providerId, false);
 
                         return resHttpResponseMessage;
                     } else
