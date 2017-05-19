@@ -37,9 +37,14 @@ namespace NewLauncher
 
         protected override void OnStartup(System.Windows.StartupEventArgs e)
         {
-            bool createdMutex;
+            bool createdMutex = false
+                , bConfigShutdownMode = false;
 
-            this.ShutdownMode = IsRelease == true ? ShutdownMode.OnExplicitShutdown : ShutdownMode.OnMainWindowClose;
+            bool.TryParse(ConfigurationManager.AppSettings[@"ShutdownMode"], out bConfigShutdownMode);
+
+            this.ShutdownMode = ((IsRelease == true) || (bConfigShutdownMode == true)) ?
+                ShutdownMode.OnExplicitShutdown
+                    : ShutdownMode.OnMainWindowClose;
 
             _mutex = new Mutex(true, "MyApplicationMutex", out createdMutex);
 

@@ -59,8 +59,66 @@ namespace NewLauncher
         public bool TopFlag;
         public double TopLength;
 
+        public struct KeyBrowserLauncherView : IComparable
+        {
+            public long ProviderId;
+
+            public
+                //Interop.SystemTime
+                DateTime
+                    StampDateTime;
+
+            public static int operator== (KeyBrowserLauncherView key1, KeyBrowserLauncherView key2)
+            {
+                return ((((key1.ProviderId == key2.ProviderId)
+                    && (key1.StampDateTime - key2.StampDateTime).TotalSeconds == 0)) == true)
+                        ? 0
+                            : (key1.ProviderId == key2.ProviderId)
+                                ? ((key1.StampDateTime - key2.StampDateTime).TotalSeconds > 0) ?
+                                    -1
+                                        : (key1.ProviderId > key2.ProviderId)
+                                            ? -1
+                                                : 1
+                                                    : 1;
+            }
+
+            public static int operator!= (KeyBrowserLauncherView key1, KeyBrowserLauncherView key2)
+            {
+                return ((((!(key1.ProviderId == key2.ProviderId))
+                    && (!((key1.StampDateTime - key2.StampDateTime).TotalSeconds == 0F)))) == true)
+                        ? 0
+                            : (key1.ProviderId == key2.ProviderId)
+                                ? ((key1.StampDateTime - key2.StampDateTime).TotalSeconds > 0) ?
+                                    1
+                                        : (key1.ProviderId > key2.ProviderId)
+                                            ? 1
+                                                : -1
+                                                    : -1;
+            }
+
+            public override int GetHashCode()
+            {
+                return base.GetHashCode();
+            }
+
+            public override bool Equals(object obj)
+            {
+                return this.Equals((KeyBrowserLauncherView)obj);
+            }
+
+            public bool Equals(KeyBrowserLauncherView obj)
+            {
+                return (this == obj) == 0;
+            }
+
+            public int CompareTo(object obj)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         Dictionary<int, BrandLauncherView> _dictBrandLauncherView;
-        Dictionary<long, BrowserLauncherView> _dictBrowserLauncherView;
+        Dictionary<KeyBrowserLauncherView, BrowserLauncherView> _dictBrowserLauncherView;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -69,7 +127,7 @@ namespace NewLauncher
             try
             {
                 _dictBrandLauncherView = new Dictionary<int, BrandLauncherView>();
-                _dictBrowserLauncherView = new Dictionary<long, BrowserLauncherView>();
+                _dictBrowserLauncherView = new Dictionary<KeyBrowserLauncherView, BrowserLauncherView>();
 
                 EventNewBrandLauncherView += new Action<SystemTime, CatalogApi.Settings.Brand>(newBrandLauncherView);
 
@@ -167,32 +225,71 @@ namespace NewLauncher
             };
 
             _dictBrandLauncherView.Add(brand.BrandId, view);
-            view.EventNewBrowserLauncherView += new Action<Interop.SystemTime, BrandProvider>(newBrowserLauncherView);
+            view.EventNewBrowserLauncherView += new Action<Interop.SystemTime, BrandProvider>(showBrowserLauncherView);
             view.Closing += new CancelEventHandler(closingViewer<BrandLauncherView>);
 
             this.currentBrandLauncher = view;
             this.currentBrandLauncher.Show();
         }
 
-        private void newBrowserLauncherView(Interop.SystemTime time, BrandProvider brandProvider)
+        private void showBrowserLauncherView(Interop.SystemTime time, BrandProvider brandProvider)
         {
             Uri uri;
             string urlSession = string.Empty;
+            KeyBrowserLauncherView keyView;
+            IOrderedEnumerable<KeyBrowserLauncherView> keys;
+            MessageBoxResult res;
+            int iMaxCountLauncherOnProvider = 1;
 
             uri = new Uri(brandProvider.Uri);
             urlSession = string.Format("{0}://{1}", uri.Scheme, uri.Host);
 
-            if (_dictBrowserLauncherView.ContainsKey(brandProvider.ProviderId) == false) {
-                _dictBrowserLauncherView.Add(brandProvider.ProviderId, new BrowserLauncherView(time
-                    , brandProvider.Title
-                    , brandProvider.Uri
-                    , brandProvider.ProviderId
-                    , brandProvider.Login
-                    , brandProvider.Password));
-                _dictBrowserLauncherView[brandProvider.ProviderId].Closing += new CancelEventHandler(closingViewer<BrowserLauncherView>);
-                _dictBrowserLauncherView[brandProvider.ProviderId].Show();
-            } else
-                _dictBrowserLauncherView[brandProvider.ProviderId].Activate();
+            int.TryParse(ConfigurationManager.AppSettings["MaxCountLauncherOnProvider"], out iMaxCountLauncherOnProvider);
+            keys = _dictBrowserLauncherView.Keys.Where(key => { return key.ProviderId == brandProvider.ProviderId; })
+                .OrderBy(key => key.StampDateTime);
+
+            if ((keys.Count() == 0)
+                || (keys.Count() < iMaxCountLauncherOnProvider)) {
+                if (keys.Count() > 0)
+                    res = MessageBox.Show(string.Format("Каталог этого провайдера уже отображается ({1} шт.).{0}Открыть новый каталог ({2})?{0}Установить фокус ввода на открытый ранее({3})?{0}Отменить операцию({4})?"
+                            , Environment.NewLine
+                            , keys.Count()
+                            , MessageBoxResult.Yes, MessageBoxResult.No, MessageBoxResult.Cancel)
+                        , "Внимание!"
+                        , MessageBoxButton.YesNoCancel);
+                else
+                    res = MessageBoxResult.Yes;
+
+                if (res == MessageBoxResult.Yes) {
+                    keyView = new KeyBrowserLauncherView() {
+                        ProviderId = brandProvider.ProviderId
+                        , StampDateTime =
+                            //new DateTime(
+                            //    time.Year, time.Month, time.Day
+                            //    , time.Hour, time.Minute, time.Second, time.Millisecond
+                            //    , DateTimeKind.Local
+                            //)
+                            DateTime.Now
+                    };
+
+                    _dictBrowserLauncherView.Add(keyView
+                        , new BrowserLauncherView(time
+                            , brandProvider.Title
+                            , brandProvider.Uri
+                            , brandProvider.ProviderId
+                            , brandProvider.Login
+                            , brandProvider.Password));
+                    _dictBrowserLauncherView[keyView].Closing += new CancelEventHandler(closingViewer<BrowserLauncherView>);
+                    _dictBrowserLauncherView[keyView].Show();
+                } else if (res == MessageBoxResult.No) {
+                    keyView = keys.ElementAt(0);
+                    _dictBrowserLauncherView[keyView].Activate();
+                } else
+                    ;
+            } else {
+                keyView = keys.ElementAt(0);
+                _dictBrowserLauncherView[keyView].Activate();
+            }
         }
 
         private void closingViewer<T>(object obj, CancelEventArgs ev)
@@ -252,10 +349,7 @@ namespace NewLauncher
                         url = brandown.Providers[0].Uri;
                         if (IsUrlAsHttp(url) == true)
                         {
-                            if (_dictBrowserLauncherView.ContainsKey(brandown.Providers[0].ProviderId) == false)
-                                newBrowserLauncherView(this.time, brandown.Providers[0]);
-                            else
-                                _dictBrowserLauncherView[brandown.Providers[0].ProviderId].Activate();
+                            showBrowserLauncherView(this.time, brandown.Providers[0]);
                         } else {
                             url = GetPathBrandToProcess(url, brandown.NameAndFolder);
 
@@ -265,18 +359,18 @@ namespace NewLauncher
                                     , FileName = url
                                     , CreateNoWindow = true
                                     , Verb = url }
-                            })
-                            {
+                            }) {
                                 process.Start();
                             }
                         }
                     }
                 }
             }
-            catch (Exception exception)
+            catch (Exception e)
             {
-                ErrorLogHelper.AddErrorInLog("button_onClick", url + " | " + exception.Message + " | " + exception.StackTrace);
-                MessageBox.Show(exception.Message + url + " | " + exception.StackTrace);
+                ErrorLogHelper.AddErrorInLog(string.Format("button_onClick (brand.Id={0}, provider.Id={1}, url={2}", brandown.BrandId, brandown.Providers[0].ProviderId, url)
+                    , string.Format("{0} | {1}", e.Message, e.StackTrace));
+                MessageBox.Show(string.Format("{0} | {1}", e.Message, e.StackTrace));
             }
 
             //Func<CatalogApi.Settings.Brand, bool> predicate = null;
@@ -475,47 +569,88 @@ namespace NewLauncher
             return image;
         }
 
+        private class File
+        {
+            public enum TYPE { TXT, JSON, RAR, ZIP }
+
+            public string Name { get; }
+
+            public TYPE Type { get; }
+
+            public File (string config_value)
+            {
+                string[] values = config_value.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+
+                if ((values.Length == 2)
+                    && (Enum.IsDefined(typeof(TYPE), values[1].ToUpperInvariant()) == true)) {
+                    Type = (TYPE)Enum.Parse(typeof(TYPE), values[1].ToUpperInvariant());
+                    Name = string.Format("{0}.{1}", values[0], Type.ToString().ToLowerInvariant());
+                } else
+                    ;
+            }
+        }
+
         private static void LoadUpdates()
         {
+            string nameFileSettingVersion = string.Empty
+                , nameFileAppVersion = string.Empty;
             Exception exception;
+
             try
             {
-                using (AvtoritetEntities entities = new AvtoritetEntities())
-                {
-                    //if (!(entities.Database.Connection.State == ConnectionState.Closed))
-                    //{
-                        int? settingVersion = entities.SettingUpdate.FirstOrDefault().SettingVersion;
-                        Version version = new Version(entities.VersionLog.FirstOrDefault().Value)
-                            , version2 = new Version(JsonConvert.DeserializeObject<VersionEntity>(FileHelper.OpenFile("Version.json")).Version);
-                        if (version > version2) {
-                            try {
-                            } catch (Exception exception1) {
-                                exception = exception1;
-                                ErrorLogHelper.AddErrorInLog("LoadUpdates()", exception.Message + " | " + exception.StackTrace);
-                            }
-                        }
-                        if (!System.IO.File.Exists("settingver.txt")) {
-                            System.IO.File.WriteAllText("settingver.txt", "1");
-                        }
-                        int num = int.Parse(System.IO.File.ReadAllText("settingver.txt"));
-                        int? nullable2 = settingVersion;
-                        int num2 = num;
-                        if ((nullable2.GetValueOrDefault() > num2)
-                            && (nullable2.HasValue == true)) {
-                            launcherSettings = new SettingsFactory(categoryEventHandler).DownloadSettings(true, true);
-                            System.IO.File.WriteAllText("settingver.txt", settingVersion.ToString());
-                            HaveNewUpdate = true;
-                        }
-                    //}
-                    //else
-                    //ErrorLogHelper.AddErrorInLog("Обновление приложения - LoadUpdates() - ...", string.Format("Состояние БД={0}", entities.Database.Connection.State.ToString()));
-                }
+                nameFileSettingVersion = new File(ConfigurationManager.AppSettings["FileSettingVersion"]).Name;
+                nameFileAppVersion = new File(ConfigurationManager.AppSettings["FileAppVersion"]).Name;
+
+                if ((string.IsNullOrWhiteSpace(nameFileSettingVersion) == false)
+                    && (string.IsNullOrWhiteSpace(nameFileAppVersion) == false))
+                    using (AvtoritetEntities entities = new AvtoritetEntities())
+                    {
+                        //if (!(entities.Database.Connection.State == ConnectionState.Closed))
+                        //{
+                            Version version = new Version(entities.VersionLog.FirstOrDefault().Value)
+                                , version2 = new Version(JsonConvert.DeserializeObject<VersionEntity>(FileHelper.OpenFile(nameFileAppVersion)).Version)
+                                , version3 = new Version(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
+
+                            if (version > version2) {
+                                try {
+                                } catch (Exception exception1) {
+                                    exception = exception1;
+                                    ErrorLogHelper.AddErrorInLog("LoadUpdates()", string.Format("{0} | {1}", exception.Message, exception.StackTrace));
+                                }
+                            } else
+                                ;
+
+                            if (!System.IO.File.Exists(nameFileSettingVersion)) {
+                                System.IO.File.WriteAllText(nameFileSettingVersion, "1");
+                            } else
+                                ;
+
+                            int? settingVersion = entities.SettingUpdate.FirstOrDefault().SettingVersion;
+                            int? nullable2 = settingVersion;
+
+                            int num = int.Parse(System.IO.File.ReadAllText(nameFileSettingVersion));
+                            int num2 = num;
+
+                            if ((nullable2.GetValueOrDefault() > num2)
+                                && (nullable2.HasValue == true)) {
+                                launcherSettings = new SettingsFactory(categoryEventHandler).DownloadSettings(true, true);
+                                System.IO.File.WriteAllText(nameFileSettingVersion, settingVersion.ToString());
+                                HaveNewUpdate = true;
+                            } else
+                                ;
+                        //}
+                        //else
+                        //ErrorLogHelper.AddErrorInLog("Обновление приложения - LoadUpdates() - ...", string.Format("Состояние БД={0}", entities.Database.Connection.State.ToString()));
+                    }
+                else
+                    ErrorLogHelper.AddErrorInLog("Обновление приложения - LoadUpdates() - ...", string.Format("Неизвестна версия приложения или версия конфигурация БД"));
+                ;
             }
             catch (Exception exception2)
             {
                 exception = exception2;
-                ErrorLogHelper.AddErrorInLog("Обновление приложения - LoadUpdates()", exception.Message + " | " + exception.StackTrace);
-                MessageBox.Show(exception.Message + " | " + exception.StackTrace);
+                ErrorLogHelper.AddErrorInLog("Обновление приложения - LoadUpdates()", string.Format("{0} | {1}", exception.Message, exception.StackTrace));
+                MessageBox.Show(string.Format("{0}{1}{2}", Environment.NewLine, exception.Message, exception.StackTrace));
             }
         }
 

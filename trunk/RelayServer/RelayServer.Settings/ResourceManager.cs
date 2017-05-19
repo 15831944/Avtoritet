@@ -1,13 +1,10 @@
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.IO;
 using System.Linq;
 
 namespace RelayServer.Settings
 {
-	public static class ResourceManager
+    public static class ResourceManager
 	{
 		private static readonly string TempFolder;
 
