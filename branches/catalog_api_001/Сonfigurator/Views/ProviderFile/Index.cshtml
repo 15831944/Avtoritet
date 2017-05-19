@@ -1,0 +1,40 @@
+﻿@model System.Collections.Generic.List<Сonfigurator.DataContext.ProviderFile>
+@{
+    ViewBag.Title = "Двоичные файлы провайдера";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.Raw(ViewBag.BradCrumb)
+
+<table border="1">
+    <tr>
+        <td>Наименование файла</td>
+        <td>Размер файла</td>
+        <td></td>
+    </tr>
+    @foreach (var file in Model)
+    {
+        <tr>
+            <td>@file.FileName</td>
+            <td>@file.FileSize</td>
+            <td>@Html.ActionLink("Удалить", "Delete", "ProviderFile", new { Id = file.ProviderFileId, providerId = ViewBag.ProviderId }, null)
+        </tr>
+    }
+</table>
+<table>
+    @using (Html.BeginForm("Upload", "ProviderFile", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        int providerId = ViewBag.ProviderId;
+        @Html.Hidden("providerId", providerId)
+        <tr>
+            <td>Файл</td>
+            <td><input type="file" id="upload" name="upload" value="Обзор" /></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button type="submit">Сохранить</button>
+            </td>
+        </tr>
+    }
+</table>

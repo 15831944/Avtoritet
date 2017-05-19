@@ -1,0 +1,37 @@
+﻿@model Object
+
+@{
+    ViewBag.Title = "Расположение";
+}
+<script language="javascript" type="text/javascript" src="/Scripts/jquery-1.10.2.min.js"></script>
+@*<script language="javascript" type="text/javascript" src="/Scripts/interact.js"></script>
+<script language="javascript" type="text/javascript" src="/Scripts/geditor.js"></script>*@
+<script language="javascript" type="text/javascript" src="/Scripts/d3.js"></script>
+<script language="javascript" type="text/javascript" src="/Scripts/gd3.js"></script>
+<script language="javascript" type="text/javascript" src="/Content/jquery-ui.css"></script>
+<script language="javascript" type="text/javascript" src="/Scripts/jquery-ui.js"></script>
+@*<script language="javascript" type="text/javascript" src="/Scripts/brandeditor.js"></script>*@
+<style>
+    .draggable {
+        border: 1px solid black;
+        position: absolute;
+        display: inline-block;
+        top: 0;
+        left: 0;
+        cursor:default
+    }
+    body {
+        margin: 0px;
+        padding: 0px;
+    }
+</style>
+<script language="javascript" type="text/javascript">
+    jQuery(function() {
+        gd3(@Model);
+    });
+</script>
+            <div style="border-style: solid; border-width: 1px; border-color: red; width:@{@ViewBag.Width}px; height:@{@ViewBag.Height}px; top: 0px; left: 0px; padding: 0; margin: 0;">&nbsp;</div>
+            <div style="position: relative">
+                <button id="btnSave" name="btnSave">Сохранить</button>
+            </div>
+@Html.ActionLink("Обратно в список","Index","GroupBox",new {groupid=ViewBag.GroupId},null)

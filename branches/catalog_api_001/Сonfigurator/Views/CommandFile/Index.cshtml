@@ -1,0 +1,24 @@
+﻿@model List<Сonfigurator.DataContext.CommandFile>
+
+@{
+    ViewBag.Title = "Командные файлы";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.Raw(ViewBag.BradCrumb)
+
+<table border="1">
+    <tr>
+        <td>Наименование файла</td>
+        <td></td>
+    </tr>
+    @foreach (var file in Model)
+    {
+        <tr>
+            <td>@Html.ActionLink(file.FileName, "Edit", new { commandFileId = file.CommandFileId,providerId= ViewBag.ProviderId})</td>
+            <td>@Html.ActionLink("Удалить", "Delete", "CommandFile", new { Id = file.CommandFileId,providerId= ViewBag.ProviderId }, null)
+        </tr>
+    }
+</table>
+@Html.ActionLink("Создать командный файл", "Edit", new { providerId = ViewBag.ProviderId })

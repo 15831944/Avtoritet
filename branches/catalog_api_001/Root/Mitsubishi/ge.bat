@@ -1,0 +1,2 @@
+cd C:\MMC\ASA\M80\PROG1
+.\ASA.exe M80

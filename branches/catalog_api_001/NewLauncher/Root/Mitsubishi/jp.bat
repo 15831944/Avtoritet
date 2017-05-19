@@ -1,0 +1,2 @@
+cd C:\MMC\ASA\M00\PROG1
+.\ASA.exe M00

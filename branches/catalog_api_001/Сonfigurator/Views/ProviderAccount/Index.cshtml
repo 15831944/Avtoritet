@@ -1,0 +1,33 @@
+﻿@model System.Collections.Generic.List<Сonfigurator.DataContext.ProviderAccount>
+
+@{
+    ViewBag.Title = "Аккаунты провайдера";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@Html.Raw(ViewBag.BradCrumb)
+
+<table border="1">
+    <tr>
+        <td>Uri</td>
+        <td>Login</td>
+        <td>Password</td>
+        <td>Доступно</td>
+        <td>Порядковый номер</td>
+        <td></td>
+    </tr>
+    @foreach (var provAcc in Model)
+    {
+        <tr>
+            <td>@Html.ActionLink(provAcc.Uri, "Edit", new { providerAccId = provAcc.ProviderAccountId, ProviderId = ViewBag.ProviderId })</td>
+            <td>@provAcc.Login</td>
+            <td>@provAcc.Password</td>
+            <td>@Html.CheckBox("Enable", provAcc.Enable)</td>
+            <td>@provAcc.Order</td>
+            <td>@Html.ActionLink("Удалить","Delete",new {id=provAcc.ProviderAccountId, providerId = ViewBag.ProviderId })</td>
+        </tr>
+    }
+</table>
+@Html.ActionLink("Создать аккаунт", "Edit", new { ProviderId = ViewBag.ProviderId })
