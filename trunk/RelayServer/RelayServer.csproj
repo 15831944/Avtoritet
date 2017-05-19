@@ -165,7 +165,15 @@
     <Compile Include="RelayServer.Processors\FileTransferProcessor.cs" />
     <Compile Include="RelayServer.Processors\RequestProcessor.cs" />
     <Compile Include="RelayServer.Properties\Resources.cs" />
+    <Compile Include="RelayServer.Settings\Brand.cs" />
+    <Compile Include="RelayServer.Settings\BrandProvider.cs" />
+    <Compile Include="RelayServer.Settings\GroupBox.cs" />
+    <Compile Include="RelayServer.Settings\GroupSet.cs" />
+    <Compile Include="RelayServer.Settings\ISettingsZipper.cs" />
+    <Compile Include="RelayServer.Settings\LauncherSettings.cs" />
+    <Compile Include="RelayServer.Settings\ResourceManager.cs" />
     <Compile Include="RelayServer.Settings\SettingsZipper.cs" />
+    <Compile Include="RelayServer.Settings\ZipFile.cs" />
     <Compile Include="SettingUpdate.cs">
       <DependentUpon>DataContext.tt</DependentUpon>
     </Compile>
@@ -204,10 +212,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CatatalogApi\CatalogApi.csproj">
-      <Project>{93b1e453-fbdb-4585-aed5-373fd42e6206}</Project>
-      <Name>CatalogApi</Name>
-    </ProjectReference>
     <ProjectReference Include="..\RequestHandler\RequestHandlers.csproj">
       <Project>{65d78338-2d4b-4b16-989d-defb6d6f6f26}</Project>
       <Name>RequestHandlers</Name>

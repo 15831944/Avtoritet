@@ -1,10 +1,10 @@
 //using RelayServer.DataContext;
-using CatalogApi.Settings;
 using RelayServer.Entities;
 using RelayServer.Helpers;
 using RelayServer.Interfaces;
 using RelayServer.Models;
 using RelayServer.Portals;
+using RelayServer.Settings;
 using RequestHandlers;
 using RequestHandlers.Handlers;
 using System;
@@ -45,7 +45,7 @@ namespace RelayServer.Processors
 
 		private static readonly System.Collections.Generic.Dictionary<string, System.DateTime> UserStatistics;
 
-		private readonly CatalogApi.Settings.ISettingsZipper settingsZipper;
+		private readonly ISettingsZipper settingsZipper;
 
 		static RequestProcessor()
 		{
@@ -64,7 +64,7 @@ namespace RelayServer.Processors
 		public RequestProcessor()
 		{
 			RequestProcessor.SetupServicePointManager();
-			this.settingsZipper = new RelayServer.Settings.SettingsZipper();
+			this.settingsZipper = new SettingsZipper();
 		}
 
 		public System.IO.Stream DownloadUpdate()
@@ -232,7 +232,7 @@ namespace RelayServer.Processors
 						SettingUpdate updateFlag = ae.SettingUpdate.FirstOrDefault();
 						string settings = string.Empty;
 						string baseDir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-						string root = System.IO.Path.Combine(baseDir, CatalogApi.Settings.ResourceManager.Root);
+						string root = System.IO.Path.Combine(baseDir, ResourceManager.Root);
 						string path = string.Join("\\", new string[]
 						{
 							root,

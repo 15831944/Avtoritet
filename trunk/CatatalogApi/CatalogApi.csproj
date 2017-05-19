@@ -148,7 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeTools\CodeTools4.csproj">
-      <Project>{d49b6bb5-29d6-4f52-adf7-eeed5eb5e518}</Project>
+      <Project>{D49B6BB5-29D6-4F52-ADF7-EEED5EB5E518}</Project>
       <Name>CodeTools4</Name>
     </ProjectReference>
   </ItemGroup>
