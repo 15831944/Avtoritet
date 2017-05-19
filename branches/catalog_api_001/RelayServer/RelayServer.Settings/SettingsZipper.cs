@@ -9,8 +9,6 @@ namespace RelayServer.Settings
 {
 	public class SettingsZipper : ISettingsZipper
 	{
-		private const string TempPath = "temp";
-
 		public string CreateZipFromSettings(string json)
 		{
 			string result;
@@ -68,7 +66,7 @@ namespace RelayServer.Settings
 
 		private System.IO.DirectoryInfo ClearTempFolder()
 		{
-			System.IO.DirectoryInfo tempDirectory = new System.IO.DirectoryInfo(System.IO.Path.Combine(ResourceManager.Root, "temp"));
+			System.IO.DirectoryInfo tempDirectory = new System.IO.DirectoryInfo(System.IO.Path.Combine(ResourceManager.Root, ResourceManager.UpdateDirectory));
 			if (!tempDirectory.Exists)
 			{
 				tempDirectory.Create();
@@ -88,15 +86,17 @@ namespace RelayServer.Settings
 
 		public void UnzipToUpdate(string sourceZipFile)
 		{
-			if (!System.IO.Directory.Exists(ResourceManager.Temp))
-			{
-				throw new System.ArgumentException("Directory not found: '{0}'");
-			}
-			if (!System.IO.File.Exists(sourceZipFile))
-			{
-				throw new System.ArgumentException("File not found: '{0}'");
-			}
-			ZipFile.ExtractToDirectory(sourceZipFile, ResourceManager.Temp);
+            if (!System.IO.Directory.Exists(ResourceManager.UpdateDirectory)) {
+                throw new System.ArgumentException("Directory not found: '{0}'");
+            } else
+                ;
+
+            if (!System.IO.File.Exists(sourceZipFile)) {
+                throw new System.ArgumentException("File not found: '{0}'");
+            } else
+                ;
+
+			ZipFile.ExtractToDirectory(sourceZipFile, ResourceManager.UpdateDirectory);
 		}
 
 		public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)

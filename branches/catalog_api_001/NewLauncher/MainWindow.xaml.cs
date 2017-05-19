@@ -499,10 +499,11 @@ namespace NewLauncher
         {
             Logging(string.Format("::InitializeSettings() - вход..."));
 
-            if (RequestHelper.Client == null)
-            {
+            if (RequestHelper.Client == null) {
                 RequestHelper.Client = new RequestProcessorClient();
-            }
+            } else
+                ;
+
             #region  Khryapin 2017/04/29
             if ((Application.Current as App).IsRelease == false) {
                 var endpoint = RequestHelper.Client.Endpoint;
@@ -569,27 +570,6 @@ namespace NewLauncher
             return image;
         }
 
-        private class File
-        {
-            public enum TYPE { TXT, JSON, RAR, ZIP }
-
-            public string Name { get; }
-
-            public TYPE Type { get; }
-
-            public File (string config_value)
-            {
-                string[] values = config_value.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
-
-                if ((values.Length == 2)
-                    && (Enum.IsDefined(typeof(TYPE), values[1].ToUpperInvariant()) == true)) {
-                    Type = (TYPE)Enum.Parse(typeof(TYPE), values[1].ToUpperInvariant());
-                    Name = string.Format("{0}.{1}", values[0], Type.ToString().ToLowerInvariant());
-                } else
-                    ;
-            }
-        }
-
         private static void LoadUpdates()
         {
             string nameFileSettingVersion = string.Empty
@@ -598,8 +578,8 @@ namespace NewLauncher
 
             try
             {
-                nameFileSettingVersion = new File(ConfigurationManager.AppSettings["FileSettingVersion"]).Name;
-                nameFileAppVersion = new File(ConfigurationManager.AppSettings["FileAppVersion"]).Name;
+                nameFileSettingVersion = new CatalogApi.Settings.File(ConfigurationManager.AppSettings["FileSettingVersion"]).Name;
+                nameFileAppVersion = new CatalogApi.Settings.File(ConfigurationManager.AppSettings["FileAppVersion"]).Name;
 
                 if ((string.IsNullOrWhiteSpace(nameFileSettingVersion) == false)
                     && (string.IsNullOrWhiteSpace(nameFileAppVersion) == false))

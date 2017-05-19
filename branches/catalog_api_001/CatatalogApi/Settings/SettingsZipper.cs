@@ -57,7 +57,7 @@ namespace CatalogApi.Settings
                 throw new ArgumentException("Directory not found: '{0}'".FormatString(ResourceManager.Root));
             }
 
-            if (!File.Exists(sourceZipFile))
+            if (!System.IO.File.Exists(sourceZipFile))
             {
                 throw new ArgumentException("File not found: '{0}'".FormatString(sourceZipFile));
             }
@@ -118,7 +118,7 @@ namespace CatalogApi.Settings
                 throw new ArgumentException("Directory not found: '{0}'".FormatString("Temp"));
             }
 
-            if (!File.Exists(sourceZipFile))
+            if (!System.IO.File.Exists(sourceZipFile))
             {
                 throw new ArgumentException("File not found: '{0}'".FormatString(sourceZipFile));
             }

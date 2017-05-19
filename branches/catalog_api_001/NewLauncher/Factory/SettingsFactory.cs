@@ -6,6 +6,7 @@
     using NewLauncher.DataContext;
     using System;
     using System.Collections.Generic;
+    using System.Configuration;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -45,35 +46,33 @@
                         {
                             path = Path.Combine(root, brand.NameAndFolder);
 
-                            if (!Directory.Exists(path))
-                            {
+                            if (!Directory.Exists(path)) {
                                 Directory.CreateDirectory(path);
-                            }
-                            if (brand.IconPathImg != null)
-                            {
-                                File.WriteAllBytes(string.Join(@"\", new string[] { path, brand.IconPath }), brand.IconPathImg);
-                            }
-                            if (brand.IconPath2Img != null)
-                            {
-                                File.WriteAllBytes(string.Join(@"\", new string[] { path, brand.IconPath2 }), brand.IconPath2Img);
-                            }
-                            foreach (BrandProvider provider in brand.Providers)
-                            {
-                                foreach (CatalogApi.Settings.CommandFile file in provider.CommandFiles)
-                                {
-                                    using (StreamWriter writer = new StreamWriter(string.Join(@"\", new string[] { path, file.FileName })))
-                                    {
+                            } else
+                                ;
+
+                            if (brand.IconPathImg != null) {
+                                System.IO.File.WriteAllBytes(string.Join(@"\", new string[] { path, brand.IconPath }), brand.IconPathImg);
+                            } else
+                                ;
+
+                            if (brand.IconPath2Img != null) {
+                                System.IO.File.WriteAllBytes(string.Join(@"\", new string[] { path, brand.IconPath2 }), brand.IconPath2Img);
+                            } else
+                                ;
+
+                            foreach (BrandProvider provider in brand.Providers) {
+                                foreach (CatalogApi.Settings.CommandFile file in provider.CommandFiles) {
+                                    using (StreamWriter writer = new StreamWriter(string.Join(@"\", new string[] { path, file.FileName }))) {
                                         writer.Write(file.FileContent);
                                     }
                                 }
-                                foreach (CatalogApi.Settings.ProviderFile file2 in provider.ProviderFiles)
-                                {
-                                    File.WriteAllBytes(string.Join(@"\", new string[] { path, file2.FileName }), file2.FileContent);
+
+                                foreach (CatalogApi.Settings.ProviderFile file2 in provider.ProviderFiles) {
+                                    System.IO.File.WriteAllBytes(string.Join(@"\", new string[] { path, file2.FileName }), file2.FileContent);
                                 }
                             }
-                        }
-                        catch (Exception e)
-                        {
+                        } catch (Exception e) {
                             ErrorLogHelper.AddErrorInLog(string.Format("::CreateRootDirectory (root={0}, brand.Id={1}, brand.NameAndFolder={2}, path={3}) - ..."
                                     , root
                                     , brand.BrandId, brand.NameAndFolder
@@ -87,18 +86,18 @@
 
         public LauncherSettings DownloadSettings(bool force, bool FullLoad = true)
         {
-            string nameFileDbSerialize = "launcherDBSettings.dat";
+            string nameFileDbSerialize = new CatalogApi.Settings.File(ConfigurationManager.AppSettings["FileDbSerialize"]).Name;
             LauncherSettings graph = new LauncherSettings();
             // режим "force" принажатии кнопки брэнда
             if ((force == true)
-                && (File.Exists(nameFileDbSerialize) == true)) {
-                File.Delete(nameFileDbSerialize);
+                && (System.IO.File.Exists(nameFileDbSerialize) == true)) {
+                System.IO.File.Delete(nameFileDbSerialize);
             } else
                 ;
 
-            if (File.Exists(nameFileDbSerialize) == true) {
+            if (System.IO.File.Exists(nameFileDbSerialize) == true) {
             // для режима forse=false - прочитать и вернуть копию БД
-                Stream stream = File.OpenRead(nameFileDbSerialize);
+                Stream stream = System.IO.File.OpenRead(nameFileDbSerialize);
                 BinaryFormatter formatter = new BinaryFormatter();
                 graph = (LauncherSettings)formatter.Deserialize(stream);
                 stream.Close();
@@ -247,15 +246,15 @@
             }
             #endregion
 
-            if (File.Exists(nameFileDbSerialize) == true) {
-            //??? никогда не выполняется
-            // , если forse=true файл будет удален
-            // , если forse=false произодет возврат значения и выход из функции
-                File.Delete(nameFileDbSerialize);
+            if (System.IO.File.Exists(nameFileDbSerialize) == true) {
+                //??? никогда не выполняется
+                // , если forse=true файл будет удален
+                // , если forse=false произодет возврат значения и выход из функции
+                System.IO.File.Delete(nameFileDbSerialize);
             } else
                 ;
 
-            Stream serializationStream = File.Create(nameFileDbSerialize);
+            Stream serializationStream = System.IO.File.Create(nameFileDbSerialize);
             new BinaryFormatter().Serialize(serializationStream, graph);
             serializationStream.Close();
 

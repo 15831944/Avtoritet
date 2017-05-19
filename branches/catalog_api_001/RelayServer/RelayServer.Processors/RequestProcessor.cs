@@ -25,8 +25,6 @@ namespace RelayServer.Processors
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, AddressFilterMode = AddressFilterMode.Any)]
 	public class RequestProcessor : IRequestProcessor, IFileServer
 	{
-		private const string TempFolder = "Temp";
-
 		private static readonly OpelPortal OpelPortal;
 
 		private static readonly CitroenPortal CitroenPortal;
@@ -70,19 +68,24 @@ namespace RelayServer.Processors
 		public System.IO.Stream DownloadUpdate()
 		{
 			System.IO.Stream result;
-			try
+            string fileName = string.Empty;
+
+            try
 			{
 				lock (RequestProcessor.SyncLoadNewUpdate)
 				{
-					string fileName = System.IO.Path.Combine("Temp", "Temp.zip");
-					if (!System.IO.Directory.Exists("Temp"))
-					{
-						System.IO.Directory.CreateDirectory("Temp");
-					}
-					if (!System.IO.File.Exists(fileName))
-					{
-						ZipFile.CreateFromDirectory("Temp", fileName);
-					}
+					fileName = System.IO.Path.Combine(ResourceManager.UpdateDirectory, new CatalogApi.Settings.File(ResourceManager.Archive).Name);
+
+                    if (!System.IO.Directory.Exists(ResourceManager.UpdateDirectory)) {
+                        System.IO.Directory.CreateDirectory(ResourceManager.UpdateDirectory);
+                    } else
+                        ;
+
+                    if (!System.IO.File.Exists(fileName)) {
+                        ZipFile.CreateFromDirectory(ResourceManager.UpdateDirectory, fileName);
+                    } else
+                        ;
+
 					result = System.IO.File.OpenRead(fileName);
 				}
 			}

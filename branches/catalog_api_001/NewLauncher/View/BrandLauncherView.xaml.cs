@@ -67,7 +67,7 @@ namespace NewLauncher.View
                             & (provider.Uri.ToLower().IndexOf(".exe") >= 0)
                         )
                     )
-                    && File.Exists(provider.Uri) == true) {
+                    && System.IO.File.Exists(provider.Uri) == true) {
                     uri = provider.Uri;
                 } else
                     ;
