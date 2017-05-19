@@ -78,7 +78,7 @@ namespace CatalogApi.Settings
 
     public class File
     {
-        public enum TYPE { TXT, JSON, RAR, ZIP, DAT }
+        public enum TYPE { TXT, JSON, RAR, ZIP, DAT, EXE }
 
         public string Name { get; }
 
