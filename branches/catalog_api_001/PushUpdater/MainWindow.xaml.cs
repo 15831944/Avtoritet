@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -8,16 +9,24 @@ namespace PushUpdater
 {
     public partial class MainWindow
     {
-        private const string ZipName = "temp.zip";
-        private const string SourceDirName = "Temp";
+        private CatalogApi.Settings.File UpdateTarget;
+
+        private CatalogApi.Settings.File Zip;
+
+        private string UpdateDirectory;
 
         public MainWindow()
         {
             try
             {
-
                 InitializeComponent();
-   
+
+                UpdateTarget = new CatalogApi.Settings.File(ConfigurationManager.AppSettings["UpdateTarget"]);
+
+                Zip = new CatalogApi.Settings.File(ConfigurationManager.AppSettings["UpdateFileArchive"]);
+
+                UpdateDirectory = ConfigurationManager.AppSettings["UpdateDirectory"];
+
                 new Thread(() =>
                 {
                     try
@@ -41,51 +50,45 @@ namespace PushUpdater
         {
             Thread.Sleep(3000);
 
-            KillProcessIfExist("NewLauncher");
+            KillProcessIfExist(UpdateTarget.Name);
 
             Thread.Sleep(3000);
 
-            if (DirectoryHasFiles(SourceDirName) == true)
+            if (DirectoryHasFiles(UpdateDirectory) == true)
             {
-                DirectoryCopy(SourceDirName, string.Empty, true);
+                DirectoryCopy(UpdateDirectory, string.Empty, true);
 
                 //TODO: Проверить ход работы после Exception
 
-                if (DirectoryClear(SourceDirName) == true)
+                if (DirectoryClear(UpdateDirectory) == true)
                 {
-                    if (File.Exists(ZipName)) {
-                        File.Delete(ZipName);
-                    } else
-                        ;
-
-                    if (CanStartProcessAsAdministrator() == false)
-                        return;
-                    else
-                        ;
+                    //TODO
                 } else {
                 // не удалось очистить каталог
-                    if (File.Exists(ZipName)) {
-                        File.Delete(ZipName);
-                    } else
-                        ;
-
-                    if (CanStartProcessAsAdministrator() == false)
-                        return;
-                    else
-                        ;
+                    //TODO
                 }
+
+                if (File.Exists(Zip.Name)) {
+                    File.Delete(Zip.Name);
+                } else
+                    ;
+
+                if (StartProcessAsAdministrator(UpdateTarget.Name) == false)
+                    return;
+                else
+                    ;
             }
 
             Dispatcher.BeginInvoke(new Action(() => Application.Current.Shutdown()));
         }
 
-        private static bool CanStartProcessAsAdministrator()
+        private static bool StartProcessAsAdministrator(string target)
         {
             var processStartInfo = new ProcessStartInfo
             {
                 UseShellExecute = true,
                 WorkingDirectory = Environment.CurrentDirectory,
-                FileName = "NewLauncher.exe",
+                FileName = target,
                 Verb = "runas"
             };
 
