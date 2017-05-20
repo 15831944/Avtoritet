@@ -101,6 +101,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
@@ -147,6 +148,7 @@
     <Compile Include="Interop\HandWrittenInterfaces\nsIScriptContext.cs" />
     <Compile Include="Interop\SpiderMonkey\JSAutoCompartment.cs" />
     <Compile Include="Interop\SpiderMonkey\MutableHandle.cs" />
+    <Compile Include="LoggingListener.cs" />
     <Compile Include="NSSErrors.cs" />
     <Compile Include="GeckoWindowCollection.cs" />
     <Compile Include="Generated\imgINotificationObserver.cs" />

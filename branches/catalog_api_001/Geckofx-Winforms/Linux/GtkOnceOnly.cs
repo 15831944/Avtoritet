@@ -23,7 +23,7 @@ namespace GtkDotNet
 
 		static void OnException(GLib.UnhandledExceptionArgs args)
 		{
-			Debug.WriteLine("Glib error error {0}", args.ExceptionObject.ToString());
+			CatalogApi.Logging.Info(string.Format("Glib error error {0}", args.ExceptionObject.ToString()));
 			args.ExitApplication = false;
 		}
 		/// <summary>

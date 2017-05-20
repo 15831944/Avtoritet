@@ -70,10 +70,9 @@ namespace BrowserExtension
 
                     //Logging("Browser::ctor () - new WindowManager() - ???...");
                     this.windowManager = new WindowManager();
-                    Logging(string.Format("{1}{0}Browser::ctor () - new WindowManager([DateTime={2}]) - processing.."
+                    CatalogApi.Logging.Info(string.Format("{1}{0}Browser::ctor () - new WindowManager() - processing.."
                         , Environment.NewLine
-                        , string.Concat(Enumerable.Repeat("*---", 16))
-                        , DateTime.UtcNow));
+                        , string.Concat(Enumerable.Repeat("*---", 16))));
 
                     taskStart = Task.Factory.StartNew(delegate
                     {
@@ -88,7 +87,7 @@ namespace BrowserExtension
                             }), new object[0]);
 
                             if (CommandArgs.This.Mode == CommandArgs.MODE.proxy) {
-                                // режим proxy
+                            // режим proxy
                                 if (RequestHelper.Client == null) {
                                     RequestHelper.Client = new ServiceReference.RequestProcessorClient();
                                 } else
@@ -100,7 +99,7 @@ namespace BrowserExtension
                                 ServicePointManager.ServerCertificateValidationCallback +=
                                     delegateCertificateValidationAlwaysTrust;
 
-                                Logging(string.Format("::InitializeSettings() - успех..."));
+                                CatalogApi.Logging.Info(string.Format("::InitializeSettings() - успех..."));
 
                                 RequestHelper.Client.LogConnection(string.Format(@"{0}\{1}", Environment.MachineName, "Browser")
                                     , FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
@@ -112,7 +111,7 @@ namespace BrowserExtension
                                 && (CommandArgs.This.ContainsKey(CommandArgs.KEYS.session) == true)
                                 && (string.IsNullOrWhiteSpace(CommandArgs.This[CommandArgs.KEYS.session]) == false)) {
                             // режим slave
-                                Logging(String.Format("Browser::ctor () - read local session settings(file={0}) - ???..."
+                                CatalogApi.Logging.Info(String.Format("Browser::ctor () - read local session settings(file={0}) - ???..."
                                     , CommandArgs.This[CommandArgs.KEYS.session]));
                                 if (File.Exists(CommandArgs.This[CommandArgs.KEYS.session]) == true) {
                                     using (FileStream fileStream =
@@ -121,37 +120,37 @@ namespace BrowserExtension
                                             cookies = streamReader.ReadToEnd();
                                         }
                                     }
-                                    Logging(String.Format(
+                                    CatalogApi.Logging.Info(String.Format(
                                         "Browser::ctor () - read local session settings(file={0}) - success..."
                                         , CommandArgs.This[CommandArgs.KEYS.session]));
                                 } else
-                                    Logging(String.Format(
+                                    CatalogApi.Logging.Info(String.Format(
                                         "Browser::ctor () - read local session settings(file={0}) - not exists..."
                                         , CommandArgs.This[CommandArgs.KEYS.session]));
                             } else
                                 ;
 
                             if (string.IsNullOrEmpty(cookies) == false) {
-                                Logging(String.Format("Browser::ctor (cookies={0}) - cookies not empty..."
+                                CatalogApi.Logging.Info(String.Format("Browser::ctor (cookies={0}) - cookies not empty..."
                                     , cookies));
 
                                 string urlSetCookie = string.Format("{0}/", CommandArgs.This.Url) // /
                                     , urlNavigateDoLogin = string.Format("{0}/users/login.html", CommandArgs.This.Url); // /users/login.html
 
-                                Logging(String.Format("Url to SetCookie (Url={0}) - ..."
+                                CatalogApi.Logging.Info(String.Format("Url to SetCookie (Url={0}) - ..."
                                     , urlSetCookie));
 
-                                Logging(String.Format("Url to navigate do login (Url={0}) - ..."
+                                CatalogApi.Logging.Info(String.Format("Url to navigate do login (Url={0}) - ..."
                                     , urlNavigateDoLogin));
 
                                 List<Cookie> list;
                                 try {
                                     list = JsonConvert.DeserializeObject<List<Cookie>>(cookies);
 
-                                    Logging(String.Format("Cookies DeserializeObject ... (Length={0})", list.Count));
+                                    CatalogApi.Logging.Info(String.Format("Cookies DeserializeObject ... (Length={0})", list.Count));
 
                                     foreach (Cookie c in list) {
-                                        Logging(String.Format("Browser::ctor () - InternetSetCookie to={0}, key={1}, value={2}..."
+                                        CatalogApi.Logging.Info(String.Format("Browser::ctor () - InternetSetCookie to={0}, key={1}, value={2}..."
                                             , urlSetCookie
                                             , c.Name
                                             , c.Value));
@@ -159,15 +158,15 @@ namespace BrowserExtension
                                         if (MainWindow.InternetSetCookie(urlSetCookie
                                             , c.Name,
                                             c.Value) == false)
-                                            Logging(string.Format("::InternetSetCookie () - ошибка..."));
+                                            CatalogApi.Logging.Info(string.Format("::InternetSetCookie () - ошибка..."));
                                         else
                                             ;
                                     }
                                 } catch (Exception ex) {
-                                    Logging(ex);
+                                    CatalogApi.Logging.Exception(ex);
                                 }
 
-                                Logging(String.Format("Browser to Navigate (Url={0}) - ..."
+                                CatalogApi.Logging.Info(String.Format("Browser to Navigate (Url={0}) - ..."
                                     , urlNavigateDoLogin));
 
                                 base.Dispatcher.BeginInvoke(new Action(delegate
@@ -227,9 +226,9 @@ namespace BrowserExtension
                     base.Close();
                 }
             } catch (System.Threading.Tasks.TaskCanceledException ex) {
-                Logging(ex, true);
+                CatalogApi.Logging.Exception(ex, true);
             } catch (Exception ex) {
-                Logging(ex, true);
+                CatalogApi.Logging.Exception(ex, true);
             }
 
             if (taskStart?.Status == TaskStatus.Faulted)
@@ -255,19 +254,19 @@ namespace BrowserExtension
         {
             FreeOccupiedAccount();
 
-            Logging(string.Format("Browser::MainWindow_Closing () - .."));
+            CatalogApi.Logging.Info(string.Format("Browser::MainWindow_Closing () - .."));
         }
 
         private void InternetExplorerOnQuit(object sender, EventArgs eventArgs)
         {
-            Logging(string.Format("Browser::InternetExplorerOnQuit (Title={0}) - ...", this.Title));
+            CatalogApi.Logging.Info(string.Format("Browser::InternetExplorerOnQuit (Title={0}) - ...", this.Title));
 
             Close();
         }
 
         private void InternetExplorerOnNavigating(object sender, WebBrowserNavigatingEventArgs webBrowserNavigatingEventArgs)
         {
-            Logging(string.Format("Browser::InternetExplorerOnNavigating (Title={0}, AbsoluteUri={1}) - ..."
+            CatalogApi.Logging.Info(string.Format("Browser::InternetExplorerOnNavigating (Title={0}, AbsoluteUri={1}) - ..."
                 , this.Title
                 , webBrowserNavigatingEventArgs.Url.AbsoluteUri));
 
@@ -283,7 +282,7 @@ namespace BrowserExtension
 
         private void InternetExplorerOnStartNewWindow(object sender, BrowserExtendedNavigatingEventArgs browserExtendedNavigatingEventArgs)
         {
-            Logging(string.Format("Browser::InternetExplorerOnStartNewWindow (Title={0}, argUrl={1}) - ..."
+            CatalogApi.Logging.Info(string.Format("Browser::InternetExplorerOnStartNewWindow (Title={0}, argUrl={1}) - ..."
                 , this.Title
                 , browserExtendedNavigatingEventArgs.Url.ToString()));
 
@@ -340,7 +339,7 @@ namespace BrowserExtension
 
         private void InternetExplorerOnDocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs webBrowserDocumentCompletedEventArgs)
         {
-            Logging(string.Format("Browser::InternetExplorerOnDocumentCompleted (Title={0}, argUrl={1}) - ..."
+            CatalogApi.Logging.Info(string.Format("Browser::InternetExplorerOnDocumentCompleted (Title={0}, argUrl={1}) - ..."
                 , this.Title
                 , webBrowserDocumentCompletedEventArgs.Url.ToString()));
 
@@ -387,7 +386,7 @@ namespace BrowserExtension
                 else
                     this.DelayForNextNavigation(this.IeHost, 3000, 4000);
             } catch (Exception ex) {
-                Logging(ex);
+                CatalogApi.Logging.Exception(ex);
             }
         }
 
@@ -422,42 +421,7 @@ namespace BrowserExtension
                 } else
                     ;
             } catch (Exception e) {
-                Logging(e);
-            }
-        }
-
-        public static void Logging(Exception e, bool innerEx = false)
-        {
-            Logging(string.Format("{0} / {1} | внутр.сообщ.={2} | внутр.стек={3}"
-                , e.Message
-                , e.StackTrace
-                , innerEx == true ? e.InnerException.Message : "не требуется"
-                , innerEx == true ? e.InnerException.StackTrace : "не требуется"
-            ));
-        }
-
-        public static void Logging(string mes)
-        {
-            try {
-                var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
-
-                if (bool.Parse(ConfigurationManager.AppSettings[@"LogDebugToCurrentDirectory"]) == true) {
-                    FileInfo appFileInfo = new FileInfo(location.AbsolutePath);
-
-                    using (FileStream fileStream = new FileStream(string.Format("{0}.log"
-                            , System.IO.Path.GetFileNameWithoutExtension(appFileInfo.FullName))
-                                , FileMode.Append
-                                , FileAccess.Write)) {
-                        using (StreamWriter streamWriter = new StreamWriter(fileStream)) {
-                            streamWriter.WriteLine(string.Format("[{1:o}]{0}{2}"
-                                , Environment.NewLine
-                                , DateTime.Now
-                                , mes));
-                        }
-                    }
-                } else
-                    ;
-            } catch {
+                CatalogApi.Logging.Exception(e);
             }
         }
     }

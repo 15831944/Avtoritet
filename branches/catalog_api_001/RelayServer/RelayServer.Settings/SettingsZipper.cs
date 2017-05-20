@@ -28,7 +28,7 @@ namespace RelayServer.Settings
 			}
 			catch (System.Exception ex)
 			{
-				Debug.WriteLine(ex.Message + " || " + ex.StackTrace);
+                CatalogApi.Logging.Exception(ex);
 				result = null;
 			}
 			return result;

@@ -1,4 +1,5 @@
-﻿using CatalogApi.Settings;
+﻿using CatalogApi;
+using CatalogApi.Settings;
 using NewLauncher;
 using NewLauncher.Entities;
 using NewLauncher.Factory;
@@ -212,7 +213,7 @@ namespace NewLauncher.View
             catch (Exception exception)
             {
                 ErrorLogHelper.AddErrorInLog("OnLoaded", exception.Message + " | " + exception.StackTrace);
-                Debug.WriteLine("[{0}] {1} / {2}", new object[] { DateTime.Now, exception.Message, exception.StackTrace });
+                CatalogApi.Logging.Exception(exception);
             }
         }
 
@@ -343,7 +344,7 @@ namespace NewLauncher.View
             //        ;
             //} catch (Exception e) {
             //    ErrorLogHelper.AddErrorInLog(string.Format("Process.Start: {0}", fileNameBrowser), e.Message + " | " + e.StackTrace);
-            //    Debug.WriteLine("[{0}-{1}] {2} / {3}", new object[] { DateTime.Now, fileNameBrowser, e.Message, e.StackTrace });
+            //    Logging.Exception(e, true);
             //}
         }
     }

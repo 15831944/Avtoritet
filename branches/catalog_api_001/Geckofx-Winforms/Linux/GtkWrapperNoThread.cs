@@ -126,7 +126,7 @@ namespace GtkDotNet
 			}catch(Exception e)
 			{
 				// Ignore any exceptions to improve stablity.
-				Debug.WriteLine(e);
+				CatalogApi.Logging.Exception(e);
 			}			
 		}
 

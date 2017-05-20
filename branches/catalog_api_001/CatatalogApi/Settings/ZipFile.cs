@@ -16,7 +16,7 @@ namespace CatalogApi.Settings
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message + " || " + ex.StackTrace + " || " + ex.Data);
+                Logging.Exception(ex, true);
             }  
         }
 

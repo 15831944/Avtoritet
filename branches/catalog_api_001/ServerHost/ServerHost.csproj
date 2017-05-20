@@ -83,6 +83,10 @@
     <Compile Include="ServerHost\Program.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CatatalogApi\CatalogApi.csproj">
+      <Project>{93b1e453-fbdb-4585-aed5-373fd42e6206}</Project>
+      <Name>CatalogApi</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RelayServer\RelayServer.csproj">
       <Project>{7f37ff42-25e8-4a63-bd50-89c740ea0c8b}</Project>
       <Name>RelayServer</Name>

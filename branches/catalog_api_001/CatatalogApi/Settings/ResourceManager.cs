@@ -9,7 +9,7 @@ namespace CatalogApi.Settings
     {
         private static readonly string ResourceFolder;
 
-        private static readonly string UpadteFileArchive;
+        private static readonly string UpdateFileArchive;
 
         public static string Root
         {
@@ -24,13 +24,18 @@ namespace CatalogApi.Settings
             get;
         }
 
-        public static string Archive { get { return UpadteFileArchive; } }
+        public static string Archive { get { return UpdateFileArchive; } }
 
         static ResourceManager()
         {
-            UpdateDirectory = ConfigurationManager.AppSettings["UpdateDirectory"]; // "Temp"
-            ResourceFolder = ConfigurationManager.AppSettings["ResourceDirectory"];
-            UpadteFileArchive = ConfigurationManager.AppSettings["UpdateFileArchive"];
+            if (ConfigurationManager.AppSettings.Keys.Cast<string>().Contains("UpdateDirectory") == true)
+                UpdateDirectory = ConfigurationManager.AppSettings["UpdateDirectory"]; // "Temp"
+
+            if (ConfigurationManager.AppSettings.Keys.Cast<string>().Contains("ResourceDirectory") == true)
+                ResourceFolder = ConfigurationManager.AppSettings["ResourceDirectory"];
+
+            if (ConfigurationManager.AppSettings.Keys.Cast<string>().Contains("UpdateFileArchive") == true)
+                UpdateFileArchive = new CatalogApi.Settings.File(ConfigurationManager.AppSettings["UpdateFileArchive"]).Name;
 
             Prepare();
         }

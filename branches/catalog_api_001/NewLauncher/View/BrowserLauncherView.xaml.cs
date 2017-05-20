@@ -1,4 +1,5 @@
-﻿using Gecko;
+﻿using CatalogApi;
+using Gecko;
 using Gecko.DOM;
 using Gecko.Events;
 using mshtml;
@@ -251,7 +252,7 @@ namespace NewLauncher.View
                 this.Message.Text = "Пожалуйста, ждите...";
 
 #if DEBUG
-                MainWindow.Logging(string.Format("Browser::GeckoWebOnDocumentCompleted (Title={0}, AbsoluteUri={1}) - ..."
+                CatalogApi.Logging.Info(string.Format("Browser::GeckoWebOnDocumentCompleted (Title={0}, AbsoluteUri={1}) - ..."
                     , this.Title
                     , geckoEventArgs.Uri.AbsoluteUri));
 #endif
@@ -638,7 +639,7 @@ namespace NewLauncher.View
         private void GeckoWebOnNavigating(object sender, GeckoNavigatingEventArgs geckoNavigatingEventArgs)
         {
 #if DEBUG
-            MainWindow.Logging(string.Format("Browser::GeckoWebOnNavigating (Title={0}, AbsoluteUri={1}) - ..."
+            CatalogApi.Logging.Info(string.Format("Browser::GeckoWebOnNavigating (Title={0}, AbsoluteUri={1}) - ..."
                 , this.Title
                 , geckoNavigatingEventArgs.Uri.AbsoluteUri));
 #endif
@@ -733,7 +734,7 @@ namespace NewLauncher.View
         {
             string cookies = RequestHelper.Client.GetCookies(geckoUrl);
 
-            NewLauncher.MainWindow.Logging(string.Format(@"BrowserLauncherView::GetCookies (Url={1}{0}, cookies={2})"
+            CatalogApi.Logging.Info(string.Format(@"BrowserLauncherView::GetCookies (Url={1}{0}, cookies={2})"
                 , Environment.NewLine
                 , geckoUrl
                 , cookies));
@@ -745,7 +746,7 @@ namespace NewLauncher.View
         {
             try
             {
-                MainWindow.Logging(string.Format("Browser::IeWebOnDocumentCompleted (Title={0}, AbsoluteUri={1}) - ..."
+                CatalogApi.Logging.Info(string.Format("Browser::IeWebOnDocumentCompleted (Title={0}, AbsoluteUri={1}) - ..."
                     , this.Title
                     , webBrowserDocumentCompletedEventArgs.Url.AbsoluteUri));
 
@@ -1196,8 +1197,8 @@ namespace NewLauncher.View
             }
             catch (Exception exception)
             {
-                ErrorLogHelper.AddErrorInLog("IeWebOnDocumentCompleted", exception.Message + " | " + exception.StackTrace);
-                Debug.WriteLine("[{0}] {1} / {2}", new object[] { DateTime.Now, exception.Message, exception.StackTrace });
+                ErrorLogHelper.AddErrorInLog("::IeWebOnDocumentCompleted ()", exception.Message + " | " + exception.StackTrace);
+                CatalogApi.Logging.Exception(exception);
             }
         }
 
@@ -1206,7 +1207,7 @@ namespace NewLauncher.View
             try
             {
 #if DEBUG
-                MainWindow.Logging(string.Format("Browser::IeWebOnNavigating (Title={0}, AbsoluteUri={1}) - ..."
+                Logging.Info(string.Format("Browser::IeWebOnNavigating (Title={0}, AbsoluteUri={1}) - ..."
                     , this.Title
                     , webBrowserNavigatingEventArgs.Url.AbsoluteUri));
 #endif
@@ -1337,10 +1338,10 @@ namespace NewLauncher.View
             try
             {
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                ErrorLogHelper.AddErrorInLog("OnClosing", exception.Message + " | " + exception.StackTrace);
-                Debug.WriteLine(exception.Message + " " + exception.StackTrace);
+                ErrorLogHelper.AddErrorInLog("::OnClosing", ex.Message + " | " + ex.StackTrace);
+                CatalogApi.Logging.Exception(ex);
             }
         }
 
@@ -1657,7 +1658,7 @@ namespace NewLauncher.View
                                 , cookie.Name
                                 , cookie.Value);
 
-                        MainWindow.Logging(string.Format(@"::OpenSession () - InternetSetCookie ({3} - host={0}, cookie-name={1}, cookie-value={2}) - ..."
+                        CatalogApi.Logging.Info(string.Format(@"::OpenSession () - InternetSetCookie ({3} - host={0}, cookie-name={1}, cookie-value={2}) - ..."
                             , host_cookies, cookie.Name, cookie.Value
                             , success == true ? "Ok" : "ERROR"));
                     }
@@ -1672,7 +1673,7 @@ namespace NewLauncher.View
                     this.InsertCookies(host_cookies, cookies);
 
                     foreach (System.Net.Cookie cookie in cookies)
-                        MainWindow.Logging(string.Format(@"::OpenSession () - InsertCookies (host={0}, cookie-name={1}, cookie-value={2}) - ..."
+                        CatalogApi.Logging.Info(string.Format(@"::OpenSession () - InsertCookies (host={0}, cookie-name={1}, cookie-value={2}) - ..."
                             , host_cookies, cookie.Name, cookie.Value));
                 }
             } else

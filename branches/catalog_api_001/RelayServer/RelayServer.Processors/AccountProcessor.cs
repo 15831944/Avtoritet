@@ -3,6 +3,7 @@ using RelayServer.Helpers;
 using RelayServer.Properties;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Timers;
 
@@ -27,9 +28,13 @@ namespace RelayServer.Processors
 			}
 		}
 
-		private AccountProcessor()
+        private TimeSpan AccountSessionTimeout;
+
+        private AccountProcessor()
 		{
-			Timer timer = new Timer
+            AccountSessionTimeout = TimeSpan.FromHours(int.Parse(ConfigurationManager.AppSettings["AccountSessionTimeout"]));
+
+            Timer timer = new Timer
 			{
 				Interval = 60000.0,
 				AutoReset = true
@@ -41,8 +46,8 @@ namespace RelayServer.Processors
 		private void SessionTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
 		{
 			System.Collections.Generic.IEnumerable<AccountModel> accounts = from x in this.userAccounts
-			where x.SessionTime.HasValue && (System.DateTime.Now - x.SessionTime).Value.TotalHours >= 12.0
-			select x;
+			    where x.SessionTime.HasValue && (System.DateTime.Now - x.SessionTime).Value.TotalHours >= (int)AccountSessionTimeout.TotalHours
+                select x;
 			foreach (AccountModel accountModel in accounts)
 			{
 				accountModel.IsOccupied = false;

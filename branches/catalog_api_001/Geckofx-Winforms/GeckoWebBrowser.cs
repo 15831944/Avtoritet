@@ -1167,7 +1167,7 @@ namespace Gecko
   void nsIWebBrowserChrome.ShowAsModal()
   {
    //throw new NotImplementedException();
-   Debug.WriteLine("ShowAsModal");
+   GeckoFxCoreCatalogApi.Logging.Info("nsIWebBrowserChrome::ShowAsModal () - ...");
 
    _IsWindowModal = true;
   }
@@ -1177,7 +1177,7 @@ namespace Gecko
   bool nsIWebBrowserChrome.IsWindowModal()
   {
    //throw new NotImplementedException();
-   Debug.WriteLine("IsWindowModal");
+   GeckoFxCoreCatalogApi.Logging.Info("nsIWebBrowserChrome::IsWindowModal () - ...");
 
    return _IsWindowModal;
   }
@@ -1185,7 +1185,7 @@ namespace Gecko
   void nsIWebBrowserChrome.ExitModalEventLoop(int status)
   {
    //throw new NotImplementedException();
-   Debug.WriteLine("ExitModalEventLoop");
+    GeckoFxCoreCatalogApi.Logging.Info("nsIWebBrowserChrome::ExitModalEventLoop () - ...");
 
    _IsWindowModal = false;
   }

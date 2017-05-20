@@ -1,4 +1,5 @@
-﻿using Gecko;
+﻿using CatalogApi;
+using Gecko;
 using Gecko.Events;
 using NewLauncher.Extension;
 using System;
@@ -67,12 +68,7 @@ namespace NewLauncher.View
             }
             catch (System.Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("[{0}] {1} / {2}", new object[]
-				{
-					System.DateTime.Now,
-					ex.Message,
-					ex.StackTrace
-				});
+                CatalogApi.Logging.Exception(ex);
             }
             //EventHandler onClick = null;
             //EventHandler handler2 = null;
@@ -102,7 +98,7 @@ namespace NewLauncher.View
             //}
             //catch (Exception exception)
             //{
-            //    Debug.WriteLine("[{0}] {1} / {2}", new object[] { DateTime.Now, exception.Message, exception.StackTrace });
+            //    Logging.Exception(exception);
             //}
         }
 

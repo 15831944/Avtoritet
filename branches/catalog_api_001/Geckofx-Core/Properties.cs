@@ -49,7 +49,7 @@ namespace Gecko
 		//    }
 		//    else
 		//    {
-		//        Debug.WriteLine( string.Format( "nsISupports container for value {0} of type {1} is not found", value, type ) );
+		//        Logging.Info(string.Format( "nsISupports container for value {0} of type {1} is not found", value, type ) );
 		//    }
 		//}
 

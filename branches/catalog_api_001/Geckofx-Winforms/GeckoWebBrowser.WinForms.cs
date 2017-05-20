@@ -311,8 +311,8 @@ namespace Gecko
 							if ( !IsSubWindow( Handle, focus ) )
 							{
 							//	var str = string.Format( "+WM_MOUSEACTIVATE {0:X8} lastfocus", focus.ToInt32() );
-							//	System.Diagnostics.Debug.WriteLine( str );
-								Console.WriteLine("Activating");
+							//	CatalogApi.Logging.Info( str );
+								GeckoFxCoreCatalogApi.Logging.Info("GeckoWebBrowser::WndProc.Activating () - ...");
 								if ( WebBrowserFocus != null )
 								{
 									WebBrowserFocus.Activate();
@@ -322,7 +322,7 @@ namespace Gecko
 							else
 							{
 							//	var str = string.Format( "-WM_MOUSEACTIVATE {0:X8} lastfocus", focus.ToInt32() );
-							//	System.Diagnostics.Debug.WriteLine( str );
+							//	CatalogApi.Logging.Info( str );
 							}
 							if ( !this.Window.Equals(Services.WindowWatcher.ActiveWindow) )
 							{
@@ -347,7 +347,7 @@ namespace Gecko
 						if ( WebBrowserFocus != null )
 						{
 						//	var str = string.Format( "WM_IME_SETCONTEXT {0} {1} {2} (focus on {3})", m.HWnd.ToString( "X8" ), m.WParam, m.LParam.ToString( "X8" ), focus.ToString( "X8" ) );
-						//	System.Diagnostics.Debug.WriteLine( str );
+						//	CatalogApi.Logging.Info( str );
 
 
 							var param = m.LParam.ToInt64();
@@ -487,7 +487,7 @@ namespace Gecko
 			}
 			catch ( Exception e )
 			{
-				System.Diagnostics.Debug.WriteLine( string.Format( "Invoking exception" ) );
+                GeckoFxCoreCatalogApi.Logging.Exception( e );
 			}
 		}
 
@@ -521,7 +521,7 @@ namespace Gecko
 			}
 			catch ( Exception e )
 			{
-				System.Diagnostics.Debug.WriteLine( string.Format( "Invoking exception" ) );
+                GeckoFxCoreCatalogApi.Logging.Exception( e );
 			}
 			return ret;
 		}

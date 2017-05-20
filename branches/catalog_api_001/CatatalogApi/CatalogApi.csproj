@@ -126,6 +126,7 @@
     <Compile Include="CatalogsContants.cs" />
     <Compile Include="CategoryEventHandler.cs" />
     <Compile Include="Exceptions\ICategoryEventHandler.cs" />
+    <Compile Include="LoggingListener.cs" />
     <Compile Include="LauncherSettingsHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\Brand.cs" />

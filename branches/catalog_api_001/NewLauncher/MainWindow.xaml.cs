@@ -451,7 +451,7 @@ namespace NewLauncher
         {
             try
             {
-                Logging(string.Format("::CheckForUpdateAndStartProcess() - вход..."));
+                CatalogApi.Logging.Info(string.Format("::CheckForUpdateAndStartProcess() - вход..."));
 
                 if (Directory.Exists("Temp"))
                 {
@@ -470,7 +470,7 @@ namespace NewLauncher
 
                 this.SetWindowVisibility(Visibility.Visible);
 
-                Logging(string.Format("::CheckForUpdateAndStartProcess() - успех..."));
+                CatalogApi.Logging.Info(string.Format("::CheckForUpdateAndStartProcess() - успех..."));
             }
             catch (Exception exception)
             {
@@ -497,7 +497,7 @@ namespace NewLauncher
 
         private void InitializeSettings()
         {
-            Logging(string.Format("::InitializeSettings() - вход..."));
+            CatalogApi.Logging.Info(string.Format("::InitializeSettings() - вход..."));
 
             if (RequestHelper.Client == null) {
                 RequestHelper.Client = new RequestProcessorClient();
@@ -507,7 +507,7 @@ namespace NewLauncher
             #region  Khryapin 2017/04/29
             if ((Application.Current as App).IsRelease == false) {
                 var endpoint = RequestHelper.Client.Endpoint;
-                Logging(string.Format("EndPoint=[Name={0}, ListenUri={1}, ListenUriMode={2}, Contract.Name={3}, Binding.Name={4}, Address.Uri={5}]"
+                CatalogApi.Logging.Info(string.Format("EndPoint=[Name={0}, ListenUri={1}, ListenUriMode={2}, Contract.Name={3}, Binding.Name={4}, Address.Uri={5}]"
                     , endpoint.Name
                     , endpoint.ListenUri.ToString()
                     , endpoint.ListenUriMode.ToString()
@@ -517,7 +517,7 @@ namespace NewLauncher
 
                 var clientCredentials = RequestHelper.Client.ClientCredentials;
                 if (!(RequestHelper.Client.ClientCredentials == null))
-                    Logging(string.Format("ClientCredentials=[Certificate.SerialNumber={0}, UserName={1}, HttpDigest.UserName={2}, HttpDigest.Password={3}, Windows.AllowedImpersonationLevel={4}]"
+                    CatalogApi.Logging.Info(string.Format("ClientCredentials=[Certificate.SerialNumber={0}, UserName={1}, HttpDigest.UserName={2}, HttpDigest.Password={3}, Windows.AllowedImpersonationLevel={4}]"
                         , (clientCredentials.ClientCertificate.Certificate == null) ? string.Empty : clientCredentials.ClientCertificate.Certificate.SerialNumber
                         , clientCredentials.UserName.UserName
                         , clientCredentials.HttpDigest.ClientCredential.UserName
@@ -527,7 +527,7 @@ namespace NewLauncher
                 else
                     ;
 
-                Logging(string.Format("RequestHelper.Client.State={0}", RequestHelper.Client.State.ToString()));
+                CatalogApi.Logging.Info(string.Format("RequestHelper.Client.State={0}", RequestHelper.Client.State.ToString()));
             } else
                 ;
 
@@ -546,7 +546,7 @@ namespace NewLauncher
             ServicePointManager.ServerCertificateValidationCallback +=
                 delegateCertificateValidationAlwaysTrust;
 
-            Logging(string.Format("::InitializeSettings() - успех..."));
+            CatalogApi.Logging.Info(string.Format("::InitializeSettings() - успех..."));
         }
 
         private static BitmapImage LoadImage(byte[] imageData)
@@ -750,7 +750,7 @@ namespace NewLauncher
         {
             try
             {
-                Logging(string.Format("::StartNewEventSession() - вход..."));
+                CatalogApi.Logging.Info(string.Format("::StartNewEventSession() - вход..."));
 
                 base.Closing += delegate(object sender, System.ComponentModel.CancelEventArgs args)
                 {
@@ -844,7 +844,7 @@ namespace NewLauncher
                     MainWindow.FreeOccupiedAccount();
                 };
 
-                Logging(string.Format("::StartNewEventSession() - успех..."));
+                CatalogApi.Logging.Info(string.Format("::StartNewEventSession() - успех..."));
             }
             catch (System.Exception ex)
             {
@@ -869,39 +869,6 @@ namespace NewLauncher
             {
                 this.news = value;
                 this.OnPropertyChanged("News");
-            }
-        }
-
-        public static void Logging(Exception e)
-        {
-            Logging(string.Format("{0} / {1}"
-                    , e.Message
-                    , e.StackTrace
-            ));
-        }
-
-        public static void Logging(string mes)
-        {
-            try {
-                var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
-
-                if (bool.Parse(ConfigurationManager.AppSettings[@"LogDebugToCurrentDirectory"]) == true) {
-                    FileInfo appFileInfo = new FileInfo(location.AbsolutePath);
-
-                    using (FileStream fileStream = new FileStream(string.Format("{0}.log"
-                            , System.IO.Path.GetFileNameWithoutExtension(appFileInfo.FullName))
-                                , FileMode.Append
-                                , FileAccess.Write)) {
-                        using (StreamWriter streamWriter = new StreamWriter(fileStream)) {
-                            streamWriter.WriteLine(string.Format("[{1:o}]{0}{2}"
-                                , Environment.NewLine
-                                , DateTime.Now
-                                , mes));
-                        }
-                    }
-                } else
-                    ;
-            } catch {
             }
         }
     }

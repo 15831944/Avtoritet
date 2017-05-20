@@ -42,7 +42,7 @@
             }
             catch (Exception e)
             {
-                MainWindow.Logging(e);
+                CatalogApi.Logging.Exception(e);
 
                 if (!(Application.Current == null))
                     Application.Current.Shutdown(-1);

@@ -537,7 +537,7 @@ namespace Gecko
       }
       catch (NullReferenceException ex)
       {
-       Debug.WriteLine("NullRefException from native code.\n" + ex.ToString());
+       GeckoFxCoreCatalogApi.Logging.Exception(ex);
       }
      }
      Marshal.Release(pInterfaceRequestor);
@@ -624,7 +624,7 @@ namespace Gecko
    }
    catch (Exception ex)
    {
-    Debug.WriteLine("Exception \n" + ex.ToString());
+    GeckoFxCoreCatalogApi.Logging.Exception(ex);
    }
    object result = (ppv != IntPtr.Zero) ? GetObjectForIUnknown(ppv) : null;
    int count = Marshal.Release(ppv);
@@ -666,7 +666,7 @@ namespace Gecko
    {
     endRef = Marshal.AddRef(ptr);
     if (endRef > startRef + 1)
-     Debug.WriteLine("mono GetObjectForIUknown bug has been fixed! Please delete this fix.");
+     GeckoFxCoreCatalogApi.Logging.Info("mono GetObjectForIUknown bug has been fixed! Please delete this fix.");
    }
 
    return ret;

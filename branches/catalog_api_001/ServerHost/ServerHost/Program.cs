@@ -1,3 +1,4 @@
+using CatalogApi;
 using RelayServer.Processors;
 using RequestHandlers.Helpers;
 using ServerHost.Helpers;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 
@@ -21,6 +23,8 @@ namespace ServerHost
 		{
             int running = 0;
 
+            string message = string.Empty;
+
 			try
 			{
 				using (ServiceHost proxyHost = new ServiceHost(typeof(RequestProcessor), new Uri[]
@@ -33,11 +37,18 @@ namespace ServerHost
 						new Uri(ConfigurationManager.AppSettings["StorageAddress"])
 					}))
 					{
+                        message = string.Format("Start proxy-application...{0}{1}"
+                            , Environment.NewLine
+                            , string.Concat(Enumerable.Repeat("*---", 16)));
+                                Logging.Info(message);
+
                         EventHandler fHostClosed = (object obj, EventArgs ev) => {
                             Uri[] uriAddresses = new Uri[(obj as ServiceHost).BaseAddresses.Count];
                             (obj as ServiceHost).BaseAddresses.CopyTo(uriAddresses, 0);
 
-                            ConsoleHelper.Trace(string.Format("Service to uri addresses: {0} has closed...", uriAddresses[0].OriginalString));
+                            message = string.Format("Service to uri addresses: {0} has closed...", uriAddresses[0].OriginalString);
+                            ConsoleHelper.Trace(message);
+                            Logging.Info(message);
 
                             running--;
                         };
@@ -52,11 +63,15 @@ namespace ServerHost
 						};
 
 						Program.SetupHost(proxyHost, metadataBehavior, fHostClosed);
-                        ConsoleHelper.Info(string.Format("Proxy Address: {0}", new Uri(ConfigurationManager.AppSettings["ProxyAddress"]).Authority));
+                        message = string.Format("Proxy Address: {0}", new Uri(ConfigurationManager.AppSettings["ProxyAddress"]).Authority);
+                        ConsoleHelper.Info(message);
+                        Logging.Info(message);
                         running ++;
 
                         Program.SetupHost(storageHost, metadataBehavior, fHostClosed);
-                        ConsoleHelper.Info(string.Format("Storage Address: {0}", new Uri(ConfigurationManager.AppSettings["StorageAddress"]).Authority));
+                        message = string.Format("Storage Address: {0}", new Uri(ConfigurationManager.AppSettings["StorageAddress"]).Authority);
+                        ConsoleHelper.Info(message);
+                        Logging.Info(message);
                         running++;
 
                         while (running > 0)
@@ -91,17 +106,14 @@ namespace ServerHost
 			catch (Exception ex)
 			{
 				ErrorLogHelper.AddErrorInLog("Main()", string.Format("{0} | {1}", ex.Message , ex.StackTrace));
-				using (FileStream fileStream = new FileStream("ServerHost_Exception.txt", FileMode.Append, FileAccess.Write))
-				{
-					using (StreamWriter streamWriter = new StreamWriter(fileStream))
-					{
-						streamWriter.Write("[{0}]{1}{2} | {3}"
-                            , DateTime.UtcNow, Environment.NewLine
-                            , ex.Message, ex.StackTrace);
-					}
-				}
+                CatalogApi.Logging.Exception(ex, true);
 				Environment.Exit(0);
-			}
+			} finally {
+                message = string.Format("Exit from proxy-application...{0}{1}"
+                    , Environment.NewLine
+                    , string.Concat(Enumerable.Repeat("*---", 16)));
+                Logging.Info(message);
+            }
 		}
 
 		private static void StopHost(ICommunicationObject host)
