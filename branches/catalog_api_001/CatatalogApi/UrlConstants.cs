@@ -2,6 +2,71 @@ namespace CatalogApi
 {
     public static class UrlConstants
     {
+        public enum Key {
+            #region SERVICE
+            WEB_PROXY
+            #endregion
+
+            #region BMW
+            , BmwGroupRoot
+            , BMW_WebETKStart
+            , BMW_Internet
+            , BMW_WebETKStartNodeRoot
+            #endregion
+
+            #region Citroen
+            , CitroenRoot
+            , CitroenLoginDo
+            , CitroenLogoutTo
+            #endregion
+
+            #region Peugeot
+            , PeugeotRoot
+            , PeugeotLoginDo
+            , PeugeotLogoutTo
+            #endregion
+
+            #region partslink24.com
+            , PartslinkRoot
+            , Partslink24Root
+            , Partslink24Com
+            , Partslink24ComPartslink24UserLoginDo
+            , Partslink24ComPartslink24UserLogoutTo
+            , Partslink24ComPartslink24BrandMenuDo
+            , Partslink24ComPartslink24AjaxLoginAction
+            , Partslink24ComFrame
+            , PartsLink24FormRequestKeyToken
+            , PartsLink24FormRequestValueToken
+            #endregion
+
+            #region chevrolet/opel
+            , ChevroletOpelGroupRoot
+            , ChevroletOpelGroup
+            , ChevroletOpelGroupUserLoginDo
+            , ChevroletOpelGroupUserLogoutTo
+            #endregion
+
+            #region Cargo bull
+            , CargoBullRoot
+            , CargoBullArticleSearch
+            #endregion
+
+            , EtkaRoot
+            , FordRoot
+            , HyundaiRoot
+            , Kia_file_root
+            , Kia_Http_root
+            , MazdaRoot
+            , MercedezRoot
+            , VinOnlineRoot
+            , GigantGroupRoot
+            , RangerRoot
+            , SafAxlesRoot
+            , SsangYongRoot
+
+            ,
+        }
+
         #region SERVICE
         public const string WEB_PROXY = "http://40d002f8ae14.sn.mynetname.net:5190";
         #endregion
@@ -29,12 +94,13 @@ namespace CatalogApi
         public const string PartslinkRoot = "partslink";
         public const string Partslink24Root = "partslink24";
         public const string Partslink24Com = "https://www.partslink24.com";
+        public const string Partslink24ComPartslink24UserLoginDo = "https://www.partslink24.com/partslink24/user/login.do";
         public const string Partslink24ComPartslink24UserLogoutTo = "https://www.partslink24.com/partslink24/user/logout.do";
         public const string Partslink24ComFrame = "https://www.partslink24.com/partslink24/launchCatalog.do?service=bentley_parts";
-        public const string Partslink24ComPartslink24UserLoginDo = "https://www.partslink24.com/partslink24/user/login.do";
         public const string Partslink24ComPartslink24BrandMenuDo = "https://www.partslink24.com/partslink24/user/brandMenu.do";
         public const string Partslink24ComPartslink24AjaxLoginAction = "https://www.partslink24.com/partslink24/login-ajax!login.action";
-        public const string FormRequest = "org.apache.struts.taglib.html.TOKEN=0ee9d4e3a624fd1989c11c00449c9394&" + "loginAction=formLogin&accountLogin=ru-735778&userLogin=admin&password=Hugoboss5500";
+        public const string PartsLink24FormRequestKeyToken = "org.apache.struts.taglib.html.TOKEN";
+        public const string PartsLink24FormRequestValueToken = "7bfe4fc414c2621c309b7960a92d012e";
         #endregion
 
         #region chevrolet/opel

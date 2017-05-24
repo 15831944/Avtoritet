@@ -292,7 +292,7 @@ namespace BrowserExtension
                     browserExtendedNavigatingEventArgs.Cancel = true;
                 } else {
                     if ((!(browserExtendedNavigatingEventArgs.Url == null))
-                        && (browserExtendedNavigatingEventArgs.Url.LocalPath.Contains(CatalogApi.Catalogs.Blanket) == true)) {
+                        && (browserExtendedNavigatingEventArgs.Url.LocalPath.Contains(CatalogApi.CatalogConstants.Blanket) == true)) {
                         base.Close();
                     } else
                         ;

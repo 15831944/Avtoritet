@@ -761,13 +761,13 @@ namespace NewLauncher.View
                 this.Captcha.Text = "Загрузка...";
                 this.Message.Text = "Пожалуйста, ждите...";
 
-                if (this._url.Contains(CatalogApi.Catalogs.VolvoImpact))
+                if (this._url.Contains(CatalogApi.CatalogConstants.VolvoImpact))
                 {
                     flag = true;
                     this.DelayForNextNavigation(this.IeHost, 2000, 3000);
                 }
 
-                if (this._url.Contains(CatalogApi.Catalogs.RenoImpact))
+                if (this._url.Contains(CatalogApi.CatalogConstants.RenoImpact))
                 {
                     flag = true;
                     this.DelayForNextNavigation(this.IeHost, 500, 3000);
@@ -1093,38 +1093,38 @@ namespace NewLauncher.View
                         (
                             (
                                 (
-                                    (this._url.Contains(CatalogApi.Catalogs.AlfaRomeo)
-                                        || this._url.Contains(CatalogApi.Catalogs.Fiat)
+                                    (this._url.Contains(CatalogApi.CatalogConstants.AlfaRomeo)
+                                        || this._url.Contains(CatalogApi.CatalogConstants.Fiat)
                                     )
-                                    || (this._url.Contains(CatalogApi.Catalogs.GeneralMotors)
-                                            || this._url.Contains(CatalogApi.Catalogs.FiatProfessional)
+                                    || (this._url.Contains(CatalogApi.CatalogConstants.GeneralMotors)
+                                            || this._url.Contains(CatalogApi.CatalogConstants.FiatProfessional)
                                     )
                                 )
                                 || (
-                                    (this._url.Contains(CatalogApi.Catalogs.Lancia)
-                                        || this._url.Contains(CatalogApi.Catalogs.Abarth)
+                                    (this._url.Contains(CatalogApi.CatalogConstants.Lancia)
+                                        || this._url.Contains(CatalogApi.CatalogConstants.Abarth)
                                     )
                                     || (
-                                        this._url.Contains(CatalogApi.Catalogs.Fiat)
-                                            || this._url.Contains(CatalogApi.Catalogs.Opel_main)
+                                        this._url.Contains(CatalogApi.CatalogConstants.Fiat)
+                                            || this._url.Contains(CatalogApi.CatalogConstants.Opel)
                                     )
                                 )
                             )
                             || (
                                 (
-                                    (this._url.Contains(CatalogApi.Catalogs.Volvo)
-                                        || this._url.Contains(CatalogApi.Catalogs.Rover)
+                                    (this._url.Contains(CatalogApi.CatalogConstants.Volvo)
+                                        || this._url.Contains(CatalogApi.CatalogConstants.Rover)
                                     )
-                                    || (this._url.Contains(CatalogApi.Catalogs.Chrysler)
-                                        || this._url.Contains(CatalogApi.Catalogs.Chevrolet)
+                                    || (this._url.Contains(CatalogApi.CatalogConstants.Chrysler)
+                                        || this._url.Contains(CatalogApi.CatalogConstants.Chevrolet)
                                     )
                                 )
-                                || (this._url.Contains(CatalogApi.Catalogs.IvecoTruck)
-                                    || this._url.Contains(CatalogApi.Catalogs.IvecoBus)
+                                || (this._url.Contains(CatalogApi.CatalogConstants.IvecoTruck)
+                                    || this._url.Contains(CatalogApi.CatalogConstants.IvecoBus)
                                 )
                             )
                         )
-                    || (this._url.Contains(CatalogApi.Catalogs.Blanket) == true)
+                    || (this._url.Contains(CatalogApi.CatalogConstants.Blanket) == true)
                 )
                 {
                     flag = true;
@@ -1281,7 +1281,7 @@ namespace NewLauncher.View
                 else
                 {
                     if ((browserExtendedNavigatingEventArgs.Url != null)
-                        && browserExtendedNavigatingEventArgs.Url.LocalPath.Contains(CatalogApi.Catalogs.Blanket) == true)
+                        && browserExtendedNavigatingEventArgs.Url.LocalPath.Contains(CatalogApi.CatalogConstants.Blanket) == true)
                     {
                         base.Close();
                     }
@@ -1432,7 +1432,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region AlfaRomeo
-                if (this._url.Contains(CatalogApi.Catalogs.AlfaRomeo))
+                if (this._url.Contains(CatalogApi.CatalogConstants.AlfaRomeo))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1440,7 +1440,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region OpelMain
-                if (this._url.Contains(CatalogApi.Catalogs.Opel_main))
+                if (this._url.Contains(CatalogApi.CatalogConstants.Opel))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1448,8 +1448,8 @@ namespace NewLauncher.View
                 #endregion
 
                 #region IvecoTruck
-                if (this._url.Contains(CatalogApi.Catalogs.IvecoTruck)
-                    || this._url.Contains(CatalogApi.Catalogs.IvecoBus))
+                if (this._url.Contains(CatalogApi.CatalogConstants.IvecoTruck)
+                    || this._url.Contains(CatalogApi.CatalogConstants.IvecoBus))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1457,7 +1457,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Volvo
-                if (this._url.Contains(CatalogApi.Catalogs.Volvo))
+                if (this._url.Contains(CatalogApi.CatalogConstants.Volvo))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1465,7 +1465,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Volvo Impact
-                if (this._url.Contains(CatalogApi.Catalogs.VolvoImpact))
+                if (this._url.Contains(CatalogApi.CatalogConstants.VolvoImpact))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1473,7 +1473,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Reno Impact
-                if (this._url.Contains(CatalogApi.Catalogs.RenoImpact))
+                if (this._url.Contains(CatalogApi.CatalogConstants.RenoImpact))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1481,7 +1481,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Rover
-                if (this._url.Contains(CatalogApi.Catalogs.Rover))
+                if (this._url.Contains(CatalogApi.CatalogConstants.Rover))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1489,7 +1489,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Chrysler
-                if (this._url.Contains(CatalogApi.Catalogs.Chrysler))
+                if (this._url.Contains(CatalogApi.CatalogConstants.Chrysler))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1497,7 +1497,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Chevrolet
-                if (this._url.Contains(CatalogApi.Catalogs.Chevrolet))
+                if (this._url.Contains(CatalogApi.CatalogConstants.Chevrolet))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1505,7 +1505,7 @@ namespace NewLauncher.View
                 #endregion
 
 
-                if (this._url.Contains(CatalogApi.Catalogs.Blanket) == true) {
+                if (this._url.Contains(CatalogApi.CatalogConstants.Blanket) == true) {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
                 } else
@@ -1604,7 +1604,7 @@ namespace NewLauncher.View
                 this.IeWeb.StartNewWindow += new EventHandler<BrowserExtendedNavigatingEventArgs>(this.IeWebOnStartNewWindow);
                 this.IeWeb.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(this.IeWebOnDocumentCompleted);
                 this.IeWeb.IsWebBrowserContextMenuEnabled = false;
-                if (this._url.Contains(CatalogApi.Catalogs.RenoImpact))
+                if (this._url.Contains(CatalogApi.CatalogConstants.RenoImpact))
                 {
                     this.IeWeb.IsWebBrowserContextMenuEnabled = true;
                 }

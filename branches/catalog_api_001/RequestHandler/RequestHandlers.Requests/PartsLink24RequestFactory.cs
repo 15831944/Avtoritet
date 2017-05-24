@@ -37,7 +37,8 @@ namespace RequestHandlers.Requests
 			ConsoleHelper.Info("Partslink Password: " + password);
 			List<KeyValuePair<string, string>> postData = new List<KeyValuePair<string, string>>
 			{
-				new KeyValuePair<string, string>("org.apache.struts.taglib.html.TOKEN", "7bfe4fc414c2621c309b7960a92d012e"),
+				new KeyValuePair<string, string>(CatalogApi.UrlConstants.PartsLink24FormRequestKeyToken
+                    , CatalogApi.UrlConstants.PartsLink24FormRequestValueToken),
 				new KeyValuePair<string, string>("loginAction", ""),
 				new KeyValuePair<string, string>("loginBean.accountLogin", id),
 				new KeyValuePair<string, string>("loginBean.userLogin", login),
