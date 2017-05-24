@@ -1,6 +1,7 @@
 using RequestHandlers.Handlers;
 using System;
 using RequestHandlers.Helpers;
+using CatalogApi.Settings;
 
 namespace RequestHandlers
 {
@@ -19,11 +20,11 @@ namespace RequestHandlers
 			{
 				result = new PeugeotRequestHandler(login, password);
 			}
-			else if (url.Contains(CatalogApi.UrlConstants.Partslink24Root))
+			else if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.Partslink24Root]))
 			{
 				result = new PartsLink24RequestHandler(login, password);
 			}
-			else if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
+			else if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.ChevroletOpelGroupRoot]))
 			{
 			    result = new ChevroletRequestHandler(login, password);
 			    

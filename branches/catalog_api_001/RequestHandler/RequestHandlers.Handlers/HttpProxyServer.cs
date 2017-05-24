@@ -1,3 +1,4 @@
+using CatalogApi.Settings;
 using RequestHandlers.Helpers;
 using System;
 using System.Net;
@@ -11,7 +12,7 @@ namespace RequestHandlers.Handlers
 		public static async Task<HttpResponseMessage> SendRequest(HttpRequestMessage httpRequestMessage, CookieContainer cookieContainer)
 		{
 			int arg_54_0 = 0;
-			//httpRequestMessage.RequestUri.AbsoluteUri.IndexOf(string.Format("{0}.com", CatalogApi.UrlConstants.Partslink24Root));
+			//httpRequestMessage.RequestUri.AbsoluteUri.IndexOf(string.Format("{0}.com", ResourceManager.Urls[CatalogApi.UrlConstants.Key.Partslink24Root]));
 
             HttpResponseMessage result;
 			if (arg_54_0 != 0)
@@ -47,14 +48,14 @@ namespace RequestHandlers.Handlers
 
 		private static HttpClientHandler CreateClientHandler2(CookieContainer cookieContainer)
 		{
-			ConsoleHelper.Info(string.Format("WebProxy - {0}", CatalogApi.UrlConstants.WEB_PROXY));
+			ConsoleHelper.Info(string.Format("WebProxy - {0}", ResourceManager.Urls[CatalogApi.UrlConstants.Key.WEB_PROXY]));
 			return new HttpClientHandler
 			{
 				AllowAutoRedirect = true,
 				ClientCertificateOptions = ClientCertificateOption.Automatic,
 				UseCookies = true,
 				CookieContainer = cookieContainer,
-				Proxy = new WebProxy(CatalogApi.UrlConstants.WEB_PROXY, false),
+				Proxy = new WebProxy(ResourceManager.Urls[CatalogApi.UrlConstants.Key.WEB_PROXY], false),
 				UseProxy = true
 			};
 		}

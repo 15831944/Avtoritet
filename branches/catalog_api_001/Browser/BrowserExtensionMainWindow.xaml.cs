@@ -31,6 +31,7 @@ using BrowserExtension.Manager;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Configuration;
+using CatalogApi.Settings;
 
 namespace BrowserExtension
 {
@@ -113,7 +114,7 @@ namespace BrowserExtension
                             // режим slave
                                 CatalogApi.Logging.Info(String.Format("Browser::ctor () - read local session settings(file={0}) - ???..."
                                     , CommandArgs.This[CommandArgs.KEYS.session]));
-                                if (File.Exists(CommandArgs.This[CommandArgs.KEYS.session]) == true) {
+                                if (System.IO.File.Exists(CommandArgs.This[CommandArgs.KEYS.session]) == true) {
                                     using (FileStream fileStream =
                                         new FileStream(CommandArgs.This[CommandArgs.KEYS.session], FileMode.Open, FileAccess.Read)) {
                                         using (StreamReader streamReader = new StreamReader(fileStream)) {
@@ -292,7 +293,7 @@ namespace BrowserExtension
                     browserExtendedNavigatingEventArgs.Cancel = true;
                 } else {
                     if ((!(browserExtendedNavigatingEventArgs.Url == null))
-                        && (browserExtendedNavigatingEventArgs.Url.LocalPath.Contains(CatalogApi.CatalogConstants.Blanket) == true)) {
+                        && (browserExtendedNavigatingEventArgs.Url.LocalPath.Contains(ResourceManager.Catalogs[CatalogApi.CatalogConstants.Key.Blanket]) == true)) {
                         base.Close();
                     } else
                         ;

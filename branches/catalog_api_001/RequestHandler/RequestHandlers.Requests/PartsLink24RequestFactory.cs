@@ -1,3 +1,4 @@
+using CatalogApi.Settings;
 using RequestHandlers.Helpers;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace RequestHandlers.Requests
 			{
 				Content = PartsLink24RequestFactory.FormUrlEncodedContentForLogin(login, password),
 				Method = HttpMethod.Post,
-				RequestUri = new Uri(CatalogApi.UrlConstants.Partslink24ComPartslink24AjaxLoginAction)
+				RequestUri = new Uri(ResourceManager.Urls[CatalogApi.UrlConstants.Key.Partslink24ComPartslink24AjaxLoginAction])
 
             };
 		}
@@ -23,7 +24,7 @@ namespace RequestHandlers.Requests
 			return new HttpRequestMessage
 			{
 				Method = HttpMethod.Get,
-				RequestUri = new Uri(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo)
+				RequestUri = new Uri(ResourceManager.Urls[CatalogApi.UrlConstants.Key.Partslink24ComPartslink24UserLogoutTo])
 			};
 		}
 
@@ -37,8 +38,9 @@ namespace RequestHandlers.Requests
 			ConsoleHelper.Info("Partslink Password: " + password);
 			List<KeyValuePair<string, string>> postData = new List<KeyValuePair<string, string>>
 			{
-				new KeyValuePair<string, string>(CatalogApi.UrlConstants.PartsLink24FormRequestKeyToken
-                    , CatalogApi.UrlConstants.PartsLink24FormRequestValueToken),
+				new KeyValuePair<string, string>(
+                    ResourceManager.Urls[CatalogApi.UrlConstants.Key.PartsLink24FormRequestKeyToken]
+                    , ResourceManager.Urls[CatalogApi.UrlConstants.Key.PartsLink24FormRequestValueToken]),
 				new KeyValuePair<string, string>("loginAction", ""),
 				new KeyValuePair<string, string>("loginBean.accountLogin", id),
 				new KeyValuePair<string, string>("loginBean.userLogin", login),

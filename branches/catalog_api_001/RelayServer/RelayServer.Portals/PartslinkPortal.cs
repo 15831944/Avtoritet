@@ -1,3 +1,4 @@
+using CatalogApi.Settings;
 using Newtonsoft.Json;
 //using RelayServer.DataContext;
 using RelayServer.Helpers;
@@ -46,7 +47,7 @@ namespace RelayServer.Portals
                                 + "WHERE(dbo.Provider.Uri LIKE N'%{2}%') AND (dbo.ProviderAccount.Enable = 1)"
                                 , "          "
                                 , "\r\n"
-                                , CatalogApi.UrlConstants.PartslinkRoot)
+                                , ResourceManager.Urls[CatalogApi.UrlConstants.Key.PartslinkRoot])
                             //GetQueryCreditionals(providerId)
                                 ;
 
@@ -131,7 +132,7 @@ namespace RelayServer.Portals
                             , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                             , resHttpResponseMessage.StatusCode));
 
-                        this.CloseSession(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo);
+                        this.CloseSession(ResourceManager.Urls[CatalogApi.UrlConstants.Key.Partslink24ComPartslink24UserLogoutTo]);
                         PartslinkPortal.partslinkIsBlocked = true;
                     } else
                     {
@@ -139,7 +140,7 @@ namespace RelayServer.Portals
                     // без разницы force или не force, но сессию возвращать надо!
                     //if (forceSession == true) {
                         // url для подтверждения сессии
-                        url_session = CatalogApi.UrlConstants.Partslink24ComPartslink24UserLoginDo;
+                        url_session = ResourceManager.Urls[CatalogApi.UrlConstants.Key.Partslink24ComPartslink24UserLoginDo];
 
                         Task<HttpResponseMessage> session2 = reqHandler.GetSessionAsync(url_session, container);
                         session2.Wait();
@@ -188,7 +189,7 @@ namespace RelayServer.Portals
                                 , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                                 , resHttpResponseMessage.StatusCode));
 
-                            this.CloseSession(CatalogApi.UrlConstants.Partslink24ComPartslink24UserLogoutTo);
+                            this.CloseSession(ResourceManager.Urls[CatalogApi.UrlConstants.Key.Partslink24ComPartslink24UserLogoutTo]);
                             PartslinkPortal.partslinkIsBlocked = true;
                         } else
                             ;

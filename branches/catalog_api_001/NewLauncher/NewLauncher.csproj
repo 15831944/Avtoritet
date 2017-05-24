@@ -196,6 +196,7 @@
     <Compile Include="GroupBox.cs">
       <DependentUpon>DataContext.tt</DependentUpon>
     </Compile>
+    <Compile Include="Helper\FileAppVersionHelper.cs" />
     <Compile Include="Links.cs">
       <DependentUpon>DataContext.tt</DependentUpon>
     </Compile>
@@ -281,7 +282,6 @@
     <Compile Include="Features\PersistentConnection\ConnectionClient.cs" />
     <Compile Include="Helper\ButtonHelpers.cs" />
     <Compile Include="Helper\ErrorLogHelper.cs" />
-    <Compile Include="Helper\FileHelper.cs" />
     <Compile Include="Helper\GridExt.cs" />
     <Compile Include="Helper\GridHelpers.cs" />
     <Compile Include="Helper\HtmlHelper.cs" />

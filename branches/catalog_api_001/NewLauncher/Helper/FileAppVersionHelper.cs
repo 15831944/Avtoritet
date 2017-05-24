@@ -5,15 +5,15 @@
     using System;
     using System.IO;
 
-    public static class FileHelper
+    public static class FileAppVersionHelper
     {
-        public static void CreateDirectoryIfNotExist(string dirPath)
-        {
-            if (!Directory.Exists(dirPath))
-            {
-                Directory.CreateDirectory(dirPath);
-            }
-        }
+        //public static void CreateDirectoryIfNotExist(string dirPath)
+        //{
+        //    if (!Directory.Exists(dirPath))
+        //    {
+        //        Directory.CreateDirectory(dirPath);
+        //    }
+        //}
 
         public static void CreateFileIfNotExist(string filePath)
         {
@@ -26,18 +26,18 @@
             }
         }
 
-        public static string OpenFile(string filePath)
-        {
-            string str;
-            using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-            {
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    str = reader.ReadToEnd();
-                }
-            }
-            return str;
-        }
+        //public static string OpenFile(string filePath)
+        //{
+        //    string str;
+        //    using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        //    {
+        //        using (StreamReader reader = new StreamReader(stream))
+        //        {
+        //            str = reader.ReadToEnd();
+        //        }
+        //    }
+        //    return str;
+        //}
 
         public static void UpdateFile(string filePath, string version)
         {

@@ -1,3 +1,4 @@
+using CatalogApi.Settings;
 using RequestHandlers.Helpers;
 using RequestHandlers.Requests;
 using System;
@@ -22,7 +23,7 @@ namespace RequestHandlers.Handlers
         protected override HttpRequestMessage createLoginRequest()
         {
             return ChevroletRequestFactory.CreateLoginRequest(
-                string.Format("{0}", CatalogApi.UrlConstants.ChevroletOpelGroup)
+                string.Format("{0}", ResourceManager.Urls[CatalogApi.UrlConstants.Key.ChevroletOpelGroup])
                 , m_login
                 , m_password);
         }

@@ -2,6 +2,7 @@
 using System.Linq;
 using Newtonsoft.Json;
 using System;
+using System.Xml;
 
 namespace CatalogApi.Settings
 {
@@ -10,6 +11,10 @@ namespace CatalogApi.Settings
         private static readonly string ResourceFolder;
 
         private static readonly string UpdateFileArchive;
+
+        public static CatalogConstants Catalogs { get; }
+
+        public static UrlConstants Urls { get; }
 
         public static string Root
         {
@@ -28,6 +33,9 @@ namespace CatalogApi.Settings
 
         static ResourceManager()
         {
+            //XmlDocument xmlDoc;
+            string json = string.Empty;
+
             if (ConfigurationManager.AppSettings.Keys.Cast<string>().Contains("UpdateDirectory") == true)
                 UpdateDirectory = ConfigurationManager.AppSettings["UpdateDirectory"]; // "Temp"
 
@@ -36,6 +44,25 @@ namespace CatalogApi.Settings
 
             if (ConfigurationManager.AppSettings.Keys.Cast<string>().Contains("UpdateFileArchive") == true)
                 UpdateFileArchive = new CatalogApi.Settings.File(ConfigurationManager.AppSettings["UpdateFileArchive"]).Name;
+
+            //xmlDoc = new XmlDocument();
+            if (ConfigurationManager.AppSettings.Keys.Cast<string>().Contains("CatalogConstants") == true) {
+                //xmlDoc.Load(new CatalogApi.Settings.File(ConfigurationManager.AppSettings["CatalogConstants"]).Name);
+                json = CodeTools.Helpers.IoHelper.OpenFile(new CatalogApi.Settings.File(ConfigurationManager.AppSettings["CatalogConstants"]).Name);
+            } else
+                ;
+            //Catalogs = new CatalogConstants(xmlDoc);
+            Catalogs = new CatalogConstants(json);
+
+            //xmlDoc = new XmlDocument();
+            json = string.Empty;
+            if (ConfigurationManager.AppSettings.Keys.Cast<string>().Contains("UrlConstants") == true) {
+                //xmlDoc.Load(new CatalogApi.Settings.File(ConfigurationManager.AppSettings["UrlConstants"]).Name);
+                json = CodeTools.Helpers.IoHelper.OpenFile(new CatalogApi.Settings.File(ConfigurationManager.AppSettings["UrlConstants"]).Name);
+            } else
+                ;
+            //Urls = new UrlConstants(xmlDoc);
+            Urls = new UrlConstants(json);
 
             Prepare();
         }
@@ -87,6 +114,8 @@ namespace CatalogApi.Settings
 
         public string Name { get; }
 
+        public string NameWithoutExt { get; }
+
         public TYPE Type { get; }
 
         public File(string config_value)
@@ -96,7 +125,8 @@ namespace CatalogApi.Settings
             if (values.Length == 2)
                 if (Enum.IsDefined(typeof(TYPE), values[1].ToUpperInvariant()) == true) {
                     Type = (TYPE)Enum.Parse(typeof(TYPE), values[1].ToUpperInvariant());
-                    Name = string.Format("{0}.{1}", values[0], Type.ToString().ToLowerInvariant());
+                    NameWithoutExt = string.Format("{0}", values[0]);
+                    Name = string.Format("{0}.{1}", NameWithoutExt, Type.ToString().ToLowerInvariant());
                 } else
                 // неизвестный тип
                     ;

@@ -1,4 +1,5 @@
 ﻿using CatalogApi;
+using CatalogApi.Settings;
 using Gecko;
 using Gecko.DOM;
 using Gecko.Events;
@@ -169,7 +170,7 @@ namespace NewLauncher.View
             try
             {
                 BrowserDialogView view;
-                if (geckoCreateWindow2EventArgs.Uri.Contains(CatalogApi.UrlConstants.Partslink24Root) == true)
+                if (geckoCreateWindow2EventArgs.Uri.Contains(ResourceManager.Urls[UrlConstants.Key.Partslink24Root]) == true)
                 {
                     if ((geckoCreateWindow2EventArgs.Uri != null) && geckoCreateWindow2EventArgs.Uri.Contains("popupcheck.html"))
                     {
@@ -192,8 +193,8 @@ namespace NewLauncher.View
                     }
                 }
 
-                if (geckoCreateWindow2EventArgs.Uri.Contains(CatalogApi.UrlConstants.PeugeotRoot)
-                    || geckoCreateWindow2EventArgs.Uri.Contains(CatalogApi.UrlConstants.CitroenRoot))
+                if (geckoCreateWindow2EventArgs.Uri.Contains(ResourceManager.Urls[UrlConstants.Key.PeugeotRoot])
+                    || geckoCreateWindow2EventArgs.Uri.Contains(ResourceManager.Urls[UrlConstants.Key.CitroenRoot]))
                 {
                     geckoCreateWindow2EventArgs.Cancel = true;
                     view = new BrowserDialogView
@@ -207,7 +208,7 @@ namespace NewLauncher.View
                     view.Show();
                 }
 
-                if (geckoCreateWindow2EventArgs.Uri.Contains(CatalogApi.UrlConstants.MazdaRoot) == true) {
+                if (geckoCreateWindow2EventArgs.Uri.Contains(ResourceManager.Urls[UrlConstants.Key.MazdaRoot]) == true) {
                     geckoCreateWindow2EventArgs.Cancel = true;
                 } else
                     ;
@@ -218,7 +219,7 @@ namespace NewLauncher.View
                     geckoCreateWindow2EventArgs.Cancel = true;
                 }
 
-                if (geckoCreateWindow2EventArgs.Uri.Contains(CatalogApi.UrlConstants.SsangYongRoot) == true)
+                if (geckoCreateWindow2EventArgs.Uri.Contains(ResourceManager.Urls[UrlConstants.Key.SsangYongRoot]) == true)
                 {
                     geckoCreateWindow2EventArgs.Cancel = true;
                     view = new BrowserDialogView
@@ -258,8 +259,8 @@ namespace NewLauncher.View
 #endif
 
                 #region wpc.mobis.co.kr
-                if ((this._url.Contains(CatalogApi.UrlConstants.Kia_Http_root) == true)
-                    || (this._url.Contains(CatalogApi.UrlConstants.HyundaiRoot) == true)) {
+                if ((this._url.Contains(ResourceManager.Urls[UrlConstants.Key.Kia_Http_root]) == true)
+                    || (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.HyundaiRoot]) == true)) {
                     if ((from x in this.GeckoWeb.Document.GetElementsByTagName("form")
                         where x.GetAttribute("name").Equals("CheckForm")
                         select x).Any<GeckoHtmlElement>()) {
@@ -292,10 +293,10 @@ namespace NewLauncher.View
                 #endregion
 
                 #region partslink24
-                if (this._url.Contains(CatalogApi.UrlConstants.Partslink24Root))
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.Partslink24Root]))
                 {
                     if (this.PartsLink24NeedRefresh(geckoEventArgs.Uri) == true) {
-                        if (this.SetCookiesToPath(string.Format(".{0}.com", CatalogApi.UrlConstants.Partslink24Root)) == true) {
+                        if (this.SetCookiesToPath(string.Format(".{0}.com", ResourceManager.Urls[UrlConstants.Key.Partslink24Root])) == true) {
                             //this.GeckoWeb.Navigate(geckoEventArgs.Uri.AbsoluteUri);
                             this.GeckoWeb.Navigate(this._url);
                         } else {
@@ -458,14 +459,14 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Saf-axles
-                if (this._url.Contains(string.Format("{0}", CatalogApi.UrlConstants.SafAxlesRoot)) == true) {
+                if (this._url.Contains(string.Format("{0}", ResourceManager.Urls[UrlConstants.Key.SafAxlesRoot])) == true) {
                     this.DelayForNextNavigation(this.GeckoHost, 300, 500);
                 } else
                     ;
                 #endregion
 
                 #region Inforanger.Roadrenger
-                if (this._url.Contains(string.Format("{0}", CatalogApi.UrlConstants.RangerRoot)) == true) {
+                if (this._url.Contains(string.Format("{0}", ResourceManager.Urls[UrlConstants.Key.RangerRoot])) == true) {
                     FilterContent(this.GeckoWeb.Document, "td", "nav_top");
                     this.DelayForNextNavigation(this.GeckoHost, 300, 500);
                 } else
@@ -473,14 +474,14 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Gigant-group
-                if (this._url.Contains(string.Format("{0}.com", CatalogApi.UrlConstants.GigantGroupRoot)) == true) {
+                if (this._url.Contains(string.Format("{0}.com", ResourceManager.Urls[UrlConstants.Key.GigantGroupRoot])) == true) {
                     this.DelayForNextNavigation(this.GeckoHost, 300, 500);
                 } else
                     ;
                 #endregion
 
                 #region ssangyong
-                if (this._url.Contains(CatalogApi.UrlConstants.SsangYongRoot) == true)
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.SsangYongRoot]) == true)
                 {
                     GeckoElement element11 = this.GeckoWeb.Document.GetElementById("login");
                     if (element11 != null) {
@@ -543,10 +544,10 @@ namespace NewLauncher.View
             IEnumerable<GeckoElement> enumerable;
 
             #region Citroen
-            if (this._url.Contains(CatalogApi.UrlConstants.CitroenRoot)) {
+            if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.CitroenRoot])) {
                 if ((this.GeckoWeb.Document.Body.InnerHtml.IndexOf("Your session time expired. Please reconnect.") > 0)
                     || (this.GeckoWeb.Url.AbsoluteUri.Contains("index.jsp") == true)) {
-                    if (this.RefreshSession(string.Format(".{0}.com", CatalogApi.UrlConstants.CitroenRoot)) == true) {
+                    if (this.RefreshSession(string.Format(".{0}.com", ResourceManager.Urls[UrlConstants.Key.CitroenRoot])) == true) {
                         this.GeckoWeb.Navigate(this._url);
                     } else
                         ;
@@ -581,10 +582,10 @@ namespace NewLauncher.View
             #endregion
 
             #region Peugeot
-            if (this._url.Contains(CatalogApi.UrlConstants.PeugeotRoot)) {
+            if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.PeugeotRoot])) {
                 if ((this.GeckoWeb.Document.Body.InnerHtml.IndexOf("Your session time expired. Please reconnect.") > 0)
                     || (this.GeckoWeb.Url.AbsoluteUri.Contains("index.jsp") == true)) {
-                    if (this.RefreshSession(string.Format(".{0}.com", CatalogApi.UrlConstants.PeugeotRoot)) == true) {
+                    if (this.RefreshSession(string.Format(".{0}.com", ResourceManager.Urls[UrlConstants.Key.PeugeotRoot])) == true) {
                         this.GeckoWeb.Navigate(this._url);
                     } else
                         ;
@@ -644,8 +645,8 @@ namespace NewLauncher.View
                 , geckoNavigatingEventArgs.Uri.AbsoluteUri));
 #endif
 
-            if ((this._url.Contains(CatalogApi.UrlConstants.EtkaRoot) == true)
-                && (geckoNavigatingEventArgs.Uri.AbsoluteUri.Contains(string.Format("{0}.ru/shop", CatalogApi.UrlConstants.EtkaRoot)) == true))
+            if ((this._url.Contains(ResourceManager.Urls[UrlConstants.Key.EtkaRoot]) == true)
+                && (geckoNavigatingEventArgs.Uri.AbsoluteUri.Contains(string.Format("{0}.ru/shop", ResourceManager.Urls[UrlConstants.Key.EtkaRoot])) == true))
             {
                 geckoNavigatingEventArgs.Cancel = true;
             }
@@ -761,20 +762,20 @@ namespace NewLauncher.View
                 this.Captcha.Text = "Загрузка...";
                 this.Message.Text = "Пожалуйста, ждите...";
 
-                if (this._url.Contains(CatalogApi.CatalogConstants.VolvoImpact))
+                if (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.VolvoImpact]))
                 {
                     flag = true;
                     this.DelayForNextNavigation(this.IeHost, 2000, 3000);
                 }
 
-                if (this._url.Contains(CatalogApi.CatalogConstants.RenoImpact))
+                if (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.RenoImpact]))
                 {
                     flag = true;
                     this.DelayForNextNavigation(this.IeHost, 500, 3000);
                 }
 
                 #region bmwgroup
-                if (this._url.Contains(CatalogApi.UrlConstants.BmwGroupRoot) == true)
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.BmwGroupRoot]) == true)
                 {
                     flag = true;
                     string absoluteUri = this.IeWeb.Document.Url.AbsoluteUri;
@@ -784,7 +785,7 @@ namespace NewLauncher.View
                         ;
 
                     if (!absoluteUri.Contains("PSESSID")
-                        & (this._url == CatalogApi.UrlConstants.BMW_Internet))
+                        & (this._url == ResourceManager.Urls[UrlConstants.Key.BMW_Internet]))
                     {
                         bool flag2 = false;
                         if (!this.flag1)
@@ -827,7 +828,7 @@ namespace NewLauncher.View
                         }
                         else if (!this.flag1)
                         {
-                            this.IeWeb.Navigate(CatalogApi.UrlConstants.BMW_WebETKStartNodeRoot);
+                            this.IeWeb.Navigate(ResourceManager.Urls[UrlConstants.Key.BMW_WebETKStartNodeRoot]);
                             this.flag1 = true;
                         }
                     }
@@ -835,7 +836,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Ford
-                if (this._url.Contains(CatalogApi.UrlConstants.FordRoot))
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.FordRoot]))
                 {
                     flag = true;
                     if (this.IeWeb.Document != null)
@@ -907,7 +908,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region mazdaeur
-                if (this._url.Contains(CatalogApi.UrlConstants.MazdaRoot))
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.MazdaRoot]))
                 {
                     flag = true;
                     if (this.IeWeb.Document != null)
@@ -968,7 +969,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region EWA-net
-                if (this._url.Contains(CatalogApi.UrlConstants.MercedezRoot))
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.MercedezRoot]))
                 {
                     flag = true;
                     if (this.IeWeb.Document != null)
@@ -1004,7 +1005,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Chevrolet-Opel Group
-                if (this._url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true)
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.ChevroletOpelGroupRoot]) == true)
                 {
                     flag = true;
 
@@ -1079,7 +1080,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region BMW Group
-                if (this._url.Contains(CatalogApi.UrlConstants.BmwGroupRoot) == true)
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.BmwGroupRoot]) == true)
                 {
                     flag = true;
                     this.DelayForNextNavigation(this.IeHost, 1000, 2000);
@@ -1093,38 +1094,38 @@ namespace NewLauncher.View
                         (
                             (
                                 (
-                                    (this._url.Contains(CatalogApi.CatalogConstants.AlfaRomeo)
-                                        || this._url.Contains(CatalogApi.CatalogConstants.Fiat)
+                                    (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.AlfaRomeo])
+                                        || this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.Fiat])
                                     )
-                                    || (this._url.Contains(CatalogApi.CatalogConstants.GeneralMotors)
-                                            || this._url.Contains(CatalogApi.CatalogConstants.FiatProfessional)
+                                    || (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.GeneralMotors])
+                                            || this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.FiatProfessional])
                                     )
                                 )
                                 || (
-                                    (this._url.Contains(CatalogApi.CatalogConstants.Lancia)
-                                        || this._url.Contains(CatalogApi.CatalogConstants.Abarth)
+                                    (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.Lancia])
+                                        || this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.Abarth])
                                     )
                                     || (
-                                        this._url.Contains(CatalogApi.CatalogConstants.Fiat)
-                                            || this._url.Contains(CatalogApi.CatalogConstants.Opel)
+                                        this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.Fiat])
+                                            || this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.Opel])
                                     )
                                 )
                             )
                             || (
                                 (
-                                    (this._url.Contains(CatalogApi.CatalogConstants.Volvo)
-                                        || this._url.Contains(CatalogApi.CatalogConstants.Rover)
+                                    (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.Volvo])
+                                        || this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.Rover])
                                     )
-                                    || (this._url.Contains(CatalogApi.CatalogConstants.Chrysler)
-                                        || this._url.Contains(CatalogApi.CatalogConstants.Chevrolet)
+                                    || (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.Chrysler])
+                                        || this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.Chevrolet])
                                     )
                                 )
-                                || (this._url.Contains(CatalogApi.CatalogConstants.IvecoTruck)
-                                    || this._url.Contains(CatalogApi.CatalogConstants.IvecoBus)
+                                || (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.IvecoTruck])
+                                    || this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.IvecoBus])
                                 )
                             )
                         )
-                    || (this._url.Contains(CatalogApi.CatalogConstants.Blanket) == true)
+                    || (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.Blanket]) == true)
                 )
                 {
                     flag = true;
@@ -1133,7 +1134,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region cargobull
-                if (this._url.Contains(CatalogApi.UrlConstants.CargoBullRoot) == true)
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.CargoBullRoot]) == true)
                 {
                     flag = true;
                     elementById = this.IeWeb.Document.GetElementById("ctl00_cphLogin_tbUsername");
@@ -1152,7 +1153,7 @@ namespace NewLauncher.View
                         if (!(this.IeWeb.Document.Body.InnerHtml.Contains("EPOSArticleSearch") || this.cargobullPageLoading))
                         {
                             this.cargobullPageLoading = true;
-                            this.IeWeb.Navigate(CatalogApi.UrlConstants.CargoBullArticleSearch);
+                            this.IeWeb.Navigate(ResourceManager.Urls[UrlConstants.Key.CargoBullArticleSearch]);
                         }
                         else
                         {
@@ -1180,7 +1181,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Citroen
-                if (this._url.Contains(CatalogApi.UrlConstants.CitroenRoot)) {
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.CitroenRoot])) {
                     flag = true;
                     this.DelayForNextNavigation(this.IeHost, 1000, 2000);
                 } else
@@ -1231,7 +1232,7 @@ namespace NewLauncher.View
 
         private void IeWebOnQuit(object sender, EventArgs eventArgs)
         {
-            if (this._url.Contains(CatalogApi.UrlConstants.MazdaRoot) == true) {
+            if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.MazdaRoot]) == true) {
                 base.Close();
             } else
                 ;
@@ -1270,7 +1271,7 @@ namespace NewLauncher.View
                 || (browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains("about:blank") == false))
             {
                 if ((browserExtendedNavigatingEventArgs.Url != null)
-                    && browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains(CatalogApi.UrlConstants.MazdaRoot))
+                    && browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains(ResourceManager.Urls[UrlConstants.Key.MazdaRoot]))
                 {
                     browserExtendedNavigatingEventArgs.Cancel = true;
                 }
@@ -1281,18 +1282,18 @@ namespace NewLauncher.View
                 else
                 {
                     if ((browserExtendedNavigatingEventArgs.Url != null)
-                        && browserExtendedNavigatingEventArgs.Url.LocalPath.Contains(CatalogApi.CatalogConstants.Blanket) == true)
+                        && browserExtendedNavigatingEventArgs.Url.LocalPath.Contains(ResourceManager.Catalogs[CatalogConstants.Key.Blanket]) == true)
                     {
                         base.Close();
                     }
 
                     if ((browserExtendedNavigatingEventArgs.Url != null)
-                        && browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains(CatalogApi.UrlConstants.BMW_WebETKStart))
+                        && browserExtendedNavigatingEventArgs.Url.AbsoluteUri.Contains(ResourceManager.Urls[UrlConstants.Key.BMW_WebETKStart]))
                     {
-                        this.IeWeb.Navigate(CatalogApi.UrlConstants.BMW_WebETKStart);
+                        this.IeWeb.Navigate(ResourceManager.Urls[UrlConstants.Key.BMW_WebETKStart]);
                         browserExtendedNavigatingEventArgs.Cancel = true;
                     }
-                    else if (this._url.Contains(CatalogApi.UrlConstants.BmwGroupRoot))
+                    else if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.BmwGroupRoot]))
                         browserExtendedNavigatingEventArgs.Cancel = true;
                     else
                     {
@@ -1353,7 +1354,7 @@ namespace NewLauncher.View
                 this.IeHost.Visibility = this.GeckoHost.Visibility = Visibility.Collapsed;
 
                 #region Ford
-                if (this._url.Contains(CatalogApi.UrlConstants.FordRoot) == true)
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.FordRoot]) == true)
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1361,7 +1362,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Mazda
-                if (this._url.Contains(CatalogApi.UrlConstants.MazdaRoot) == true)
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.MazdaRoot]) == true)
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1369,26 +1370,26 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Peugeot
-                if (this._url.Contains(CatalogApi.UrlConstants.PeugeotRoot) == true)
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.PeugeotRoot]) == true)
                 {
                     flag = true;
-                    this.OpenSession(false/*, string.Format(".{0}.com", CatalogApi.UrlConstants.PeugeotRoot)*/);
+                    this.OpenSession(false/*, string.Format(".{0}.com", ResourceManager.Urls[UrlConstants.Key.PeugeotRoot)*/);
                     this.GeckoWeb.Navigate(this._url);
                 }
                 #endregion
 
                 #region Citroen
-                if (this._url.Contains(CatalogApi.UrlConstants.CitroenRoot) ==  true)
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.CitroenRoot]) ==  true)
                 {
                     flag = true;
-                    this.OpenSession(false/*, string.Format(".{0}.com", CatalogApi.UrlConstants.CitroenRoot)*/);
+                    this.OpenSession(false/*, string.Format(".{0}.com", ResourceManager.Urls[UrlConstants.Key.CitroenRoot)*/);
                     this.GeckoWeb.Navigate(this._url);
                 }
                 #endregion
 
                 #region MOBIS (Kia, Hundai)
-                if ((this._url.Contains(CatalogApi.UrlConstants.Kia_Http_root) == true)
-                    || (this._url.Contains(CatalogApi.UrlConstants.HyundaiRoot) == true))
+                if ((this._url.Contains(ResourceManager.Urls[UrlConstants.Key.Kia_Http_root]) == true)
+                    || (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.HyundaiRoot]) == true))
                 {
                     flag = true;
                     this.GeckoWeb.Navigate(this._url);
@@ -1396,7 +1397,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region EWA-net
-                if (this._url.Contains(CatalogApi.UrlConstants.MercedezRoot) == true)
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.MercedezRoot]) == true)
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1404,14 +1405,14 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Partslink24
-                if (this._url.Contains(CatalogApi.UrlConstants.Partslink24Root) == true)
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.Partslink24Root]) == true)
                 {
                     flag = true;
                     InteropHelper.SetSystemTime(ref this.time);
-                    if (RequestHelper.Client.IsServiceAvailable(CatalogApi.UrlConstants.Partslink24Com))
+                    if (RequestHelper.Client.IsServiceAvailable(ResourceManager.Urls[UrlConstants.Key.Partslink24Com]))
                     {
-                        this.OpenSession(false/*, string.Format(".{0}.com", CatalogApi.UrlConstants.Partslink24Root)*/);
-                        this.GeckoWeb.Navigate(string.Format("{0}/", CatalogApi.UrlConstants.Partslink24Com));
+                        this.OpenSession(false/*, string.Format(".{0}.com", ResourceManager.Urls[UrlConstants.Key.Partslink24Root)*/);
+                        this.GeckoWeb.Navigate(string.Format("{0}/", ResourceManager.Urls[UrlConstants.Key.Partslink24Com]));
                     }
                     else
                     {
@@ -1422,7 +1423,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Chevrolet/Opel Group
-                if (this._url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true)
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.ChevroletOpelGroupRoot]) == true)
                 {
                     flag = true;
 
@@ -1432,7 +1433,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region AlfaRomeo
-                if (this._url.Contains(CatalogApi.CatalogConstants.AlfaRomeo))
+                if (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.AlfaRomeo]))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1440,7 +1441,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region OpelMain
-                if (this._url.Contains(CatalogApi.CatalogConstants.Opel))
+                if (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.Opel]))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1448,8 +1449,8 @@ namespace NewLauncher.View
                 #endregion
 
                 #region IvecoTruck
-                if (this._url.Contains(CatalogApi.CatalogConstants.IvecoTruck)
-                    || this._url.Contains(CatalogApi.CatalogConstants.IvecoBus))
+                if (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.IvecoTruck])
+                    || this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.IvecoBus]))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1457,7 +1458,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Volvo
-                if (this._url.Contains(CatalogApi.CatalogConstants.Volvo))
+                if (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.Volvo]))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1465,7 +1466,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Volvo Impact
-                if (this._url.Contains(CatalogApi.CatalogConstants.VolvoImpact))
+                if (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.VolvoImpact]))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1473,7 +1474,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Reno Impact
-                if (this._url.Contains(CatalogApi.CatalogConstants.RenoImpact))
+                if (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.RenoImpact]))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1481,7 +1482,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Rover
-                if (this._url.Contains(CatalogApi.CatalogConstants.Rover))
+                if (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.Rover]))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1489,7 +1490,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Chrysler
-                if (this._url.Contains(CatalogApi.CatalogConstants.Chrysler))
+                if (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.Chrysler]))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1497,7 +1498,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Chevrolet
-                if (this._url.Contains(CatalogApi.CatalogConstants.Chevrolet))
+                if (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.Chevrolet]))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1505,14 +1506,14 @@ namespace NewLauncher.View
                 #endregion
 
 
-                if (this._url.Contains(CatalogApi.CatalogConstants.Blanket) == true) {
+                if (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.Blanket]) == true) {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
                 } else
                     ;
 
                 #region BMW
-                if (this._url.Contains(CatalogApi.UrlConstants.BmwGroupRoot))
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.BmwGroupRoot]))
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1520,7 +1521,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region CargoBull
-                if (this._url.Contains(CatalogApi.UrlConstants.CargoBullRoot) == true)
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.CargoBullRoot]) == true)
                 {
                     flag = true;
                     this.IeWeb.Navigate(this._url);
@@ -1528,7 +1529,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Gigant-Group
-                if (this._url.Contains(string.Format("{0}.com", CatalogApi.UrlConstants.GigantGroupRoot)) == true)
+                if (this._url.Contains(string.Format("{0}.com", ResourceManager.Urls[UrlConstants.Key.GigantGroupRoot])) == true)
                 {
                     flag = true;
                     this.GeckoWeb.Navigate(this._url);
@@ -1536,7 +1537,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Saf-axles
-                if (this._url.Contains(CatalogApi.UrlConstants.SafAxlesRoot) == true) {
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.SafAxlesRoot]) == true) {
                     flag = true;
                     this.GeckoWeb.Navigate(this._url);
                 } else
@@ -1544,7 +1545,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region Ranger
-                if (this._url.Contains(CatalogApi.UrlConstants.RangerRoot) == true) {
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.RangerRoot]) == true) {
                     flag = true;
                     this.GeckoWeb.Navigate(this._url);
                 } else
@@ -1552,7 +1553,7 @@ namespace NewLauncher.View
                 #endregion
 
                 #region SsangYong
-                if (this._url.Contains(CatalogApi.UrlConstants.SsangYongRoot) == true) {
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.SsangYongRoot]) == true) {
                     flag = true;
                     this.GeckoWeb.Navigate(this._url);
                 } else
@@ -1579,7 +1580,7 @@ namespace NewLauncher.View
         {
             try
             {
-                if (this._url.Contains(CatalogApi.UrlConstants.Partslink24Root))
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.Partslink24Root]))
                 {
                     keyEventArgs.Handled = true;
                 }
@@ -1604,7 +1605,7 @@ namespace NewLauncher.View
                 this.IeWeb.StartNewWindow += new EventHandler<BrowserExtendedNavigatingEventArgs>(this.IeWebOnStartNewWindow);
                 this.IeWeb.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(this.IeWebOnDocumentCompleted);
                 this.IeWeb.IsWebBrowserContextMenuEnabled = false;
-                if (this._url.Contains(CatalogApi.CatalogConstants.RenoImpact))
+                if (this._url.Contains(ResourceManager.Catalogs[CatalogConstants.Key.RenoImpact]))
                 {
                     this.IeWeb.IsWebBrowserContextMenuEnabled = true;
                 }
@@ -1617,16 +1618,17 @@ namespace NewLauncher.View
                 this.GeckoWeb.DOMContentLoaded += new EventHandler<DomEventArgs>(this.GeckoWebOnDomContentLoaded);
                 this.GeckoWeb.DocumentCompleted += new EventHandler<GeckoDocumentCompletedEventArgs>(this.GeckoWebOnDocumentCompleted);
                 this.GeckoWeb.DomClick += new EventHandler<DomMouseEventArgs>(this.GeckoWeb_DomClick);
-                this._url.Contains(CatalogApi.UrlConstants.Partslink24Root);
-                if (0 != 0)
-                {
+                this._url.Contains(ResourceManager.Urls[UrlConstants.Key.Partslink24Root]);
+                #region ??? Недостижимый код
+                if (0 != 0) {
                     GeckoPreferences.User["network.proxy.type"] = 1;
                     GeckoPreferences.User["network.proxy.http"] = "http://40d002f8ae14.sn.mynetname.net";
                     GeckoPreferences.User["network.proxy.http_port"] = 0x1446;
                     System.Windows.MessageBox.Show("Включаем прокси сервер http://40d002f8ae14.sn.mynetname.net:5190");
-                }
-            }
-            catch (Exception exception)
+                } else
+                    ;
+                #endregion
+            } catch (Exception exception)
             {
                 ErrorLogHelper.AddErrorInLog("OnLoaded", exception.Message + " | " + exception.StackTrace);
                 System.Windows.MessageBox.Show(string.Format("[{0}] {1} / {2}", DateTime.Now, exception.Message, exception.StackTrace));
@@ -1646,7 +1648,7 @@ namespace NewLauncher.View
             {
                 this.ClearCookies();
 
-                if (this._url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true) {
+                if (this._url.Contains(ResourceManager.Urls[UrlConstants.Key.ChevroletOpelGroupRoot]) == true) {
                 //??? только для Chevrolet-Opel Group
                     host_cookies = this._url;
 

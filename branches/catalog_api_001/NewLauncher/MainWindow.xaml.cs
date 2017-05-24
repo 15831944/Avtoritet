@@ -154,7 +154,7 @@ namespace NewLauncher
         private void BuildWindow()
         {
             this.tabViewCollection.Clear();
-            Version version = new Version(JsonConvert.DeserializeObject<VersionEntity>(FileHelper.OpenFile("Version.json")).Version);
+            Version version = new Version(JsonConvert.DeserializeObject<VersionEntity>(IoHelper.OpenFile(new CatalogApi.Settings.File(ConfigurationManager.AppSettings["FileAppVersion"]).Name)).Version);
             RequestHelper.Client.LogConnection(Environment.MachineName, version.ToString());
             base.Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -449,13 +449,19 @@ namespace NewLauncher
 
         private void CheckForUpdateAndStartProcess()
         {
+            string nameUpdateDirectory = string.Empty
+                , nameAppVersionFile = string.Empty;
+
             try
             {
                 CatalogApi.Logging.Info(string.Format("::CheckForUpdateAndStartProcess() - вход..."));
 
-                if (Directory.Exists("Temp"))
+                nameUpdateDirectory = ResourceManager.UpdateDirectory;
+                nameAppVersionFile = new CatalogApi.Settings.File(ConfigurationManager.AppSettings["FileAppVersion"]).Name;
+
+                if (Directory.Exists(nameUpdateDirectory))
                 {
-                    IoHelper.DirectoryClear("Temp");
+                    IoHelper.DirectoryClear(nameUpdateDirectory);
                 }
 
                 AccountManager.Account = RequestHelper.Client.GetUnoccupiedAccount();
@@ -463,8 +469,8 @@ namespace NewLauncher
                 launcherSettings = new SettingsFactory(categoryEventHandler).DownloadSettings(false, true);
                 this.BuildWindow();
 
-                if (System.IO.File.Exists("Version.json")) {
-                    this.RefreshTitle(new Version(JsonConvert.DeserializeObject<VersionEntity>(FileHelper.OpenFile("Version.json")).Version).ToString());
+                if (System.IO.File.Exists(nameAppVersionFile)) {
+                    this.RefreshTitle(new Version(JsonConvert.DeserializeObject<VersionEntity>(IoHelper.OpenFile(nameAppVersionFile)).Version).ToString());
                 } else
                     ;
 
@@ -535,8 +541,8 @@ namespace NewLauncher
             this.SetWindowStartupLocation();
             this.SetWindowVisibility(Visibility.Hidden);
 
-            FileHelper.CreateFileIfNotExist("Version.json");
-            FileHelper.CreateDirectoryIfNotExist("Temp");
+            FileAppVersionHelper.CreateFileIfNotExist(new CatalogApi.Settings.File(ConfigurationManager.AppSettings["FileAppVersion"]).Name);
+            IoHelper.CreateDirectoryIfNotExist(ResourceManager.UpdateDirectory);
             InteropHelper.GetSystemTime(ref this.time);
 
             RemoteCertificateValidationCallback delegateCertificateValidationAlwaysTrust = (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) => { return true; };
@@ -588,7 +594,7 @@ namespace NewLauncher
                         //if (!(entities.Database.Connection.State == ConnectionState.Closed))
                         //{
                             Version version = new Version(entities.VersionLog.FirstOrDefault().Value)
-                                , version2 = new Version(JsonConvert.DeserializeObject<VersionEntity>(FileHelper.OpenFile(nameFileAppVersion)).Version)
+                                , version2 = new Version(JsonConvert.DeserializeObject<VersionEntity>(IoHelper.OpenFile(nameFileAppVersion)).Version)
                                 , version3 = new Version(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
 
                             if (version > version2) {

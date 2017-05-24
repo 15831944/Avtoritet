@@ -1,3 +1,4 @@
+using CatalogApi.Settings;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -12,7 +13,7 @@ namespace RequestHandlers.Requests
 			{
 				Content = PeugeotRequestFactory.FormUrlEncodedContentForLogin(login, password),
 				Method = HttpMethod.Post,
-				RequestUri = new Uri(CatalogApi.UrlConstants.PeugeotLoginDo)
+				RequestUri = new Uri(ResourceManager.Urls[CatalogApi.UrlConstants.Key.PeugeotLoginDo])
 			};
 		}
 
@@ -21,7 +22,7 @@ namespace RequestHandlers.Requests
 			return new HttpRequestMessage
 			{
 				Method = HttpMethod.Get,
-				RequestUri = new Uri(CatalogApi.UrlConstants.PeugeotLogoutTo)
+				RequestUri = new Uri(ResourceManager.Urls[CatalogApi.UrlConstants.Key.PeugeotLogoutTo])
 			};
 		}
 

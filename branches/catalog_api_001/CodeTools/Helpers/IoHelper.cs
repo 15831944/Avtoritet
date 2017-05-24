@@ -54,26 +54,53 @@ namespace CodeTools.Helpers
    }
   }
 
-  public static void DirectoryClear(string sourceDirName)
+  public static bool DirectoryClear(string sourceDirName)
   {
-   var sourceDirectory = new DirectoryInfo(sourceDirName);
+            try {
+       var sourceDirectory = new DirectoryInfo(sourceDirName);
 
-   foreach (var file in sourceDirectory.GetFiles())
-   {
-    file.Delete();
-   }
+       foreach (var file in sourceDirectory.GetFiles())
+       {
+        file.Delete();
+       }
 
-   foreach (var subdir in sourceDirectory.GetDirectories())
-   {
-    DirectoryClear(subdir.FullName);
-   }
+       foreach (var subdir in sourceDirectory.GetDirectories())
+       {
+        DirectoryClear(subdir.FullName);
+       }
 
-   var directories = new DirectoryInfo(sourceDirName).GetDirectories();
+       var directories = new DirectoryInfo(sourceDirName).GetDirectories();
 
-   foreach (var directory in directories)
-   {
-    directory.Delete(true);
-   }
+       foreach (var directory in directories)
+       {
+        directory.Delete(true);
+       }
+            } catch { return false; }
+
+            return true;
   }
- }
+
+        public static void CreateDirectoryIfNotExist(string dirPath)
+        {
+            if (!Directory.Exists(dirPath)) {
+                Directory.CreateDirectory(dirPath);
+            }
+        }
+
+        public static string OpenFile(string filePath)
+        {
+            string str;
+            using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read)) {
+                using (StreamReader reader = new StreamReader(stream)) {
+                    str = reader.ReadToEnd();
+                }
+            }
+            return str;
+        }
+
+        public static bool DirectoryHasFiles(string sourceDirName)
+        {
+            return Directory.Exists(sourceDirName) && Directory.GetFiles(sourceDirName, "*.*", SearchOption.AllDirectories).Length > 0;
+        }
+    }
 }

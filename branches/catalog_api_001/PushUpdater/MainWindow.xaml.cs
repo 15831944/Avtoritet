@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CatalogApi.Settings;
+using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
@@ -54,13 +55,13 @@ namespace PushUpdater
 
             Thread.Sleep(3000);
 
-            if (DirectoryHasFiles(UpdateDirectory) == true)
+            if (CodeTools.Helpers.IoHelper.DirectoryHasFiles(UpdateDirectory) == true)
             {
-                DirectoryCopy(UpdateDirectory, string.Empty, true);
+                CodeTools.Helpers.IoHelper.DirectoryCopy(UpdateDirectory, string.Empty, true);
 
                 //TODO: Проверить ход работы после Exception
 
-                if (DirectoryClear(UpdateDirectory) == true)
+                if (CodeTools.Helpers.IoHelper.DirectoryClear(UpdateDirectory) == true)
                 {
                     //TODO
                 } else {
@@ -68,8 +69,8 @@ namespace PushUpdater
                     //TODO
                 }
 
-                if (File.Exists(Zip.Name)) {
-                    File.Delete(Zip.Name);
+                if (System.IO.File.Exists(Zip.Name)) {
+                    System.IO.File.Delete(Zip.Name);
                 } else
                     ;
 
@@ -112,67 +113,67 @@ namespace PushUpdater
                 process.Kill();
         }
 
-        private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
-        {
-            var sourceDirectory = new DirectoryInfo(sourceDirName);
+        //private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        //{
+        //    var sourceDirectory = new DirectoryInfo(sourceDirName);
 
-            if (sourceDirectory.Exists == false)
-            {
-                throw new DirectoryNotFoundException(
-                    string.Format("Source directory does not exist or could not be found: '{0}'."
-                        , sourceDirName)
-                );
-            }
+        //    if (sourceDirectory.Exists == false)
+        //    {
+        //        throw new DirectoryNotFoundException(
+        //            string.Format("Source directory does not exist or could not be found: '{0}'."
+        //                , sourceDirName)
+        //        );
+        //    }
 
-            if ((string.IsNullOrEmpty(destDirName) == false)
-                && (Directory.Exists(destDirName) == false))
-            {
-                Directory.CreateDirectory(destDirName);
-            }
+        //    if ((string.IsNullOrEmpty(destDirName) == false)
+        //        && (Directory.Exists(destDirName) == false))
+        //    {
+        //        Directory.CreateDirectory(destDirName);
+        //    }
 
-            foreach (var file in sourceDirectory.GetFiles())
-            {
-                var temppath = Path.Combine(string.IsNullOrEmpty(destDirName) ? string.Empty : destDirName, file.Name);
-                file.CopyTo(temppath, true);
-            }
+        //    foreach (var file in sourceDirectory.GetFiles())
+        //    {
+        //        var temppath = Path.Combine(string.IsNullOrEmpty(destDirName) ? string.Empty : destDirName, file.Name);
+        //        file.CopyTo(temppath, true);
+        //    }
 
-            if (!copySubDirs)
-                return;
+        //    if (!copySubDirs)
+        //        return;
 
-            foreach (var subdir in sourceDirectory.GetDirectories())
-            {
-                var temppath = Path.Combine(string.IsNullOrEmpty(destDirName) ? string.Empty : destDirName, subdir.Name);
-                DirectoryCopy(subdir.FullName, temppath, true);
-            }
-        }
+        //    foreach (var subdir in sourceDirectory.GetDirectories())
+        //    {
+        //        var temppath = Path.Combine(string.IsNullOrEmpty(destDirName) ? string.Empty : destDirName, subdir.Name);
+        //        DirectoryCopy(subdir.FullName, temppath, true);
+        //    }
+        //}
 
-        private static bool DirectoryClear(string sourceDirName)
-        {
-            try
-            {
-                var sourceDirectory = new DirectoryInfo(sourceDirName);
+        //private static bool DirectoryClear(string sourceDirName)
+        //{
+        //    try
+        //    {
+        //        var sourceDirectory = new DirectoryInfo(sourceDirName);
 
-                foreach (var file in sourceDirectory.GetFiles("*.*", SearchOption.AllDirectories))
-                {
-                    file.Delete();
-                }
+        //        foreach (var file in sourceDirectory.GetFiles("*.*", SearchOption.AllDirectories))
+        //        {
+        //            file.Delete();
+        //        }
 
-                foreach (var subdir in sourceDirectory.GetDirectories(Path.Combine(Directory.GetCurrentDirectory(), "Temp"), SearchOption.AllDirectories))
-                {
-                    subdir.Delete();
-                }
+        //        foreach (var subdir in sourceDirectory.GetDirectories(Path.Combine(Directory.GetCurrentDirectory(), sourceDirName), SearchOption.AllDirectories))
+        //        {
+        //            subdir.Delete();
+        //        }
 
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
+        //        return true;
+        //    }
+        //    catch
+        //    {
+        //        return false;
+        //    }
+        //}
 
-        private static bool DirectoryHasFiles(string sourceDirName)
-        {
-            return Directory.Exists(sourceDirName) && Directory.GetFiles(sourceDirName, "*.*", SearchOption.AllDirectories).Length > 0;
-        }
+        //private static bool DirectoryHasFiles(string sourceDirName)
+        //{
+        //    return Directory.Exists(sourceDirName) && Directory.GetFiles(sourceDirName, "*.*", SearchOption.AllDirectories).Length > 0;
+        //}
     }
 }

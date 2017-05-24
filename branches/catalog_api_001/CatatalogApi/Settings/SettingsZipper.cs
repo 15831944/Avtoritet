@@ -11,7 +11,9 @@ namespace CatalogApi.Settings
     // TODO: Только при старте сервера!
     public class SettingsZipper : ISettingsZipper
     {
-        private const string TempPath = "temp";
+        private const string TempPath = "temp"; // по-настоящему временный каталог
+        private static File SignSourceArchiveFile = new File("sourceZipFile|zip");
+
         private readonly object sync = new object();
         private readonly ICategoryEventHandler eventHandler;
 
@@ -50,7 +52,7 @@ namespace CatalogApi.Settings
 
         public void UnzipToRoot(string sourceZipFile)
         {
-            Guard.CheckContainsText(sourceZipFile, "sourceZipFile");
+            Guard.CheckContainsText(sourceZipFile, SignSourceArchiveFile.NameWithoutExt);
 
             if (!Directory.Exists(ResourceManager.Root))
             {
@@ -111,11 +113,11 @@ namespace CatalogApi.Settings
 
         public void UnzipToUpdate(string sourceZipFile)
         {
-            Guard.CheckContainsText(sourceZipFile, "sourceZipFile");
+            Guard.CheckContainsText(sourceZipFile, SignSourceArchiveFile.NameWithoutExt);
 
-            if (!Directory.Exists("Temp"))
+            if (!Directory.Exists(ResourceManager.UpdateDirectory))
             {
-                throw new ArgumentException("Directory not found: '{0}'".FormatString("Temp"));
+                throw new ArgumentException("Directory not found: '{0}'".FormatString(ResourceManager.UpdateDirectory));
             }
 
             if (!System.IO.File.Exists(sourceZipFile))
@@ -123,7 +125,7 @@ namespace CatalogApi.Settings
                 throw new ArgumentException("File not found: '{0}'".FormatString(sourceZipFile));
             }
 
-            ZipFile.ExtractToDirectory(sourceZipFile, "Temp");
+            ZipFile.ExtractToDirectory(sourceZipFile, ResourceManager.UpdateDirectory);
         }
     }
 }

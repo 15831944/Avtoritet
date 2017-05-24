@@ -122,15 +122,15 @@ namespace RelayServer.Processors
 		{
 			try
 			{
-				if (url.Contains(CatalogApi.UrlConstants.CitroenRoot) == true)
+				if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.CitroenRoot]) == true)
 				{
 					RequestProcessor.CitroenPortal.OpenSession(url, providerId, forceSession);
 				}
-				else if (url.Contains(CatalogApi.UrlConstants.PeugeotRoot) == true)
+				else if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.PeugeotRoot]) == true)
 				{
 					RequestProcessor.PeugeotPortal.OpenSession(url, providerId, forceSession);
 				}
-				else if (url.Contains(CatalogApi.UrlConstants.Partslink24Root))
+				else if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.Partslink24Root]))
 				{
 					RequestProcessor.PartslinkPortal.OpenSession(url, providerId, forceSession);
 				}
@@ -153,15 +153,15 @@ namespace RelayServer.Processors
 		{
 			try
 			{
-				if (url.Contains(CatalogApi.UrlConstants.CitroenRoot) == true)
+				if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.CitroenRoot]) == true)
 				{
 					RequestProcessor.CitroenPortal.CloseSession(url);
 				}
-				else if (url.Contains(CatalogApi.UrlConstants.PeugeotRoot) == true)
+				else if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.PeugeotRoot]) == true)
 				{
 					RequestProcessor.PeugeotPortal.CloseSession(url);
 				}
-				else if (url.Contains(CatalogApi.UrlConstants.Partslink24Root))
+				else if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.Partslink24Root]) == true)
 				{
 					RequestProcessor.PartslinkPortal.CloseSession(url);
 				}
@@ -194,15 +194,15 @@ namespace RelayServer.Processors
 
             try
 			{
-				if (url.Contains(CatalogApi.UrlConstants.CitroenRoot) == true)
+				if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.CitroenRoot]) == true)
 				{
 					result = RequestProcessor.CitroenPortal.GetCookies(url);
 				}
-				else if (url.Contains(CatalogApi.UrlConstants.PeugeotRoot) == true)
+				else if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.PeugeotRoot]) == true)
 				{
 					result = RequestProcessor.PeugeotPortal.GetCookies(url);
 				}
-				else if (url.Contains(CatalogApi.UrlConstants.Partslink24Root))
+				else if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.Partslink24Root]))
 			    {
 			        result = RequestProcessor.PartslinkPortal.GetCookies(url);
 
