@@ -1,3 +1,4 @@
+using CatalogApi.Settings;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -12,7 +13,7 @@ namespace RequestHandlers.Requests
 			{
 				Content = OpelRequestFactory.FormUrlEncodedContentForLogin(login, password),
 				Method = HttpMethod.Post,
-				RequestUri = new Uri(CatalogApi.UrlConstants.ChevroletOpelGroupUserLoginDo)
+				RequestUri = new Uri(ResourceManager.Urls[CatalogApi.UrlConstants.Key.ChevroletOpelGroupUserLoginDo])
 			};
 		}
 
@@ -22,7 +23,7 @@ namespace RequestHandlers.Requests
 			{
 				Content = OpelRequestFactory.FormUrlEncodedContentForLogout(),
 				Method = HttpMethod.Post,
-				RequestUri = new Uri(CatalogApi.UrlConstants.ChevroletOpelGroupUserLogoutTo)
+				RequestUri = new Uri(ResourceManager.Urls[CatalogApi.UrlConstants.Key.ChevroletOpelGroupUserLogoutTo])
 			};
 		}
 

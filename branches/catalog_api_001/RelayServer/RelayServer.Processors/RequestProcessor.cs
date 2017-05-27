@@ -134,7 +134,7 @@ namespace RelayServer.Processors
 				{
 					RequestProcessor.PartslinkPortal.OpenSession(url, providerId, forceSession);
 				}
-				else if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
+				else if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.ChevroletOpelGroupRoot]))
 				{
                     RequestProcessor.ChevroletPortal.OpenSession(url, providerId, forceSession);
                     // RequestProcessor.OpelPortal.OpenSession(url, forceSession);
@@ -165,7 +165,7 @@ namespace RelayServer.Processors
 				{
 					RequestProcessor.PartslinkPortal.CloseSession(url);
 				}
-				else if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
+				else if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.ChevroletOpelGroupRoot]))
 				{
 					RequestProcessor.ChevroletPortal.CloseSession(url);
 				}
@@ -206,7 +206,7 @@ namespace RelayServer.Processors
 			    {
 			        result = RequestProcessor.PartslinkPortal.GetCookies(url);
 
-			    } else if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot))
+			    } else if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.ChevroletOpelGroupRoot]))
 				{
                     result = RequestProcessor.ChevroletPortal.GetCookies(url);
 				}

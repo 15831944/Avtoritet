@@ -33,36 +33,72 @@ namespace CatalogApi.Settings
 
         static ResourceManager()
         {
-            //XmlDocument xmlDoc;
+            CatalogApi.Settings.File constants;
+            bool fileExists = false;
+            XmlDocument xmlDoc;
             string json = string.Empty;
 
             if (ConfigurationManager.AppSettings.Keys.Cast<string>().Contains("UpdateDirectory") == true)
                 UpdateDirectory = ConfigurationManager.AppSettings["UpdateDirectory"]; // "Temp"
+            else
+                ;
 
             if (ConfigurationManager.AppSettings.Keys.Cast<string>().Contains("ResourceDirectory") == true)
                 ResourceFolder = ConfigurationManager.AppSettings["ResourceDirectory"];
+            else
+                ;
 
             if (ConfigurationManager.AppSettings.Keys.Cast<string>().Contains("UpdateFileArchive") == true)
                 UpdateFileArchive = new CatalogApi.Settings.File(ConfigurationManager.AppSettings["UpdateFileArchive"]).Name;
+            else
+                ;
 
-            //xmlDoc = new XmlDocument();
             if (ConfigurationManager.AppSettings.Keys.Cast<string>().Contains("CatalogConstants") == true) {
-                //xmlDoc.Load(new CatalogApi.Settings.File(ConfigurationManager.AppSettings["CatalogConstants"]).Name);
-                json = CodeTools.Helpers.IoHelper.OpenFile(new CatalogApi.Settings.File(ConfigurationManager.AppSettings["CatalogConstants"]).Name);
+                constants = new CatalogApi.Settings.File(ConfigurationManager.AppSettings["CatalogConstants"]);
+                switch (constants.Type) {
+                    case File.TYPE.JSON:
+                        json = CodeTools.Helpers.IoHelper.OpenFile(constants.Name, out fileExists);
+                        if (fileExists == true)
+                            Catalogs = new CatalogConstants(json);
+                        else {
+                            Catalogs = new CatalogConstants();
+                            CodeTools.Helpers.IoHelper.SaveToFile(Catalogs.GetJsonValue(), constants.Name);
+                        }
+                        break;
+                    case File.TYPE.XML:
+                        xmlDoc = new XmlDocument();
+                        xmlDoc.Load(constants.Name);
+                        Catalogs = new CatalogConstants(xmlDoc);
+                        break;
+                    default:
+                        break;
+                }
             } else
-                ;
-            //Catalogs = new CatalogConstants(xmlDoc);
-            Catalogs = new CatalogConstants(json);
+                Catalogs = new CatalogConstants();
 
-            //xmlDoc = new XmlDocument();
-            json = string.Empty;
+
             if (ConfigurationManager.AppSettings.Keys.Cast<string>().Contains("UrlConstants") == true) {
-                //xmlDoc.Load(new CatalogApi.Settings.File(ConfigurationManager.AppSettings["UrlConstants"]).Name);
-                json = CodeTools.Helpers.IoHelper.OpenFile(new CatalogApi.Settings.File(ConfigurationManager.AppSettings["UrlConstants"]).Name);
+                constants = new CatalogApi.Settings.File(ConfigurationManager.AppSettings["UrlConstants"]);
+                switch (constants.Type) {
+                    case File.TYPE.JSON:
+                        json = CodeTools.Helpers.IoHelper.OpenFile(constants.Name, out fileExists);
+                        if (fileExists == true)
+                            Urls = new UrlConstants(json);
+                        else {
+                            Urls = new UrlConstants();
+                            CodeTools.Helpers.IoHelper.SaveToFile(Urls.GetJsonValue(), constants.Name);
+                        }
+                        break;
+                    case File.TYPE.XML:
+                        xmlDoc = new XmlDocument();
+                        xmlDoc.Load(constants.Name);
+                        Urls = new UrlConstants(xmlDoc);
+                        break;
+                    default:
+                        break;
+                }
             } else
-                ;
-            //Urls = new UrlConstants(xmlDoc);
-            Urls = new UrlConstants(json);
+                Catalogs = new CatalogConstants();
 
             Prepare();
         }
@@ -110,7 +146,7 @@ namespace CatalogApi.Settings
 
     public class File
     {
-        public enum TYPE { TXT, JSON, RAR, ZIP, DAT, EXE }
+        public enum TYPE { TXT, JSON, RAR, ZIP, XML, DAT, EXE }
 
         public string Name { get; }
 

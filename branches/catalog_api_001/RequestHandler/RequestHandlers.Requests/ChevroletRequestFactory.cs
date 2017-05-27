@@ -1,3 +1,4 @@
+using CatalogApi.Settings;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -22,7 +23,7 @@ namespace RequestHandlers.Requests
 			{
 				Content = ChevroletRequestFactory.FormUrlEncodedContentForLogout(),
 				Method = HttpMethod.Post,
-				RequestUri = new Uri(CatalogApi.UrlConstants.ChevroletOpelGroupUserLogoutTo)
+				RequestUri = new Uri(ResourceManager.Urls[CatalogApi.UrlConstants.Key.ChevroletOpelGroupUserLogoutTo])
 			};
 		}
 

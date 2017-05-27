@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Main>
+  <Item Key="WEB_PROXY" Value="http://40d002f8ae14.sn.mynetname.net:5190"/>
+  <!--BMW group-->
+  <Item Key="BmwGroupRoot" Value="bmwgroup"/>
+  <Item Key="BMW_WebETKStart" Value="https://www.parts.bmwgroup.com/tetis/starteApplikationAction.do?ENTRY_ID=WebETK_START"/>
+  <Item Key="BMW_Internet" Value="https://www.parts.bmwgroup.com/tetis/startTetisAction.do?DOMAIN=Internet"/>
+  <Item Key="BMW_WebETKStartNodeRoot" Value="https://www.parts.bmwgroup.com/tetis/startNode.do?APP=WebETK&ENTRY_ID=WebETK_START&NODE=ROOT:Favorite:WebETK:WebETK_START"/>
+  <!--Citroen-->
+  <Item Key="CitroenRoot" Value="citroen"/>
+  <Item Key="CitroenLoginDo" Value="http://service.citroen.com/do/login"/>
+  <Item Key="CitroenLogoutTo" Value="http://service.citroen.com/do/logout"/>
+  <!--Peugeot-->
+  <Item Key="PeugeotRoot" Value="peugeot"/>
+  <Item Key="PeugeotLoginDo" Value="http://public.servicebox.peugeot.com/do/login"/>
+  <Item Key="PeugeotLogoutTo" Value="http://public.servicebox.peugeot.com/do/logout"/>
+  <!--partslink24.com-->
+  <Item Key="PartslinkRoot" Value="partslink"/>
+  <Item Key="Partslink24Root" Value="partslink24"/>
+  <Item Key="Partslink24Com" Value="https://www.partslink24.com"/>
+  <Item Key="Partslink24ComPartslink24UserLoginDo" Value="https://www.partslink24.com/partslink24/user/login.do"/>
+  <Item Key="Partslink24ComPartslink24UserLogoutTo" Value="https://www.partslink24.com/partslink24/user/logout.do"/>
+  <!--<Item Key="Partslink24ComBentlyParts" Value="https://www.partslink24.com/partslink24/launchCatalog.do?service=bentley_parts"/>-->
+  <Item Key="Partslink24ComPartslink24BrandMenuDo" Value="https://www.partslink24.com/partslink24/user/brandMenu.do"/>
+  <Item Key="Partslink24ComPartslink24AjaxLoginAction" Value="https://www.partslink24.com/partslink24/login-ajax!login.action"/>
+  <Item Key="PartsLink24FormRequestKeyToken" Value="org.apache.struts.taglib.html.TOKEN"/>
+  <Item Key="PartsLink24FormRequestValueToken" Value="7bfe4fc414c2621c309b7960a92d012e"/>
+  <!--chevrolet/opel group-->
+  <Item Key="ChevroletOpelGroupRoot" Value="imtportal.gm"/>
+  <Item Key="ChevroletOpelGroup" Value="https://imtportal.gm.com"/>
+  <Item Key="ChevroletOpelGroupUserLoginDo" Value="https://imtportal.gm.com/users/login.html"/>
+  <Item Key="ChevroletOpelGroupUserLogoutTo" Value="https://imtportal.gm.com/users/logout.html"/>
+  <!--Cargo bull-->
+  <Item Key="CargoBullRoot" Value="cargobull"/>
+  <Item Key="CargoBullArticleSearch" Value="https://www.cargobull-serviceportal.de/Applications/ServicePortal/ArticleSearch.aspx"/>
+   <!--Common items-->
+  <!--Warning. Duplicate MercedezRoot-->
+  <Item Key="EtkaRoot" Value="vin-online"/>
+  <Item Key="FordRoot" Value="Ford"/>
+  <Item Key="HyundaiRoot" Value="wpc.mobis.co.kr"/>
+  <Item Key="Kia_file_root" Value="globalserviceway"/>
+  <Item Key="Kia_Http_root" Value="wpc.mobis.co.kr"/>
+  <Item Key="MazdaRoot" Value="mazdaeur"/>
+  <!--Warning. Duplicate EtkaRoot-->
+  <Item Key="MercedezRoot" Value="EWA-net"/>
+  <Item Key="VinOnlineRoot" Value="vin-online"/>
+  <Item Key="GigantGroupRoot" Value="gigant-group"/>
+  <Item Key="RangerRoot" Value="inforanger.roadranger"/>
+  <Item Key="SafAxlesRoot" Value="saf-axles"/>
+  <Item Key="SsangYongRoot" Value="ssangyong"/>
+</Main>

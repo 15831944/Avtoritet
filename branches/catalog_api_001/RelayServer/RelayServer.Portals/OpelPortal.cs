@@ -1,3 +1,4 @@
+using CatalogApi.Settings;
 using Newtonsoft.Json;
 //using RelayServer.DataContext;
 using RelayServer.Helpers;
@@ -142,7 +143,7 @@ namespace RelayServer.Portals
                         , resHttpResponseMessage.RequestMessage.RequestUri.AbsoluteUri
                         , resHttpResponseMessage.StatusCode));
 
-                    CloseSession(CatalogApi.UrlConstants.ChevroletOpelGroupUserLogoutTo);
+                    CloseSession(ResourceManager.Urls[CatalogApi.UrlConstants.Key.ChevroletOpelGroupUserLogoutTo]);
 
                     // url для новой-повторной сессии - повторный код (см. выше, при отсутствии авторизации)
                     resHttpResponseMessage = reqHandler.OpenSessionAsync(url_session, container);

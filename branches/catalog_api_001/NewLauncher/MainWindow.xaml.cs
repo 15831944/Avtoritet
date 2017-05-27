@@ -153,8 +153,10 @@ namespace NewLauncher
 
         private void BuildWindow()
         {
+            bool fileExists = false;
+
             this.tabViewCollection.Clear();
-            Version version = new Version(JsonConvert.DeserializeObject<VersionEntity>(IoHelper.OpenFile(new CatalogApi.Settings.File(ConfigurationManager.AppSettings["FileAppVersion"]).Name)).Version);
+            Version version = new Version(JsonConvert.DeserializeObject<VersionEntity>(IoHelper.OpenFile(new CatalogApi.Settings.File(ConfigurationManager.AppSettings["FileAppVersion"]).Name, out fileExists)).Version);
             RequestHelper.Client.LogConnection(Environment.MachineName, version.ToString());
             base.Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -451,6 +453,7 @@ namespace NewLauncher
         {
             string nameUpdateDirectory = string.Empty
                 , nameAppVersionFile = string.Empty;
+            bool fileExists = false;
 
             try
             {
@@ -470,7 +473,7 @@ namespace NewLauncher
                 this.BuildWindow();
 
                 if (System.IO.File.Exists(nameAppVersionFile)) {
-                    this.RefreshTitle(new Version(JsonConvert.DeserializeObject<VersionEntity>(IoHelper.OpenFile(nameAppVersionFile)).Version).ToString());
+                    this.RefreshTitle(new Version(JsonConvert.DeserializeObject<VersionEntity>(IoHelper.OpenFile(nameAppVersionFile, out fileExists)).Version).ToString());
                 } else
                     ;
 
@@ -581,6 +584,7 @@ namespace NewLauncher
             string nameFileSettingVersion = string.Empty
                 , nameFileAppVersion = string.Empty;
             Exception exception;
+            bool fileExists = false;
 
             try
             {
@@ -594,7 +598,7 @@ namespace NewLauncher
                         //if (!(entities.Database.Connection.State == ConnectionState.Closed))
                         //{
                             Version version = new Version(entities.VersionLog.FirstOrDefault().Value)
-                                , version2 = new Version(JsonConvert.DeserializeObject<VersionEntity>(IoHelper.OpenFile(nameFileAppVersion)).Version)
+                                , version2 = new Version(JsonConvert.DeserializeObject<VersionEntity>(IoHelper.OpenFile(nameFileAppVersion, out fileExists)).Version)
                                 , version3 = new Version(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
 
                             if (version > version2) {

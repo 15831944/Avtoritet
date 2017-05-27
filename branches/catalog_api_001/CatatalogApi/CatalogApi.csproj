@@ -144,6 +144,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="app.manifest" />
+    <None Include="CatalogConstants.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="ExtendedWebBrowser2.snk" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -154,8 +157,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="CatalogConstants.xml" />
-    <None Include="UrlConstants.xml" />
+    <None Include="CatalogConstants.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="UrlConstants.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="UrlConstants.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helper\" />

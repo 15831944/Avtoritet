@@ -3,28 +3,32 @@ using CodeTools.Extensions;
 
 namespace CodeTools.Helpers
 {
- public static class IoHelper
- {
-  public static void CopyStream(Stream input, Stream output)
-  {
-   // TODO: Перенести в константы.
-   var buffer = new byte[8 * 1024];
-   int len;
-   while ((len = input.Read(buffer, 0, buffer.Length)) > 0)
-   {
-    output.Write(buffer, 0, len);
-   }
-  }
+    public static class IoHelper
+    {
+        public static void CopyStream(Stream input, Stream output)
+        {
+            // TODO: Перенести в константы.
+            var buffer = new byte[8 * 1024];
+            int len;
+            while ((len = input.Read(buffer, 0, buffer.Length)) > 0) {
+                output.Write(buffer, 0, len);
+            }
+        }
 
-  public static void SaveToFile(this Stream stream, string file)
-  {
-   using (var fileStream = File.Create(file))
-   {
-    CopyStream(stream, fileStream);
-   }
-  }
+        public static void SaveToFile(this Stream stream, string nameFile)
+        {
+            using (var fileStream = File.Create(nameFile)) {
+                CopyStream(stream, fileStream);
+            }
+        }
 
-  public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        public static void SaveToFile(string content, string nameFile)
+        {
+            MemoryStream stream = new MemoryStream(System.Text.Encoding.ASCII.GetBytes(content));
+            SaveToFile(stream, nameFile);
+        }
+
+        public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
   {
    var sourceDirectory = new DirectoryInfo(sourceDirName);
  
@@ -54,31 +58,30 @@ namespace CodeTools.Helpers
    }
   }
 
-  public static bool DirectoryClear(string sourceDirName)
-  {
+        public static bool DirectoryClear(string sourceDirName)
+        {
             try {
-       var sourceDirectory = new DirectoryInfo(sourceDirName);
+                var sourceDirectory = new DirectoryInfo(sourceDirName);
 
-       foreach (var file in sourceDirectory.GetFiles())
-       {
-        file.Delete();
-       }
+                foreach (var file in sourceDirectory.GetFiles()) {
+                    file.Delete();
+                }
 
-       foreach (var subdir in sourceDirectory.GetDirectories())
-       {
-        DirectoryClear(subdir.FullName);
-       }
+                foreach (var subdir in sourceDirectory.GetDirectories()) {
+                    DirectoryClear(subdir.FullName);
+                }
 
-       var directories = new DirectoryInfo(sourceDirName).GetDirectories();
+                var directories = new DirectoryInfo(sourceDirName).GetDirectories();
 
-       foreach (var directory in directories)
-       {
-        directory.Delete(true);
-       }
-            } catch { return false; }
+                foreach (var directory in directories) {
+                    directory.Delete(true);
+                }
+            } catch {
+                return false;
+            }
 
             return true;
-  }
+        }
 
         public static void CreateDirectoryIfNotExist(string dirPath)
         {
@@ -87,14 +90,21 @@ namespace CodeTools.Helpers
             }
         }
 
-        public static string OpenFile(string filePath)
+        public static string OpenFile(string filePath, out bool exists)
         {
-            string str;
-            using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read)) {
-                using (StreamReader reader = new StreamReader(stream)) {
-                    str = reader.ReadToEnd();
+            string str = string.Empty;
+
+            exists = System.IO.File.Exists(filePath);
+
+            if (exists == true)
+                using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read)) {
+                    using (StreamReader reader = new StreamReader(stream)) {
+                        str = reader.ReadToEnd();
+                    }
                 }
-            }
+            else
+                ;
+
             return str;
         }
 

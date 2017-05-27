@@ -108,7 +108,7 @@ namespace NewLauncher.View
 
                 if (url.StartsWith("http") || url.StartsWith("https"))
                 {
-                    if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot) == true) {
+                    if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.ChevroletOpelGroupRoot]) == true) {
                         string appKey = "ChevroletOpelGroupBrowser";
 
                         if (ConfigurationManager.AppSettings[appKey] == MODE_BROWSE.Separate.ToString())
@@ -301,7 +301,7 @@ namespace NewLauncher.View
             string cookies = RequestHelper.Client.GetCookies(url);
             //List<System.Net.Cookie> listCookies = JsonConvert.DeserializeObject<List<System.Net.Cookie>>(cookies);
             // куки передаем через командную строку
-            if (url.Contains(CatalogApi.UrlConstants.ChevroletOpelGroupRoot)) {
+            if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.ChevroletOpelGroupRoot]) == true) {
                 using (stream = new FileStream(fileNameSession, FileMode.Create, FileAccess.Write)) {
                     using (writer = new StreamWriter(stream)) {
                         writer.Write(cookies);

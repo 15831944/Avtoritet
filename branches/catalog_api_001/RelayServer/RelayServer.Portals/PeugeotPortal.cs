@@ -80,7 +80,7 @@ namespace RelayServer.Portals
             bool error_session = false;
 
             lock (PeugeotPortal.AutorizeLock) {
-                ConsoleHelper.Debug("CITROEN");
+                ConsoleHelper.Debug("PEUGEOT");
 
                 url_session = url;
 

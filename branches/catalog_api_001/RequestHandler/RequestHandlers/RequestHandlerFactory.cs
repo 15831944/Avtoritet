@@ -12,11 +12,11 @@ namespace RequestHandlers
 		    ConsoleHelper.Trace(string.Format("RequestHandlerFactory::Create(url={0}, login={1}, password={2})", url, login, password));
 
             IRequestHandler result;
-			if (url.Contains("citroen"))
+			if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.CitroenRoot]))
 			{
 				result = new CitroenRequestHandler(login, password);
 			}
-			else if (url.Contains("peugeot"))
+			else if (url.Contains(ResourceManager.Urls[CatalogApi.UrlConstants.Key.PeugeotRoot]))
 			{
 				result = new PeugeotRequestHandler(login, password);
 			}
